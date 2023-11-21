@@ -1,9 +1,13 @@
 #!/usr/bin/python
 import serial
 import time
+import signal
+import sys
+
 class ADC():
     TIMEOUT = 5000
     def __init__(self,num_sensors=1):
+        self._set_handlers()
         self.num_sensors = num_sensors
         # open serial interface
         self.ser = serial.Serial('/dev/ttyACM0',9600, timeout = 0.01)
@@ -47,8 +51,26 @@ class ADC():
     def _next(self):
         self.ser.write(b'S')
         
+    def _set_handlers(self):
+        # set handlers for exit to close cleanly
+        signal.signal(signal.SIGINT, self._exit)
+        signal.signal(signal.SIGTERM, self._exit)
+        
+    def _exit(self, signum, frame):
+        # handle closing
+        print("adc: Exiting cleanly")
+        self.ser.close()
+        sys.exit(0)
+        
+def ADC_loop():
+    adc = ADC()
+    while True:
+        print(f"adc: ph is {adc.get_ph()}")
+        time.sleep(3)
+
 if __name__ == "__main__":
     adc = ADC()
     while True:
         print(f"ph: {adc.get_ph()}")
         time.sleep(0.5)
+        

@@ -1,4 +1,4 @@
-from USB.adc import ADC
+from adc.adc import ADC
 import time
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
