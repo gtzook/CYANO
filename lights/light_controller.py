@@ -42,39 +42,40 @@ class led_controller:
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(led_controller.LED,GPIO.OUT)
 
-def led_loop(period):
+def led_loop(light_data, debug_mode):
     """
     Main loop for led process
-    
-    period - period of on/off cycle (hours)
     """
     ctrl = led_controller()
-    state = ctrl.on()
+    light_data['state'] = ctrl.on()
     
-    # convert time from hours to seconds
-    toggle_time = 60*60*(period/2.0)
+    # time to toggle between day and night
+    toggle_time = light_data['period']/2.0
     start_t = time.time()
     while True:
         # Time elapsed since start of this state
-        elapsed = time.time() - start_t
+        light_data['elapsed'] = time.time() - start_t
 
         # If time elapsed, toggle LED
-        if elapsed > toggle_time:
+        if light_data['elapsed'] > toggle_time:
             print("led_controller: Toggling...")
         
             # Update time measure
             start_t = time.time()
             
             # Toggle
-            state = ctrl.toggle()
+            light_data['state'] = ctrl.toggle()
+            
         else:       
             # Calculate time remaining
-            rm_t = toggle_time - elapsed
-            # Get formatted time string
-            time_str = util.time_formatting.time_string_from_sec(rm_t)
+            rm_t = toggle_time - light_data['elapsed']
+            light_data['remaining'] = rm_t
+            if debug_mode:
+                # Get formatted time string
+                time_str = util.time_formatting.time_string_from_sec(rm_t)
+                
+                state_str = "night" if light_data['state'] else "day"
+                print("led_controller: Time to " + state_str + " is " + time_str)  
             
-            state_str = "night" if state else "day"
-            print("led_controller: Time to " + state_str + " is " + time_str)  
-        
-        time.sleep(.5)
+            time.sleep(1)
             

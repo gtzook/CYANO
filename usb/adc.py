@@ -3,7 +3,7 @@ import serial
 import time
 import signal
 import sys
-
+from ctypes import c_float
 class ADC():
     TIMEOUT = 5000
     def __init__(self,num_sensors=1):
@@ -62,14 +62,23 @@ class ADC():
         self.ser.close()
         sys.exit(0)
         
-def ADC_loop():
+def ADC_loop(adc_data, new_ph_event, debug_mode):
+    # adc_data should be an mp.Array (shared memory)
     adc = ADC()
     while True:
-        print(f"adc: ph is {adc.get_ph()}")
-        time.sleep(3)
+        ph_val = adc.get_ph()
+        adc_data['ph'] = ph_val
+        
+        # Let all know new ph data exists 
+        new_ph_event.set()
+        
+        # print if debugging
+        if debug_mode:
+            print(f"adc: ph is {ph_val}")
+        time.sleep(0.5)
 
 if __name__ == "__main__":
-    adc = ADC()
+    adc     = ADC()
     while True:
         print(f"ph: {adc.get_ph()}")
         time.sleep(0.5)
