@@ -96,5 +96,4 @@ def gui_loop(adc_data, new_ph_event, light_data):
                                          text_color='yellow')
         
         time_str = util.time_formatting.time_string_from_sec(light_data['remaining'])
-        print(light_data['remaining'])
         window['-TIME-SWITCH-'].update(time_str)
