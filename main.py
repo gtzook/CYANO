@@ -1,6 +1,7 @@
 import agitator
 import gui.gui
 import lights.light_controller
+import logger.logger
 import usb.adc
 import multiprocessing as mp
 import time
@@ -42,9 +43,15 @@ if __name__ == "__main__":
                           args=[adc_data, new_ph_event,
                                 light_data])
     
+    #Logging
+    log_proc = mp.Process(name = 'log',
+                          target=logger.logger.logger_loop,
+                          args=[adc_data,light_data])
+    
     usb_proc.start()
     light_proc.start()
     gui_proc.start()
+    log_proc.start()
     try:
         while True:
             pass
