@@ -18,7 +18,6 @@ class ADC():
     
     def get_ph(self):
         val = self.get()
-        print(f"val: {val}")
         voltage = 3.3 * (val / 4096)
         # equation from https://files.atlas-scientific.com/Gravity-pH-datasheet.pdf
         return (-5.6548 * voltage) + 15.509
@@ -31,7 +30,6 @@ class ADC():
                 vals.append(line[sense])
             return vals
         else:
-            print(f"line part {line[:-2]}")
             return int(line[:-2])
         
     def get_line(self):
