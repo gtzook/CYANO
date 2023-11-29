@@ -28,7 +28,7 @@ class led_controller:
         
     def _output(self, value):
         self.ledState = value
-        GPIO.output(led_controller.LED, self.ledState)
+        GPIO.output(led_controller.LED, not self.ledState)
         return self.ledState
     
     def _exit(self, signum, frame):
