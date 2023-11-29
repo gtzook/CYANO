@@ -1,4 +1,4 @@
-import datetime # Probably want this to timestamp logs
+from datetime import datetime # Probably want this to timestamp logs
 import time # Use to set logging frequency
 import csv # Use for file writing operations
 import os
@@ -14,15 +14,12 @@ def logger_loop(adc_data, # ph and od sensors
     
     # TODO: Add logging code @Brennan
     with  open('Data_Logging.csv','a') as file: #appends to data log file, or creates if it doesnt exist
-      row = 0
-      if os.stat('Data_Logging.csv').st_size == 0:
-        file.write("Time, pH, OD600, Light")
+      file.write("Time, pH, OD600, Light") #writes the headers for the file
       while True:
-        row += 1
         now = datetime.now() #Gets current time. Time stamps
-        file.write(str(now) + "," + str(ph) + 'OD Measurement' + ',' + str(light_state)) #Writes time of measurement, and 
+        file.write("\r\n")
+        file.write(str(now) + "," + str(ph) + "," 'OD Placeholder' + ',' + str(light_state)) #Writes time of measurement, and
         file.flush()
         time.sleep(5) #Set to whatever frequency we need
-        file.close()
       
     
