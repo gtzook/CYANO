@@ -47,7 +47,7 @@ class ADC():
         
         if self.debug_mode:
             print(f"buffer: {buffer.decode('utf8').strip()}")
-        return buffer
+        return buffer.decode('utf8').strip()
         
     def close(self):
         self.ser.write(b'E')
