@@ -16,9 +16,9 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         # pass in 'd' to enable debugging
         if '-adcdebug' in sys.argv:
-           adc_debug_mode = True
+            adc_debug_mode = True
         if '-lightdebug' in sys.argv:
-            usb_debug_mode = True
+            light_debug_mode = True
         if '-nolight' in sys.argv:
             dark_mode = True
     
