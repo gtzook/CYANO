@@ -24,6 +24,7 @@ class ADC():
     def get_sense_vals(self):
         vals = self.get()
         vals[0] = ADC.val_to_ph(vals[0]) # convert value to ph
+        return vals
     
     def get(self):
         line=self.get_line()
