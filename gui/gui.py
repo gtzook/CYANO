@@ -89,17 +89,10 @@ def gui_loop(adc_data, new_ph_event, light_data):
     # deque for ph data
     phs = deque([0]*ph_datapoints,maxlen=ph_datapoints)
     
-    # deque of od data
-    ods = deque([0]*od_datapoints,maxlen=od_datapoints)
     
     # make ph plot
     ph_line, =ax.plot(range(ph_datapoints), phs, 
-                   color='purple', linewidth=6)
-    
-    # make od plot
-    od_line, =ax.plot(range(od_datapoints), ods, 
-                   color='green', linewidth=6)
-    
+                   color='purple', linewidth=6)    
 
     #OD PLOT
     fig2 = Figure()
@@ -121,12 +114,13 @@ def gui_loop(adc_data, new_ph_event, light_data):
     od_canvas = od_canvas_elem.TKCanvas
     fig_agg2 = draw_figure(od_canvas, fig2)
 
-    # deque for ph data
-    #phs = deque([0]*ph_datapoints,maxlen=ph_datapoints)
+    # deque of od data
+    ods = deque([0]*od_datapoints,maxlen=od_datapoints)
     
-    # make plot
-    #line, =ax.plot(range(ph_datapoints), phs, color='purple', linewidth=6)
-    
+    # make od plot
+    od_line, =ax2.plot(range(od_datapoints), ods, 
+                   color='green', linewidth=6)
+
     while True:
         event, values = window.read(timeout=10)
         if event in ('Exit', None):
