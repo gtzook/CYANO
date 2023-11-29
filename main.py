@@ -11,13 +11,13 @@ import sys
 if __name__ == "__main__":
     # Check cmd line args
     adc_debug_mode = False
-    usb_debug_mode = False
+    light_debug_mode = False
     dark_mode = True
     if len(sys.argv) > 1:
         # pass in 'd' to enable debugging
-        if '-a' in sys.argv:
+        if '-adcdebug' in sys.argv:
            adc_debug_mode = True
-        if '-u' in sys.argv:
+        if '-lightdebug' in sys.argv:
             usb_debug_mode = True
         if '-nolight' in sys.argv:
             dark_mode = True
