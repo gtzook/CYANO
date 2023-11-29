@@ -16,16 +16,14 @@ class ADC():
         for i in range(5):
             self._next()
     
-    def get_ph(self):
-        val = self.get()[0]
+    def val_to_ph(val):
         voltage = 3.3 * (val / 4096)
         # equation from https://files.atlas-scientific.com/Gravity-pH-datasheet.pdf
         return (-5.6548 * voltage) + 14.509
-    
-    def get_od(self):
-        if self.num_sensors <= 1:
-            return 0
-        return self.get()[1]
+        
+    def get_sense_vals(self):
+        vals = self.get()
+        vals[0] = ADC.val_to_ph(vals[0]) # convert value to ph
     
     def get(self):
         line=self.get_line()
@@ -73,15 +71,20 @@ def ADC_loop(adc_data, new_ph_event, debug_mode):
     # adc_data should be an mp.Array (shared memory)
     adc = ADC(debug_mode=debug_mode)
     while True:
-        ph_val = adc.get_ph()
-        adc_data['ph'] = ph_val
+        vals = adc.get_sense_vals()
+        ph = vals[0]
+        od = vals[1]
         
+        adc_data['ph'] = ph
+        adc_data['od'] = od
+                
         # Let all know new ph data exists 
         new_ph_event.set()
         
         # print if debugging
         if debug_mode:
-            print(f"adc: ph is {ph_val}")
+            print(f"adc: ph is {ph}")
+            print(f"adc: od is {od}")
         time.sleep(0.5)
 
 if __name__ == "__main__":
