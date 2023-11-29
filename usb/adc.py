@@ -30,7 +30,7 @@ class ADC():
                 vals.append(line[sense])
             return vals
         else:
-            return int(line[:-2])
+            return int(line)
         
     def get_line(self):
         line = ""
@@ -46,8 +46,8 @@ class ADC():
             line = self.ser.readline() # bits from board
         
         if self.debug_mode:
-            print(f"buffer: {buffer}")
-        return buffer
+            print(f"adc buffer: {buffer.decode('utf8').strip()}")
+        return buffer.decode('utf8').strip()
         
     def close(self):
         self.ser.write(b'E')

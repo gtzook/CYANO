@@ -11,10 +11,13 @@ import sys
 if __name__ == "__main__":
     # Check cmd line args
     debug_mode = False
+    dark_mode = True
     if len(sys.argv) > 1:
         # pass in 'd' to enable debugging
-        if sys.argv[1] == '-d':
+        if '-d' in sys.argv:
             debug_mode = True
+        if '-nolight' in sys.argv:
+            dark_mode = True
     
     # Shared memory manager
     manager = mp.Manager()
@@ -50,7 +53,8 @@ if __name__ == "__main__":
                           args=[adc_data,light_data])
     
     usb_proc.start()
-    light_proc.start()
+    if not dark_mode:
+        light_proc.start()
     gui_proc.start()
     log_proc.start()
     try:
