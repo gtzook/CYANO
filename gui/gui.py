@@ -104,7 +104,7 @@ def gui_loop(adc_data, new_ph_event, light_data):
     #OD PLOT
     fig2 = Figure()
     fig2.patch.set_facecolor('xkcd:seafoam') # background color of plt
-    ax2 = fig.add_subplot(111)
+    ax2 = fig2.add_subplot(111)
     ax2.set_xlabel("Time")
     ax2.set_ylabel("OD")
     ax2.grid()
