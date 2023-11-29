@@ -31,7 +31,7 @@ class ADC():
                 vals.append(line[sense])
             return vals
         else:
-            return line[0]
+            return line[:-2]
         
     def get_line(self):
         line = ""
