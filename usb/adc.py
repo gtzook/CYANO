@@ -18,8 +18,6 @@ class ADC():
     
     def get_ph(self):
         val = self.get()
-        if self.debug_mode:
-            print(f"adc val: {val}")
         voltage = 3.3 * (val / 1024)
         # equation from https://files.atlas-scientific.com/Gravity-pH-datasheet.pdf
         return (-5.6548 * voltage) + 15.509
@@ -46,6 +44,9 @@ class ADC():
                 time.time() - startTime > ADC.TIMEOUT): # keep reading to the end
             buffer = line
             line = self.ser.readline() # bits from board
+        
+        if self.debug_mode:
+            print(f"buffer: {buffer}")
         return buffer
         
     def close(self):
