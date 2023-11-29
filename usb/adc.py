@@ -17,20 +17,22 @@ class ADC():
             self._next()
     
     def get_ph(self):
-        val = self.get()
+        val = self.get()[0]
         voltage = 3.3 * (val / 4096)
         # equation from https://files.atlas-scientific.com/Gravity-pH-datasheet.pdf
         return (-5.6548 * voltage) + 14.509
     
+    def get_od(self):
+        if self.num_sensors <= 1:
+            return 0
+        return self.get()[1]
+    
     def get(self):
         line=self.get_line()
-        if self.num_sensors > 1:
-            vals = list()
-            for sense in range(self.num_sensors):
-                vals.append(line[sense])
-            return vals
-        else:
-            return int(line)
+        vals = line.split(',')
+        for sense in range(self.num_sensors):
+            vals.append(int(line[sense]))
+        return vals
         
     def get_line(self):
         line = ""
