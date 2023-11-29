@@ -102,24 +102,24 @@ def gui_loop(adc_data, new_ph_event, light_data):
     
 
     #OD PLOT
-    fig = Figure()
-    fig.patch.set_facecolor('xkcd:seafoam') # background color of plt
-    ax = fig.add_subplot(111)
-    ax.set_xlabel("Time")
-    ax.set_ylabel("OD")
-    ax.grid()
-    ax.set_ylim(0,10)
-    for item in ([ax.xaxis.label, ax.yaxis.label] +
-             ax.get_xticklabels() + ax.get_yticklabels()):
+    fig2 = Figure()
+    fig2.patch.set_facecolor('xkcd:seafoam') # background color of plt
+    ax2 = fig.add_subplot(111)
+    ax2.set_xlabel("Time")
+    ax2.set_ylabel("OD")
+    ax2.grid()
+    ax2.set_ylim(0,10)
+    for item in ([ax2.xaxis.label, ax2.yaxis.label] +
+             ax2.get_xticklabels() + ax2.get_yticklabels()):
         item.set_fontsize(20) # make fonts bigger
-    for item in (ax.get_xticklabels() + ax.get_yticklabels()):
+    for item in (ax2.get_xticklabels() + ax2.get_yticklabels()):
         item.set_fontsize(15) # make fonts bigger
-    fig.tight_layout() #tight layout for aesthetics
-    fig.subplots_adjust(bottom=0.15,left=0.12) #expand to include text
+    fig2.tight_layout() #tight layout for aesthetics
+    fig2.subplots_adjust(bottom=0.15,left=0.12) #expand to include text
     
     od_canvas_elem = window['-OD-CANVAS-']
     od_canvas = od_canvas_elem.TKCanvas
-    fig_agg2 = draw_figure(od_canvas, fig)
+    fig_agg2 = draw_figure(od_canvas, fig2)
 
     # deque for ph data
     #phs = deque([0]*ph_datapoints,maxlen=ph_datapoints)
