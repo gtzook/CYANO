@@ -32,7 +32,7 @@ class ADC():
             return vals
         else:
             print(f"line part {line[:-2]}")
-            return int.from_bytes(line[:-2],byteorder='little',signed=False)
+            return int(line[:-2])
         
     def get_line(self):
         line = ""
