@@ -29,9 +29,10 @@ class ADC():
     
     def get(self):
         line=self.get_line()
-        vals = line.split(',')
+        line_vals = line.split(',')
+        vals = list()
         for sense in range(self.num_sensors):
-            vals.append(int(line[sense]))
+            vals.append(int(line_vals[sense]))
         return vals
         
     def get_line(self):
