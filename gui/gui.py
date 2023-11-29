@@ -138,7 +138,7 @@ def gui_loop(adc_data, new_ph_event, light_data):
         
         # TODO: below should also be separate thread
         window['-PH-VALUE-'].update(value="{:.3f}".format(adc_data['ph']))
-        window['-OD-VALUE-'].update(value=' ') #"{:.3f}".format(adc_data['ph']))
+        window['-OD-VALUE-'].update(value="{:.3f}".format(adc_data['od']))
 
         if light_data['state']:
             window['-DAY-NIGHT-'].update(value='NIGHT',
