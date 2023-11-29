@@ -12,7 +12,7 @@ if __name__ == "__main__":
     # Check cmd line args
     adc_debug_mode = False
     light_debug_mode = False
-    dark_mode = True
+    dark_mode = False
     if len(sys.argv) > 1:
         # pass in 'd' to enable debugging
         if '-adcdebug' in sys.argv:
