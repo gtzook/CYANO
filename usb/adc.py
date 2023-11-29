@@ -6,9 +6,10 @@ import sys
 from ctypes import c_float
 class ADC():
     TIMEOUT = 5000
-    def __init__(self,num_sensors=1):
+    def __init__(self,num_sensors=1,debug_mode=False):
         self._set_handlers()
         self.num_sensors = num_sensors
+        self.debug_mode = debug_mode
         # open serial interface
         self.ser = serial.Serial('/dev/ttyACM0',9600, timeout = 0.01)
         # send received messages and flush out buffers
@@ -23,6 +24,8 @@ class ADC():
     
     def get(self):
         line=self.get_line()
+        if self.debug_mode:
+            print(line)
         if self.num_sensors > 1:
             vals = list()
             for sense in range(self.num_sensors):
@@ -64,7 +67,7 @@ class ADC():
         
 def ADC_loop(adc_data, new_ph_event, debug_mode):
     # adc_data should be an mp.Array (shared memory)
-    adc = ADC()
+    adc = ADC(debug_mode=debug_mode)
     while True:
         ph_val = adc.get_ph()
         adc_data['ph'] = ph_val
