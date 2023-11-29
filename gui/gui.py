@@ -16,7 +16,7 @@ def draw_figure(canvas, figure, loc=(0, 0)):
 
 def gui_loop(adc_data, new_ph_event, light_data):
     ph_datapoints = 5
-    screen_sizee = sg.Window.get_screen_size()
+    od_datapoints = 30
     
     sg.theme('Dark') # set gui colors
     
@@ -89,9 +89,16 @@ def gui_loop(adc_data, new_ph_event, light_data):
     # deque for ph data
     phs = deque([0]*ph_datapoints,maxlen=ph_datapoints)
     
-    # make plot
-    line, =ax.plot(range(ph_datapoints), phs, 
+    # deque of od data
+    ods = deque([0]*od_datapoints,maxlen=od_datapoints)
+    
+    # make ph plot
+    ph_line, =ax.plot(range(ph_datapoints), phs, 
                    color='purple', linewidth=6)
+    
+    # make od plot
+    od_line, =ax.plot(range(od_datapoints), ods, 
+                   color='green', linewidth=6)
     
 
     #OD PLOT
@@ -127,7 +134,11 @@ def gui_loop(adc_data, new_ph_event, light_data):
         new_ph_event.wait() # TODO: Plot updating should be in a separate thread
         new_ph_event.clear() # Reset event flag because we are addressing it
         phs.append(adc_data['ph'])  # add new ph data
-        line.set_ydata(phs)     # update plot
+        ph_line.set_ydata(phs)     # update plot
+        
+        ods.append(adc_data['od']) # add new od data
+        od_line.set_ydata(ods)     # update plot
+        
         fig_agg.draw()
         fig_agg2.draw()
         
