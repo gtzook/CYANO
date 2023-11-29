@@ -70,7 +70,7 @@ class ADC():
         
 def ADC_loop(adc_data, new_ph_event, debug_mode):
     # adc_data should be an mp.Array (shared memory)
-    adc = ADC(debug_mode=debug_mode)
+    adc = ADC(num_sensors=2,debug_mode=debug_mode)
     while True:
         vals = adc.get_sense_vals()
         ph = vals[0]
