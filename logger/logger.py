@@ -1,6 +1,7 @@
 import datetime # Probably want this to timestamp logs
 import time # Use to set logging frequency
 import csv # Use for file writing operations
+import os
 
 # May need to modify inputs as we want to log more things
 def logger_loop(adc_data, # ph and od sensors
