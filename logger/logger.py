@@ -15,7 +15,7 @@ def logger_loop(adc_data, # ph and od sensors
     # TODO: Add logging code @Brennan
     with  open('Data_Logging.csv','a') as file: #appends to data log file, or creates if it doesnt exist
       row = 0
-      if os.stat(file).st_size == 0:
+      if os.stat('Data_Logging.csv').st_size == 0:
         file.write("Time, pH, OD600, Light")
       while True:
         row += 1
