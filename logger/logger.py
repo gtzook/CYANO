@@ -20,6 +20,5 @@ def logger_loop(adc_data, # ph and od sensors
         file.write(str(now) + "," + str(ph) + 'OD Measurement' + ',' + str(light_state)) #Writes time of measurement, and 
         file.flush()
         time.sleep(5) #Set to whatever frequency we need
-        file.close()
       
     
