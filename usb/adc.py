@@ -46,7 +46,7 @@ class ADC():
             line = self.ser.readline() # bits from board
         
         if self.debug_mode:
-            print(f"buffer: {buffer}")
+            print(f"buffer: {buffer.decode('utf8')}")
         return buffer
         
     def close(self):
