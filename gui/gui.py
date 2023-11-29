@@ -11,18 +11,29 @@ import util.time_formatting
 def draw_figure(canvas, figure, loc=(0, 0)):
     figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
     figure_canvas_agg.draw()
-    figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
+    figure_canvas_agg.get_tk_widget().pack(side='bottom', fill='both', expand=1)
     return figure_canvas_agg
 
 def gui_loop(adc_data, new_ph_event, light_data):
     ph_datapoints = 5
+    screen_sizee = sg.Window.get_screen_size()
     
-    sg.theme('Dark Green 5') # set gui colors
+    sg.theme('Dark') # set gui colors
     
     # pH section
-    ph_column = [[sg.Text('pH Sensor', size=(40, 1),
+    ph_column = [[sg.Text('pH Sensor', size=(40, 1), key='-PH-',
                 justification='center', font='Helvetica 20')],
               [sg.Canvas(size=(640, 60), key='-CANVAS-')]]
+    
+    od_column = [[sg.Text('OD Sensor', size=(40, 1), key='-OD-',
+                justification='center', font='Helvetica 20')],
+              [sg.Canvas(size=(640, 60), key='-OD-CANVAS-')]]
+    
+    status_column = [
+    [sg.Text('pH Value:', font='Helvetica 32'), sg.Text('', key='-PH-VALUE-', font='Helvetica 32')],
+    [sg.Text('', font='Helvetica 32'), sg.Text('', key="-BLANK-", font = 'Helvetica 32')],
+    [sg.Text('OD Value:', font='Helvetica 32'), sg.Text('', key='-OD-VALUE-', font='Helvetica 32')]
+]
     
     # light timer
     light_column = [
@@ -38,19 +49,24 @@ def gui_loop(adc_data, new_ph_event, light_data):
             ]
     
     # define the form layout
-    layout = [
-            [sg.Column(ph_column), 
-              sg.VSeperator(),
-              sg.Column(light_column),]
+    spacer_column = [sg.Column([[]], size=(140, 1))]
+    s_c2 = [sg.Column([[]], size=(140, 1))]
+    s_light = [sg.Column([[]], size=(325, 1))]
+    top = [sg.Column([[]], size=(250, 200))]
+    layout = [[*top],
+            [*s_light, sg.Column(light_column, size = (3500, 350), element_justification = 'center'),],
+              [sg.Column(ph_column,vertical_alignment ='bottom'), *spacer_column, sg.Column(status_column), *s_c2, sg.Column(od_column, vertical_alignment = 'bottom')]
     ]
 
     # create the form and show it without the plot
     window = sg.Window('CYANO GUI',
-                layout, finalize=True, element_justification='c')
+                layout, finalize=True)
     window.maximize()
 
     canvas_elem = window['-CANVAS-']
     canvas = canvas_elem.TKCanvas
+
+    #PH PLOT
 
     # draw the initial plot in the window
     fig = Figure()
@@ -77,6 +93,33 @@ def gui_loop(adc_data, new_ph_event, light_data):
     line, =ax.plot(range(ph_datapoints), phs, 
                    color='purple', linewidth=6)
     
+
+    #OD PLOT
+    fig = Figure()
+    fig.patch.set_facecolor('xkcd:seafoam') # background color of plt
+    ax = fig.add_subplot(111)
+    ax.set_xlabel("Time")
+    ax.set_ylabel("OD")
+    ax.grid()
+    ax.set_ylim(0,10)
+    for item in ([ax.xaxis.label, ax.yaxis.label] +
+             ax.get_xticklabels() + ax.get_yticklabels()):
+        item.set_fontsize(20) # make fonts bigger
+    for item in (ax.get_xticklabels() + ax.get_yticklabels()):
+        item.set_fontsize(15) # make fonts bigger
+    fig.tight_layout() #tight layout for aesthetics
+    fig.subplots_adjust(bottom=0.15,left=0.12) #expand to include text
+    
+    od_canvas_elem = window['-OD-CANVAS-']
+    od_canvas = od_canvas_elem.TKCanvas
+    fig_agg2 = draw_figure(od_canvas, fig)
+
+    # deque for ph data
+    #phs = deque([0]*ph_datapoints,maxlen=ph_datapoints)
+    
+    # make plot
+    #line, =ax.plot(range(ph_datapoints), phs, color='purple', linewidth=6)
+    
     while True:
         event, values = window.read(timeout=10)
         if event in ('Exit', None):
@@ -86,8 +129,12 @@ def gui_loop(adc_data, new_ph_event, light_data):
         phs.append(adc_data['ph'])  # add new ph data
         line.set_ydata(phs)     # update plot
         fig_agg.draw()
+        fig_agg2.draw()
         
         # TODO: below should also be separate thread
+        window['-PH-VALUE-'].update(value="{:.3f}".format(adc_data['ph']))
+        window['-OD-VALUE-'].update(value=' ') #"{:.3f}".format(adc_data['ph']))
+
         if light_data['state']:
             window['-DAY-NIGHT-'].update(value='NIGHT',
                                          text_color='blue')
