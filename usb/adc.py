@@ -31,7 +31,8 @@ class ADC():
                 vals.append(line[sense])
             return vals
         else:
-            return line[:-2]
+	    print(f"line part {line[:-2]}")
+            return int.from_bytes(line[:-2],byteorder='little',signed=False)
         
     def get_line(self):
         line = ""
