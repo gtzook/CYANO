@@ -1,3 +1,4 @@
+#!/usr/bin//env python
 import agitator
 import gui.gui
 import lights.light_controller
