@@ -43,7 +43,7 @@ if __name__ == "__main__":
     # Light controller
     light_proc =  mp.Process(name='lights', 
                             target=lights.light_controller.led_loop,
-                            args=[light_data, usb_debug_mode])
+                            args=[light_data, light_debug_mode])
     # GUI
     gui_proc = mp.Process(name = 'gui',
                           target=gui.gui.gui_loop,
