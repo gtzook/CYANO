@@ -16,6 +16,8 @@ def logger_loop(adc_data, # ph and od sensors
     with  open('Data_Logging.csv','a') as file: #appends to data log file, or creates if it doesnt exist
       file.write("Time, pH, OD600, Light") #writes the headers for the file
       while True:
+        ph = adc_data['ph'] # This is how you get ph measurement
+        light_state = light_data['state'] # State of lights
         now = datetime.now() #Gets current time. Time stamps
         file.write("\r\n")
         file.write(str(now) + "," + str(ph) + "," 'OD Placeholder' + ',' + str(light_state)) #Writes time of measurement, and
