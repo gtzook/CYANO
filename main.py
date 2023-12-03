@@ -1,7 +1,7 @@
 #!/usr/bin//env python
 import agitator
 import gui.gui
-import gpio_devs.light_controller
+import gpio_devs
 import logger.logger
 import usb.adc
 import multiprocessing as mp
@@ -42,7 +42,7 @@ if __name__ == "__main__":
     
     # Light controller
     light_proc =  mp.Process(name='lights', 
-                            target=lights.light_controller.led_loop,
+                            target=gpio_devs.light_controller.led_loop,
                             args=[light_data, light_debug_mode])
     # GUI
     gui_proc = mp.Process(name = 'gui',
