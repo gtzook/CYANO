@@ -5,7 +5,7 @@ import gpio_devs.light_controller
 import logger.logger
 import usb.adc
 import multiprocessing as mp
-import time
+import time 
 import sys
 
 if __name__ == "__main__":
