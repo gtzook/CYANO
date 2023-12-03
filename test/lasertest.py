@@ -7,7 +7,7 @@ ledState = False
 GPIO.setup(LED,GPIO.OUT)
 
 while True:
-	ledState = not ledState
+	ledState = True
 	GPIO.output(LED, ledState)
 	print(ledState)
 	sleep(.1)
