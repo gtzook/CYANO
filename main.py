@@ -14,12 +14,15 @@ if __name__ == "__main__":
     adc_debug_mode = False
     light_debug_mode = False
     dark_mode = False
+    od_debug_mode = False
     if len(sys.argv) > 1:
         # pass in 'd' to enable debugging
         if '-adcdebug' in sys.argv:
             adc_debug_mode = True
         if '-lightdebug' in sys.argv:
             light_debug_mode = True
+        if '-oddebug' in sys.argv:
+            od_debug_mode = True
         if '-nolight' in sys.argv:
             dark_mode = True
     
@@ -27,11 +30,13 @@ if __name__ == "__main__":
     manager = mp.Manager()
     
     # Shared memory items
-    adc_data = manager.dict({'ph':-1})
+    # TODO: Make into one dict (?)
+    adc_data = manager.dict({'ph':-1, 'od_raw':-1})
     light_data = manager.dict({'period':10,
                                'state':False,
                                'elapsed':-1,
                                'remaining':-1})
+    od_data = manager.dict({'od': -1})
     
     # Events
     new_ph_event = mp.Event()
@@ -45,6 +50,11 @@ if __name__ == "__main__":
     light_proc =  mp.Process(name='lights', 
                             target=gpio_devs.light_controller.led_loop,
                             args=[light_data, light_debug_mode])
+    # OD Processor
+    od_proc = mp.Process(name='od',
+                        target=gpio_devs.od.od_loop,
+                        args=[od_data, od_debug_mode])
+    
     # GUI
     gui_proc = mp.Process(name = 'gui',
                           target=gui.gui.gui_loop,
@@ -59,8 +69,10 @@ if __name__ == "__main__":
     usb_proc.start()
     if not dark_mode:
         light_proc.start()
+    od_proc.start()
     gui_proc.start()
     log_proc.start()
+    
     try:
         while True:
             pass
