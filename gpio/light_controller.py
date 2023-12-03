@@ -1,53 +1,14 @@
 import time
-import RPi.GPIO as GPIO
 import util.time_formatting
-import signal
-import sys
+from gpio_dev import gpio_dev
 
-class led_controller:
-    # LED pin number
-    LED = 26
-    def __init__(self):
-        led_controller._gpio_setup()
-        self._set_handlers()
-        self.off()
-    
-    def toggle(self):
-        return self._output(not self.ledState)
-    
-    def on(self):
-        return self._output(True)
-    
-    def off(self):
-        return self._output(False)
-    
-    def _set_handlers(self):
-        # set handlers for exit to close cleanly
-        signal.signal(signal.SIGINT, self._exit)
-        signal.signal(signal.SIGTERM, self._exit)
-        
-    def _output(self, value):
-        self.ledState = value
-        GPIO.output(led_controller.LED, not self.ledState)
-        return self.ledState
-    
-    def _exit(self, signum, frame):
-        # handle closing
-        print("led_controller: Exiting cleanly")
-        self.off()
-        time.sleep(1)
-        GPIO.cleanup()
-        sys.exit(0)
-        
-    def _gpio_setup():
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(led_controller.LED,GPIO.OUT)
+LED_pin = 26
 
 def led_loop(light_data, debug_mode):
     """
     Main loop for led process
     """
-    ctrl = led_controller()
+    ctrl = gpio_dev(LED_pin)
     light_data['state'] = ctrl.on()
     
     # time to toggle between day and night
