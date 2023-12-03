@@ -12,6 +12,6 @@ try:
 		GPIO.output(LED, ledState)
 		print(ledState)
 		sleep(.1)
-except KeyboardInterrupt
+except KeyboardInterrupt:
 	GPIO.output(LED, False)
 	GPIO.cleanup()
