@@ -10,7 +10,7 @@ def od_loop(od_data, debug_mode):
     Control laser and process adc data
     """
     ctrl = gpio_dev(laser_pin)
-    ctrl.on() # turn on laser
+    ctrl.off() # turn on laser
     if debug_mode:
         print("od: laser on!")
     while (True):
