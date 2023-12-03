@@ -35,7 +35,7 @@ class led_controller:
         # handle closing
         print("led_controller: Exiting cleanly")
         self.off()
-        time.sleep(3)
+        time.sleep(1)
         GPIO.cleanup()
         sys.exit(0)
         
