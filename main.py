@@ -1,7 +1,7 @@
 #!/usr/bin//env python
 import agitator
 import gui.gui
-from gpio_devs import *
+import gpio_devs.light_controller
 import logger.logger
 import usb.adc
 import multiprocessing as mp
