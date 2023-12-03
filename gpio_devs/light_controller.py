@@ -8,7 +8,7 @@ def led_loop(light_data, debug_mode):
     """
     Main loop for led process
     """
-    ctrl = gpio_dev(LED_pin)
+    ctrl = gpio_dev(LED_pin, reverse_polarity=True)
     light_data['state'] = ctrl.on()
     
     # time to toggle between day and night

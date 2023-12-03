@@ -4,8 +4,9 @@ import time
 import sys
 
 class gpio_dev:
-    def __init__(self, pin):
+    def __init__(self, pin, reverse_polarity=False):
         self.pin = pin
+        self.reverse_polarity = reverse_polarity
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.pin,GPIO.OUT)
         self._set_handlers()
@@ -27,7 +28,7 @@ class gpio_dev:
         
     def _output(self, value):
         self.state = value
-        GPIO.output(self.pin, not self.state)
+        GPIO.output(self.pin, self.state != self.reverse_polarity) # write opposite state if reversed
         return self.state
     
     def _exit(self, signum, frame):
