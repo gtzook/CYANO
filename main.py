@@ -2,6 +2,7 @@
 import agitator
 import gui.gui
 import gpio_devs.light_controller
+import gpio_devs.od
 import logger.logger
 import usb.adc
 import multiprocessing as mp
