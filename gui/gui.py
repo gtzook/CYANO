@@ -108,7 +108,7 @@ def gui_loop(adc_data, new_ph_event, light_data):
     for item in (ax2.get_xticklabels() + ax2.get_yticklabels()):
         item.set_fontsize(15) # make fonts bigger
     fig2.tight_layout() #tight layout for aesthetics
-    fig2.subplots_adjust(bottom=0.15,left=0.5) #expand to include text
+    fig2.subplots_adjust(bottom=0.15,left=0.2) #expand to include text
     
     od_canvas_elem = window['-OD-CANVAS-']
     od_canvas = od_canvas_elem.TKCanvas
