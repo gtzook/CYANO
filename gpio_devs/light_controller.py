@@ -1,6 +1,6 @@
 import time
 import util.time_formatting
-import gpio_dev.gpio_dev
+import gpio_devs.gpio_dev
 
 LED_pin = 26
 
