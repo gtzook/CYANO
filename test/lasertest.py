@@ -14,4 +14,4 @@ try:
 		sleep(1)
 except KeyboardInterrupt:
 	GPIO.output(LED, True)
-	GPIO.cleanup()
+	#GPIO.cleanup()
