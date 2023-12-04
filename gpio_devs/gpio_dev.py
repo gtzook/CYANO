@@ -9,7 +9,7 @@ class gpio_dev:
     def __init__(self, pin: int, reverse_polarity: bool=False):
         self.pin = pin
         self.reverse_polarity = reverse_polarity
-        print(f"gpio_dev initialized pin {self.pin}, dev_count: {gpio_dev.dev_count}")
+        print(f"gpio_dev initialized pin {self.pin}")
         pi.set_mode(self.pin,pigpio.OUTPUT)
         self._set_handlers()
         self.off()
