@@ -41,7 +41,7 @@ class gpio_dev:
         sys.exit(0)
 
 class pwm_dev(gpio_dev):
-    def __init__(self, pin: int, pwmFreq: int = 25000, pwmDuty: int = 50):
+    def __init__(self, pin: int, pwmFreq: int = 10000, pwmDuty: int = 50):
         super().__init__(pin)
         pi.set_PWM_frequency(self.pin,pwmFreq)
         
