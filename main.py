@@ -1,75 +1,59 @@
 #!/usr/bin//env python
-import agitator
 import gui.gui
 import gpio_devs.light_controller
-import gpio_devs.od
+import gpio_devs.laser_controller
 import logger.logger
 import usb.adc
 import multiprocessing as mp
-import time 
 import sys
 
-if __name__ == "__main__":
-    # Check cmd line args
-    adc_debug_mode = False
-    light_debug_mode = False
-    dark_mode = False
-    od_debug_mode = False
-    if len(sys.argv) > 1:
-        # pass in 'd' to enable debugging
-        if '-adcdebug' in sys.argv:
-            adc_debug_mode = True
-        if '-lightdebug' in sys.argv:
-            light_debug_mode = True
-        if '-oddebug' in sys.argv:
-            od_debug_mode = True
-        if '-nolight' in sys.argv:
-            dark_mode = True
-    
+if __name__ == "__main__":  
     # Shared memory manager
     manager = mp.Manager()
     
+    # TODO: If we are having speed issues, consider moving to Queue-only design
+    # https://www.geeksforgeeks.org/python-multiprocessing-queue-vs-multiprocessing-manager-queue/
+    
     # Shared memory items
-    # TODO: Make into one dict (?)
-    adc_data = manager.dict({'ph':-1, 'od_raw':-1})
-    light_data = manager.dict({'period':10,
-                               'state':False,
-                               'elapsed':-1,
-                               'remaining':-1})
-    od_data = manager.dict({'od': -1})
+    shared_data = manager.dict({'ph':-1, # ph value from adc
+                                'od':-1, # processed OD value
+                                'period':10, # period for light cycle
+                                'state':False, # state of lights
+                                'elapsed':-1, # time elapsed in this light state
+                                'remaining':-1}) # time remaining in this light state
     
     # Events
-    new_ph_event = mp.Event()
-    
+    events = {'new_adc': mp.Event(),
+              'new_light': mp.Event()}
+
     # ADC serial monitor
     usb_proc = mp.Process(name='usb', 
                         target=usb.adc.ADC_loop,
-                        args=[adc_data, new_ph_event, adc_debug_mode]) 
+                        args=[shared_data, events, '-adcdebug' in sys.argv]) 
     
     # Light controller
     light_proc =  mp.Process(name='lights', 
                             target=gpio_devs.light_controller.led_loop,
-                            args=[light_data, light_debug_mode])
-    # OD Processor
-    od_proc = mp.Process(name='od',
-                        target=gpio_devs.od.od_loop,
-                        args=[od_data, od_debug_mode])
+                            args=[shared_data, events, '-lightdebug' in sys.argv])
+    # Laser controller
+    laser_proc = mp.Process(name='od',
+                        target=gpio_devs.laser_controller.laser_loop,
+                        args=[shared_data, '-oddebug' in sys.argv])
     
     # GUI
     gui_proc = mp.Process(name = 'gui',
                           target=gui.gui.gui_loop,
-                          args=[adc_data, new_ph_event,
-                                light_data])
+                          args=[shared_data, events])
     
     #Logging
     log_proc = mp.Process(name = 'log',
                           target=logger.logger.logger_loop,
-                          args=[adc_data,light_data])
+                          args=[shared_data])
     
     usb_proc.start()
-    if not dark_mode:
+    if not '-nolight' in sys.argv:
         light_proc.start()
-    od_proc.start()
+    laser_proc.start()
     gui_proc.start()
     log_proc.start()
     

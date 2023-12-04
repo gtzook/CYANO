@@ -3,7 +3,9 @@ import serial
 import time
 import signal
 import sys
-from ctypes import c_float
+from typing import Dict, Union
+from multiprocessing.synchronize import Event
+
 class ADC():
     TIMEOUT = 5000
     def __init__(self,num_sensors=1,debug_mode=False):
@@ -15,18 +17,18 @@ class ADC():
         # send received messages and flush out buffers
         for i in range(5):
             self._next()
-    
-    def val_to_ph(val):
+    @staticmethod
+    def val_to_ph(val : int) -> float:
         voltage = 3.3 * (val / 4096)
         # equation from https://files.atlas-scientific.com/Gravity-pH-datasheet.pdf
         return (-5.6548 * voltage) + 14.509
         
     def get_sense_vals(self):
         vals = self.get()
-        vals[0] = ADC.val_to_ph(vals[0]) # convert value to ph
-        return vals
+        converted = [ADC.val_to_ph(vals[0]), vals[1]] # convert values
+        return converted
     
-    def get(self):
+    def get(self) -> list[int]:
         line=self.get_line()
         line_vals = line.split(',')
         vals = list()
@@ -68,29 +70,23 @@ class ADC():
         self.ser.close()
         sys.exit(0)
         
-def ADC_loop(adc_data, new_ph_event, debug_mode):
-    # adc_data should be an mp.Array (shared memory)
+def ADC_loop(shared_data: Dict[str, Union[int,float,bool]], 
+             events: Dict[str, Event], 
+             debug_mode: bool) -> None:
     adc = ADC(num_sensors=2,debug_mode=debug_mode)
     while True:
         vals = adc.get_sense_vals()
         ph = vals[0]
         od = vals[1]
         
-        adc_data['ph'] = ph
-        adc_data['od'] = od
+        shared_data['ph'] = ph
+        shared_data['od'] = od
                 
-        # Let all know new ph data exists 
-        new_ph_event.set()
+        # Signal new data exists 
+        events['new_adc'].set()
         
         # print if debugging
         if debug_mode:
             print(f"adc: ph is {ph}")
             print(f"adc: od is {od}")
         time.sleep(0.5)
-
-if __name__ == "__main__":
-    adc     = ADC()
-    while True:
-        print(f"ph: {adc.get_ph()}")
-        time.sleep(0.5)
-        

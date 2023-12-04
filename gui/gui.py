@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import PySimpleGUI as sg
 from random import randint
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, FigureCanvasAgg
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 from collections import deque
 import util.time_formatting
@@ -23,8 +23,9 @@ def gui_loop(adc_data, new_ph_event, light_data):
     # pH section
     ph_column = [[sg.Text('pH Sensor', size=(40, 1), key='-PH-',
                 justification='center', font='Helvetica 20')],
-              [sg.Canvas(size=(640, 60), key='-CANVAS-')]]
+              [sg.Canvas(size=(640, 60), key='-PH-CANVAS-')]]
     
+    # OD section
     od_column = [[sg.Text('OD Sensor', size=(40, 1), key='-OD-',
                 justification='center', font='Helvetica 20')],
               [sg.Canvas(size=(640, 60), key='-OD-CANVAS-')]]
@@ -63,9 +64,6 @@ def gui_loop(adc_data, new_ph_event, light_data):
                 layout, finalize=True)
     window.maximize()
 
-    canvas_elem = window['-CANVAS-']
-    canvas = canvas_elem.TKCanvas
-
     #PH PLOT
 
     # draw the initial plot in the window
@@ -84,7 +82,9 @@ def gui_loop(adc_data, new_ph_event, light_data):
     fig.tight_layout() #tight layout for aesthetics
     fig.subplots_adjust(bottom=0.15,left=0.12) #expand to include text
     
-    fig_agg = draw_figure(canvas, fig)
+    ph_canvas_elem = window['-PH-CANVAS-']
+    ph_canvas = ph_canvas_elem.TKCanvas
+    fig_agg = draw_figure(ph_canvas, fig)
 
     # deque for ph data
     phs = deque([0]*ph_datapoints,maxlen=ph_datapoints)

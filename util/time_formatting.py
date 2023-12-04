@@ -1,11 +1,13 @@
-def sec_to_time(seconds):
+from typing import Tuple
+
+def sec_to_time(seconds: int) -> Tuple[int,int,int]:
     hours = seconds // (60 * 60)
     seconds -= 60*60*hours
     minutes = seconds // 60
     secs = seconds - (minutes * 60)
-    return hours, minutes, secs
+    return int(hours), int(minutes), int(secs)
 
-def to_two_digit_string(value):
+def to_two_digit_string(value: int) -> str:
     ret = str(int(value))
     if value > 99:
         ret = "99"
@@ -13,11 +15,11 @@ def to_two_digit_string(value):
         ret = "0" + ret
     return ret
 
-def time_string_from_hr_min_sec(hours, minutes, sec):
+def time_string_from_hr_min_sec(hours: int, minutes: int, sec: int) -> str:
     return (to_two_digit_string(hours) + ":" +
             to_two_digit_string(minutes) + ":" +
             to_two_digit_string(sec))
     
-def time_string_from_sec(seconds):
+def time_string_from_sec(seconds: int) -> str:
     hrs,mins,secs = sec_to_time(seconds)
     return time_string_from_hr_min_sec(hrs,mins,secs)
