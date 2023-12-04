@@ -57,10 +57,10 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
             for i in range(100):
                 for j in range(3):
                     vals[j] += 10
-                    if vals[j] > 100:
+                    if vals[j] > 50:
                         vals[j] = 0
                 blue_ctrl.set_duty(vals[0])
                 green_ctrl.set_duty(vals[1])
                 red_ctrl.set_duty(vals[2])
-                time.sleep(.01)
+                time.sleep(.1)
             
