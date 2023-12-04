@@ -49,6 +49,6 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
                 state_str = "night" if shared_data['state'] else "day"
                 print("led_controller: Time to " + state_str + " is " + time_str)  
    
-            blue_ctrl.set_duty(random.randint(0,100))
+            blue_ctrl.set_duty(random.randint(0,10))
             time.sleep(1)
             
