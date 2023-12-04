@@ -13,7 +13,7 @@ def laser_loop(shared_data: Dict[str, Union[int,float,bool]],
     Turn on laser
     """
     ctrl = pwm_dev(laser_pin)
-    val = 0
+    val = 100
     recordings = []
     if debug_mode:
         print("laser_controller: laser on!")
@@ -21,4 +21,5 @@ def laser_loop(shared_data: Dict[str, Union[int,float,bool]],
         ctrl.set_duty(val)
         time.sleep(5)
         print(shared_data["od"])
+        val -= 1
             
