@@ -51,6 +51,6 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
             
             blue_ctrl.on()
             time.sleep(1)
-            blue_ctrl.off(0)
+            blue_ctrl.off()
             time.sleep(1)
             
