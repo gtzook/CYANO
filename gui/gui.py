@@ -105,7 +105,7 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
     ax2.set_xlabel("Time")
     ax2.set_ylabel("OD")
     ax2.grid()
-    ax2.set_ylim(0,5000)
+    ax2.set_ylim(0,4000)
     for item in ([ax2.xaxis.label, ax2.yaxis.label] +
              ax2.get_xticklabels() + ax2.get_yticklabels()):
         item.set_fontsize(20) # make fonts bigger
