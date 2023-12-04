@@ -95,4 +95,4 @@ def ADC_loop(shared_data: Dict[str, Union[int,float,bool]],
         if debug_mode:
             print(f"adc: ph is {ph}")
             print(f"adc: od is {od}")
-        time.sleep(0.5)
+        time.sleep(0.1)
