@@ -3,8 +3,11 @@ from typing import Dict, Union
 import util.time_formatting
 from multiprocessing.synchronize import Event
 from .gpio_dev import gpio_dev
+from .gpio_dev import pwm_dev
+import random
 
 LED_pin = 26
+BLED = 19
 
 def led_loop(shared_data: Dict[str, Union[int,float,bool]], 
              events: Dict[str, Event], 
@@ -13,6 +16,7 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     Main loop for led process
     """
     ctrl = gpio_dev(LED_pin, reverse_polarity=False)
+    blue_ctrl = pwm_dev(BLED)
     shared_data['state'] = ctrl.on()
     
     # time to toggle between day and night
@@ -44,6 +48,7 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
                 
                 state_str = "night" if shared_data['state'] else "day"
                 print("led_controller: Time to " + state_str + " is " + time_str)  
-            
+   
+            blue_ctrl.set_duty(random.randint(0,100))
             time.sleep(1)
             
