@@ -1,15 +1,15 @@
 import signal
 import time
 import sys
-import RPi.GPIO as GPIO
+import pigpio
 
-GPIO.setmode(GPIO.BCM)
+pi = pigpio.pi()
 
 class gpio_dev:
     def __init__(self, pin: int, reverse_polarity: bool=False):
         self.pin = pin
         self.reverse_polarity = reverse_polarity
-        GPIO.setup(self.pin,GPIO.OUT)
+        pi.set_mode(self.pin,pigpio.OUTPUT)
         self._set_handlers()
         self.off()
     
@@ -29,7 +29,7 @@ class gpio_dev:
         
     def _output(self, value: bool) -> bool:
         self.state = value
-        GPIO.output(self.pin, self.state != self.reverse_polarity) # write opposite state if reversed
+        pi.write(self.pin, self.state != self.reverse_polarity) # write opposite state if reversed
         return self.state
     
     def _exit(self, signum, frame):
@@ -37,5 +37,5 @@ class gpio_dev:
         print(f"gpio_dev pin {self.pin}: Exiting cleanly")
         self.off()
         time.sleep(1)
-        GPIO.cleanup()
+        pi.stop()
         sys.exit(0)
