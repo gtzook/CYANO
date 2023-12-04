@@ -17,7 +17,7 @@ def laser_loop(shared_data: Dict[str, Union[int,float,bool]],
     if debug_mode:
         print("laser_controller: laser on!")
     while (True):
-        ctrl.set_duty(50)
+        ctrl.set_duty(10)
         time.sleep(1)
         ctrl.set_duty(100)
         time.sleep(1)
