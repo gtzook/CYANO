@@ -44,7 +44,7 @@ class pwm_dev:
     def __init__(self, pin: int, pwmFreq: int =25000, pwmDuty: int = 50):
         self.pin = pin
         self._set_handlers()
-        pi.set_PWM_frequency(pwmFreq)
+        pi.set_PWM_frequency(self.pin,pwmFreq)
         self.duty = pwm_dev._percent_duty_convert(pwmDuty)
         
     def on(self):
