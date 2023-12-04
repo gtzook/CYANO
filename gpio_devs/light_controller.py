@@ -12,7 +12,7 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     """
     Main loop for led process
     """
-    ctrl = gpio_dev(LED_pin, reverse_polarity=True)
+    ctrl = gpio_dev(LED_pin, reverse_polarity=False)
     shared_data['state'] = ctrl.on()
     
     # time to toggle between day and night
