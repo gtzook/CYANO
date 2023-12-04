@@ -37,7 +37,7 @@ class gpio_dev:
         # handle closing
         print(f"gpio_dev pin {self.pin}: Exiting cleanly")
         self.off()
-        time.sleep(.1)
+        time.sleep(1)
         sys.exit(0)
 
 class pwm_dev(gpio_dev):
