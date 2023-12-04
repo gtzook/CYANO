@@ -14,10 +14,13 @@ def laser_loop(shared_data: Dict[str, Union[int,float,bool]],
     """
     ctrl = pwm_dev(laser_pin)
     val = 100
+    recordings = []
     if debug_mode:
         print("laser_controller: laser on!")
     while (True):
         ctrl.set_duty(val)
         time.sleep(5)
+        recordings.append((val, shared_data["od"]))
         val-=10
+        print(recordings)
             
