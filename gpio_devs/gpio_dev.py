@@ -53,4 +53,4 @@ class pwm_dev(gpio_dev):
         pi.set_PWM_dutycycle(self.pin, 0)
     
     def _percent_duty_convert(val: int):
-        return int((50/100.0) * 255)
+        return int((val/100.0) * 255)
