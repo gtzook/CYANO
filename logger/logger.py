@@ -25,5 +25,3 @@ def logger_loop(shared_data: Dict[str, Union[int,float,bool]],
         file.write(str(now) + "," + str(ph) + "," 'OD Placeholder' + ',' + str(light_state)) #Writes time of measurement, and
         file.flush()
         time.sleep(5) #Set to whatever frequency we need
-      
-    
