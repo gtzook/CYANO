@@ -5,7 +5,7 @@ import signal
 import sys
 from typing import Dict, Union
 from multiprocessing.synchronize import Event
-import signal_processing.ph_filter
+from .signal_processing import ph_filter
 
 class ADC():
     TIMEOUT = 5000 # How long to wait before giving up on response
