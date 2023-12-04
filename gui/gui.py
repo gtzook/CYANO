@@ -7,6 +7,7 @@ from collections import deque
 import util.time_formatting
 from typing import Dict, Union
 import multiprocessing as mp
+import time
 # GUI built from demo: https://github.com/PySimpleGUI/PySimpleGUI/blob/master/DemoPrograms/Demo_Matplotlib_Animated.py
 
 # Method for drawing matplotlib figure on PySimpleGUI Canvas
@@ -19,9 +20,9 @@ def draw_figure(canvas, figure, loc=(0, 0)):
 def gui_loop(shared_data: Dict[str, Union[int,float,bool]], 
              events: Dict[str, mp.Event], 
              debug_mode: bool) -> None:
-    ph_datapoints = 5
-    od_datapoints = 30
-    
+    ph_datapoints = 30 # max number of ph datapoints to display at once
+    od_datapoints = 30 # max number of od datapoints to display at once
+     
     sg.theme('Dark') # set gui colors
     
     # pH section
@@ -128,22 +129,20 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
                    color='green', linewidth=6)
 
     while True:
-        event, values = window.read(timeout=10)
+        event, _ = window.read(timeout=10)
         if event in ('Exit', None):
             exit(0)
-        events['new_adc'].wait() # TODO: Plot updating should be in a separate thread
-        events['new_adc'].clear() # Reset event flag because we are addressing it
+            
         phs.append(shared_data['ph'])  # add new ph data
         ph_line.set_ydata(phs)     # update plot
         
         ods.append(shared_data['od']) # add new od data
         od_line.set_ydata(ods)     # update plot
         
-        fig_agg.draw()
+        fig_agg.draw() # render plots
         fig_agg2.draw()
         
-        # TODO: below should also be separate thread
-        window['-PH-VALUE-'].update(value="{:.3f}".format(shared_data['ph']))
+        window['-PH-VALUE-'].update(value="{:.3f}".format(shared_data['ph'])) # update text displays
         window['-OD-VALUE-'].update(value=f"{shared_data['od']}")
 
         if shared_data['state']:
@@ -155,3 +154,5 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
         
         time_str = util.time_formatting.time_string_from_sec(shared_data['remaining'])
         window['-TIME-SWITCH-'].update(time_str)
+        
+        time.sleep(0.05) # ~refresh rate of 20 Hz
