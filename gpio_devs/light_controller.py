@@ -8,6 +8,8 @@ import random
 
 LED_pin = 26
 BLED = 19
+GLED = 20
+RLED = 16
 
 def led_loop(shared_data: Dict[str, Union[int,float,bool]], 
              events: Dict[str, Event], 
@@ -16,7 +18,9 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     Main loop for led process
     """
     ctrl = gpio_dev(LED_pin, reverse_polarity=False)
-    blue_ctrl = gpio_dev(BLED, )
+    blue_ctrl = pwm_dev(BLED, )
+    green_ctrl = gpio_dev(GLED, )
+    red_ctrl = gpio_dev(RLED, )
     shared_data['state'] = ctrl.on()
     
     # time to toggle between day and night
@@ -49,8 +53,10 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
                 state_str = "night" if shared_data['state'] else "day"
                 print("led_controller: Time to " + state_str + " is " + time_str)  
             
-            blue_ctrl.on()
+            blue_ctrl.set_duty(0)
+            green_ctrl.on()
             time.sleep(1)
-            blue_ctrl.off()
+            blue_ctrl.set_duty(100)
+            green_ctrl.off(0)
             time.sleep(1)
             
