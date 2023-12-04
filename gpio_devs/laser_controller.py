@@ -13,13 +13,11 @@ def laser_loop(shared_data: Dict[str, Union[int,float,bool]],
     Turn on laser
     """
     ctrl = pwm_dev(laser_pin)
+    val = 100
     if debug_mode:
         print("laser_controller: laser on!")
     while (True):
-        ctrl.off()
-        time.sleep(1)
-        ctrl.set_duty(10)
-        time.sleep(1)
-        ctrl.set_duty(100)
-        time.sleep(1)
+        ctrl.set_duty(val)
+        time.sleep(5)
+        val-=10
             
