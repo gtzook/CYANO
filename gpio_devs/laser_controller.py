@@ -20,4 +20,6 @@ def laser_loop(shared_data: Dict[str, Union[int,float,bool]],
         time.sleep(1)
         ctrl.set_duty(10)
         time.sleep(1)
+        ctrl.set_duty(100)
+        time.sleep(1)
             
