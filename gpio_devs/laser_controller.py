@@ -19,7 +19,7 @@ def laser_loop(shared_data: Dict[str, Union[int,float,bool]],
         print("laser_controller: laser on!")
     while (True):
         ctrl.set_duty(val)
-        time.sleep(5)
+        time.sleep(3)
         recordings.append((val, shared_data["od"]))
         val-=1
         print(recordings)
