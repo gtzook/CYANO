@@ -19,6 +19,6 @@ def laser_loop(shared_data: Dict[str, Union[int,float,bool]],
         print("laser_controller: laser on!")
     while (True):
         ctrl.set_duty(val)
-        time.sleep(3)
+        time.sleep(5)
         print(shared_data["od"])
             
