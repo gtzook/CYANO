@@ -2,6 +2,7 @@
 import gui.gui
 import gpio_devs.light_controller
 import gpio_devs.laser_controller
+import gpio_devs
 import logger.logger
 import usb.adc
 import multiprocessing as mp
@@ -61,4 +62,4 @@ if __name__ == "__main__":
         while True:
             pass
     except KeyboardInterrupt:
-        pass
+        gpio_devs.gpio_dev.pi.off()
