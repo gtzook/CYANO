@@ -21,6 +21,6 @@ def laser_loop(shared_data: Dict[str, Union[int,float,bool]],
         ctrl.set_duty(val)
         time.sleep(5)
         recordings.append((val, shared_data["od"]))
-        val-=10
+        val-=1
         print(recordings)
             
