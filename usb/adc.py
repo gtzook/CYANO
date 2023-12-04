@@ -76,7 +76,7 @@ def ADC_loop(shared_data: Dict[str, Union[int,float,bool]],
              events: Dict[str, Event], 
              debug_mode: bool) -> None:
     adc = ADC(num_sensors=2,debug_mode=debug_mode)
-    ph_filt = signal_processing.ph_filter(filter_len=10)
+    ph_filt = ph_filter(filter_len=10)
     while True:
         vals = adc.get_sense_vals()
         ph = vals[0]
