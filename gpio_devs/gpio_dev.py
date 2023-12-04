@@ -1,17 +1,14 @@
 import signal
 import time
 import sys
-try:
-    import RPi.GPIO as GPIO # type: ignore
-except:
-    print("RPi.GPIO not available. Using GPIO Simulator.")
-    from GPIOEmulator.EmulatorGUI import GPIO
+import RPi.GPIO as GPIO
+
+GPIO.setmode(GPIO.BCM)
 
 class gpio_dev:
     def __init__(self, pin: int, reverse_polarity: bool=False):
         self.pin = pin
         self.reverse_polarity = reverse_polarity
-        GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.pin,GPIO.OUT)
         self._set_handlers()
         self.off()

@@ -38,17 +38,17 @@ if __name__ == "__main__":
     # Laser controller
     laser_proc = mp.Process(name='od',
                         target=gpio_devs.laser_controller.laser_loop,
-                        args=[shared_data, '-oddebug' in sys.argv])
+                        args=[shared_data, events, '-oddebug' in sys.argv])
     
     # GUI
     gui_proc = mp.Process(name = 'gui',
                           target=gui.gui.gui_loop,
-                          args=[shared_data, events])
+                          args=[shared_data, events, '-guidebug' in sys.argv])
     
     #Logging
     log_proc = mp.Process(name = 'log',
                           target=logger.logger.logger_loop,
-                          args=[shared_data])
+                          args=[shared_data, events, '-loggerdebug' in sys.argv])
     
     usb_proc.start()
     if not '-nolight' in sys.argv:

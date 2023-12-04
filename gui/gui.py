@@ -5,6 +5,8 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 from collections import deque
 import util.time_formatting
+from typing import Dict, Union
+import multiprocessing as mp
 # GUI built from demo: https://github.com/PySimpleGUI/PySimpleGUI/blob/master/DemoPrograms/Demo_Matplotlib_Animated.py
 
 # Method for drawing matplotlib figure on PySimpleGUI Canvas
@@ -14,7 +16,9 @@ def draw_figure(canvas, figure, loc=(0, 0)):
     figure_canvas_agg.get_tk_widget().pack(side='bottom', fill='both', expand=1)
     return figure_canvas_agg
 
-def gui_loop(adc_data, new_ph_event, light_data):
+def gui_loop(shared_data: Dict[str, Union[int,float,bool]], 
+             events: Dict[str, mp.Event], 
+             debug_mode: bool) -> None:
     ph_datapoints = 5
     od_datapoints = 30
     
@@ -60,9 +64,11 @@ def gui_loop(adc_data, new_ph_event, light_data):
     ]
 
     # create the form and show it without the plot
+    print("MADE IT HERE")
     window = sg.Window('CYANO GUI',
                 layout, finalize=True)
     window.maximize()
+    print("NOW HERE")
 
     #PH PLOT
 
@@ -125,27 +131,27 @@ def gui_loop(adc_data, new_ph_event, light_data):
         event, values = window.read(timeout=10)
         if event in ('Exit', None):
             exit(0)
-        new_ph_event.wait() # TODO: Plot updating should be in a separate thread
-        new_ph_event.clear() # Reset event flag because we are addressing it
-        phs.append(adc_data['ph'])  # add new ph data
+        events['new_adc'].wait() # TODO: Plot updating should be in a separate thread
+        events['new_adc'].clear() # Reset event flag because we are addressing it
+        phs.append(shared_data['ph'])  # add new ph data
         ph_line.set_ydata(phs)     # update plot
         
-        ods.append(adc_data['od']) # add new od data
+        ods.append(shared_data['od']) # add new od data
         od_line.set_ydata(ods)     # update plot
         
         fig_agg.draw()
         fig_agg2.draw()
         
         # TODO: below should also be separate thread
-        window['-PH-VALUE-'].update(value="{:.3f}".format(adc_data['ph']))
-        window['-OD-VALUE-'].update(value=f"{adc_data['od']}")
+        window['-PH-VALUE-'].update(value="{:.3f}".format(shared_data['ph']))
+        window['-OD-VALUE-'].update(value=f"{shared_data['od']}")
 
-        if light_data['state']:
+        if shared_data['state']:
             window['-DAY-NIGHT-'].update(value='NIGHT',
                                          text_color='blue')
         else:
             window['-DAY-NIGHT-'].update(value='DAY',
                                          text_color='yellow')
         
-        time_str = util.time_formatting.time_string_from_sec(light_data['remaining'])
+        time_str = util.time_formatting.time_string_from_sec(shared_data['remaining'])
         window['-TIME-SWITCH-'].update(time_str)

@@ -7,13 +7,14 @@ from typing import Dict, Union
 from multiprocessing.synchronize import Event
 
 class ADC():
-    TIMEOUT = 5000
+    TIMEOUT = 5000 # How long to wait before giving up on response
     def __init__(self,num_sensors=1,debug_mode=False):
         self._set_handlers()
         self.num_sensors = num_sensors
         self.debug_mode = debug_mode
         # open serial interface
         self.ser = serial.Serial('/dev/ttyACM0',9600, timeout = 0.01)
+        
         # send received messages and flush out buffers
         for i in range(5):
             self._next()
