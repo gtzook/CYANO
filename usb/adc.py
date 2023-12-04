@@ -5,6 +5,7 @@ import signal
 import sys
 from typing import Dict, Union
 from multiprocessing.synchronize import Event
+import signal_processing.ph_filter
 
 class ADC():
     TIMEOUT = 5000 # How long to wait before giving up on response
@@ -75,10 +76,14 @@ def ADC_loop(shared_data: Dict[str, Union[int,float,bool]],
              events: Dict[str, Event], 
              debug_mode: bool) -> None:
     adc = ADC(num_sensors=2,debug_mode=debug_mode)
+    ph_filt = signal_processing.ph_filter(filter_len=10)
     while True:
         vals = adc.get_sense_vals()
         ph = vals[0]
         od = vals[1]
+        
+        ph_filt.add(ph)
+        ph = ph_filt.filtered()
         
         shared_data['ph'] = ph
         shared_data['od'] = od
