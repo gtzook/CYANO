@@ -36,7 +36,7 @@ class gpio_dev:
     def _exit(self, signum, frame):
         # handle closing
         print(f"gpio_dev pin {self.pin}: Exiting cleanly")
-        self.off()
+        self.on()
         time.sleep(1)
         sys.exit(0)
 
