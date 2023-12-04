@@ -62,4 +62,4 @@ if __name__ == "__main__":
         while True:
             pass
     except KeyboardInterrupt:
-        gpio_devs.gpio_dev.pi.off()
+        pass
