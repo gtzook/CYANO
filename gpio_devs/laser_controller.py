@@ -1,7 +1,7 @@
 from .gpio_dev import pwm_dev
 from typing import Dict, Union
 import multiprocessing as mp
-
+import time
 laser_pin = 13
 
 def laser_loop(shared_data: Dict[str, Union[int,float,bool]], 
@@ -13,9 +13,12 @@ def laser_loop(shared_data: Dict[str, Union[int,float,bool]],
     Turn on laser
     """
     ctrl = pwm_dev(laser_pin)
-    ctrl.on() # turn on laser
+    ctrl.set_duty(50) # turn on laser
     if debug_mode:
         print("laser_controller: laser on!")
     while (True):
-        pass
+        ctrl.set_duty(50)
+        time.sleep(1)
+        ctrl.set_duty(100)
+        time.sleep(1)
             
