@@ -3,13 +3,13 @@ import time
 import sys
 import pigpio
 
-pi = pigpio.pi()
-
 class gpio_dev:
+    pi = pigpio.pi()
+
     def __init__(self, pin: int, reverse_polarity: bool=False):
         self.pin = pin
         self.reverse_polarity = reverse_polarity
-        pi.set_mode(self.pin,pigpio.OUTPUT)
+        gpio_dev.pi.set_mode(self.pin,pigpio.OUTPUT)
         self._set_handlers()
         self.off()
     
@@ -29,7 +29,7 @@ class gpio_dev:
         
     def _output(self, value: bool) -> bool:
         self.state = value
-        pi.write(self.pin, self.state != self.reverse_polarity) # write opposite state if reversed
+        gpio_dev.pi.write(self.pin, self.state != self.reverse_polarity) # write opposite state if reversed
         return self.state
     
     def _exit(self, signum, frame):
@@ -37,5 +37,5 @@ class gpio_dev:
         print(f"gpio_dev pin {self.pin}: Exiting cleanly")
         self.off()
         time.sleep(1)
-        pi.stop()
+        gpio_dev.pi.stop()
         sys.exit(0)
