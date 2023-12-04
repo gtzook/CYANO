@@ -57,6 +57,14 @@ class pwm_dev:
         # set handlers for exit to close cleanly
         signal.signal(signal.SIGINT, self._exit)
         signal.signal(signal.SIGTERM, self._exit)
+        
+    def _exit(self, signum, frame):
+        # handle closing
+        print(f"pwm_dev pin {self.pin}: Exiting cleanly")
+        self.off()
+        time.sleep(1)
+        pi.stop()
+        sys.exit(0)
     
     def _percent_duty_convert(val: int):
         return int((50/100.0) * 255)
