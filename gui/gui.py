@@ -146,11 +146,11 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
             window['-OD-VALUE-'].update(value=f"{shared_data['od']}")
 
             if shared_data['state']:
-                window['-DAY-NIGHT-'].update(value='NIGHT',
-                                            text_color='blue')
-            else:
                 window['-DAY-NIGHT-'].update(value='DAY',
                                             text_color='yellow')
+            else:
+                window['-DAY-NIGHT-'].update(value='NIGHT',
+                                            text_color='blue')
             
             time_str = util.time_formatting.time_string_from_sec(shared_data['remaining'])
             window['-TIME-SWITCH-'].update(time_str)
