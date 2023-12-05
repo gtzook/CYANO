@@ -61,6 +61,6 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
                 red_ctrl.set_duty(rainbow[pattern_index, 0])
                 green_ctrl.set_duty(rainbow[pattern_index, 1])
                 blue_ctrl.set_duty(rainbow[pattern_index, 2])
-                pattern_index = pattern_index + 1 if pattern_index < rainbow.size[0] - 1 else 0
+                pattern_index = pattern_index + 1 if pattern_index < len(rainbow) - 1 else 0
                 time.sleep(.1)
                 
