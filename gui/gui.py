@@ -159,5 +159,6 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
             time.sleep(0.05) # ~refresh rate of 20 Hz
     except KeyboardInterrupt:
         print('gui: Exiting cleanly')
-        window.close()
+        if 'window' in locals(): # if window has been made
+            window.close()
         sys.exit(0)
