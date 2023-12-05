@@ -35,43 +35,44 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     # set handlers for exit to close cleanly
     signal.signal(signal.SIGINT, exit)
     signal.signal(signal.SIGTERM, exit)
-        
-    while True:
-        # Time elapsed since start of this state
-        shared_data['elapsed'] = time.time() - start_t
+    try:
+        while True:
+            # Time elapsed since start of this state
+            shared_data['elapsed'] = time.time() - start_t
 
-        # If time elapsed, toggle LED
-        if shared_data['elapsed'] > toggle_time:
-            if debug_mode:
-                print("led_controller: Toggling...")
-        
-            # Update time measure
-            start_t = time.time()
-            
-            # Toggle
-            shared_data['state'] = ctrl.toggle()
-            events['new_light'].set()
-            
-        else:       
-            # Calculate time remaining
-            rm_t = toggle_time - shared_data['elapsed']
-            shared_data['remaining'] = rm_t
-            if debug_mode:
-                # Get formatted time string
-                time_str = util.time_formatting.time_string_from_sec(int(rm_t))
-                
-                state_str = "night" if shared_data['state'] else "day"
-                print("led_controller: Time to " + state_str + " is " + time_str)  
-            
-            if shared_data['state']: # If on, rainbow!
+            # If time elapsed, toggle LED
+            if shared_data['elapsed'] > toggle_time:
                 if debug_mode:
-                    print(f'current RGB: {rainbow[pattern_index]}')
-                red_ctrl.set_duty(rainbow[pattern_index, 0])
-                green_ctrl.set_duty(rainbow[pattern_index, 1])
-                blue_ctrl.set_duty(rainbow[pattern_index, 2])
-                #green_ctrl.set_duty(rainbow[pattern_index, 1])
-                pattern_index = pattern_index + 1 if pattern_index < len(rainbow) - 1 else 0
-                time.sleep(.01)
+                    print("led_controller: Toggling...")
+            
+                # Update time measure
+                start_t = time.time()
                 
-def exit(self, signum, frame):
-    print("light_controller: exiting cleanly")
+                # Toggle
+                shared_data['state'] = ctrl.toggle()
+                events['new_light'].set()
+                
+            else:       
+                # Calculate time remaining
+                rm_t = toggle_time - shared_data['elapsed']
+                shared_data['remaining'] = rm_t
+                if debug_mode:
+                    # Get formatted time string
+                    time_str = util.time_formatting.time_string_from_sec(int(rm_t))
+                    
+                    state_str = "night" if shared_data['state'] else "day"
+                    print("led_controller: Time to " + state_str + " is " + time_str)  
+                
+                if shared_data['state']: # If on, rainbow!
+                    if debug_mode:
+                        print(f'current RGB: {rainbow[pattern_index]}')
+                    red_ctrl.set_duty(rainbow[pattern_index, 0])
+                    green_ctrl.set_duty(rainbow[pattern_index, 1])
+                    blue_ctrl.set_duty(rainbow[pattern_index, 2])
+                    #green_ctrl.set_duty(rainbow[pattern_index, 1])
+                    pattern_index = pattern_index + 1 if pattern_index < len(rainbow) - 1 else 0
+                    time.sleep(.01)
+    except KeyboardInterrupt:
+        print("light_controller: exiting cleanly")
+        ctrl.off()
+                       
