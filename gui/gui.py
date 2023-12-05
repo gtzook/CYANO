@@ -157,6 +157,6 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
             
             time.sleep(0.05) # ~refresh rate of 20 Hz
     except KeyboardInterrupt:
-        print("gui: keyboard interrupt detected")
+        print("gui: Keyboard interrupt detected")
     finally:
         window.close()

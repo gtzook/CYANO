@@ -19,13 +19,12 @@ def logger_loop(shared_data: Dict[str, Union[int,float,bool]],
         while True:
           ph = shared_data['ph'] # This is how you get ph measurement
           light_state = shared_data['state'] # State of lights
+          od = shared_data['od']
           now = datetime.now() #Gets current time. Time stamps
           file.write("\r\n")
-          file.write(str(now) + "," + str(ph) + "," 'OD Placeholder' + ',' + str(light_state)) #Writes time of measurement, and
+          file.write(str(now) + "," + str(ph) + "," + str(od) + ',' + str(light_state)) #Writes time of measurement, and
           file.flush()
           time.sleep(5) #Set to whatever frequency we need
     except KeyboardInterrupt:
       print("logger: Exiting cleanly")
-      file.flush()
-      file.close()
       sys.exit(0)
