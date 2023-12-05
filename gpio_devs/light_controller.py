@@ -24,20 +24,13 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     ctrl = gpio_dev(LED_pin, reverse_polarity=False)
 
     # RGB
-    red_ctrl = pwm_dev(RLED, )
-    green_ctrl = pwm_dev(GLED, )
-    blue_ctrl = pwm_dev(BLED, )
-    def set_rgb(red: int, green: int, blue: int):
-        red_ctrl.set_duty(red)
-        green_ctrl.set_duty(green)
-        blue_ctrl.set_duty(blue)
-        
-    
+    rgb_ctrls = [pwm_dev(RLED), pwm_dev(GLED), pwm_dev(BLED)]
+    def set_rgb(rgb: list[int]):
+        (rgb_ctrls.set_duty(rgb[i]) for i in range(3))
     rainbow = np.load('gpio_devs/light_patterns/interpolated_rainbow.npy')
     pattern_index = 0
     
     shared_data['state'] = ctrl.on()
-    set_rgb(255,255,255) # turn all leds on
     
     def cleanup(*args):
         print("light_controller: Exiting cleanly")
@@ -81,7 +74,7 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
             if shared_data['demo'] and shared_data['state']: # If demo mode and on, rainbow!
                 if debug_mode:
                     print(f'current RGB: {rainbow[pattern_index]}')
-                set_rgb(*rainbow[pattern_index])
+                set_rgb(rainbow[pattern_index])
                 pattern_index = pattern_index + 1 if pattern_index < len(rainbow) - 1 else 0
                 time.sleep(.01)
                 

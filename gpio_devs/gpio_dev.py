@@ -44,6 +44,7 @@ class pwm_dev(gpio_dev):
     def __init__(self, pin: int, pwmFreq: int = 10000, pwmDuty: int = 50):
         super().__init__(pin)
         pi.set_PWM_frequency(self.pin,pwmFreq)
+        self.set_duty_percent(100) # start on
         
     def set_duty_percent(self, duty_percent):
         pi.set_PWM_dutycycle(self.pin, pwm_dev._percent_duty_convert(duty_percent))
