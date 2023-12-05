@@ -8,7 +8,7 @@ import numpy as np
 
 LED_pin = 26
 BLED = 19
-GLED = 20
+GLED = 21
 RLED = 16
 
 def led_loop(shared_data: Dict[str, Union[int,float,bool]], 
