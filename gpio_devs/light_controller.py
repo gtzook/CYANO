@@ -32,7 +32,7 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     shared_data['state'] = ctrl.on()
     
     def cleanup(*args):
-        print("light_controller: exiting cleanly")
+        print("light_controller: Exiting cleanly")
         ctrl.off()
         gpio_dev.cleanup()
         sys.exit(0)

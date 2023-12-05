@@ -70,14 +70,7 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
     window = sg.Window('CYANO GUI',
                 layout, finalize=True)
     window.maximize()
-    
-    def cleanup(*args):
-        print("laser_controller: exiting cleanly")
-        window.close()
-        sys.exit(0)
-    
-    signal.signal(signal.SIGTERM, cleanup)
-    signal.signal(signal.SIGINT, cleanup)
+
     #PH PLOT
 
     # draw the initial plot in the window
@@ -134,32 +127,36 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
     # make od plot
     od_line, =ax2.plot(range(od_datapoints), ods, 
                    color='green', linewidth=6)
-
-    while True:
-        event, _ = window.read(timeout=10)
-        if event in ('Exit', None):
-            exit(0)
+    try:
+        while True:
+            event, _ = window.read(timeout=10)
+            if event in ('Exit', None):
+                break
+                
+            phs.append(shared_data['ph'])  # add new ph data
+            ph_line.set_ydata(phs)     # update plot
             
-        phs.append(shared_data['ph'])  # add new ph data
-        ph_line.set_ydata(phs)     # update plot
-        
-        ods.append(shared_data['od']) # add new od data
-        od_line.set_ydata(ods)     # update plot
-        
-        fig_agg.draw() # render plots
-        fig_agg2.draw()
-        
-        window['-PH-VALUE-'].update(value="{:.3f}".format(shared_data['ph'])) # update text displays
-        window['-OD-VALUE-'].update(value=f"{shared_data['od']}")
+            ods.append(shared_data['od']) # add new od data
+            od_line.set_ydata(ods)     # update plot
+            
+            fig_agg.draw() # render plots
+            fig_agg2.draw()
+            
+            window['-PH-VALUE-'].update(value="{:.3f}".format(shared_data['ph'])) # update text displays
+            window['-OD-VALUE-'].update(value=f"{shared_data['od']}")
 
-        if shared_data['state']:
-            window['-DAY-NIGHT-'].update(value='NIGHT',
-                                         text_color='blue')
-        else:
-            window['-DAY-NIGHT-'].update(value='DAY',
-                                         text_color='yellow')
-        
-        time_str = util.time_formatting.time_string_from_sec(shared_data['remaining'])
-        window['-TIME-SWITCH-'].update(time_str)
-        
-        time.sleep(0.05) # ~refresh rate of 20 Hz
+            if shared_data['state']:
+                window['-DAY-NIGHT-'].update(value='NIGHT',
+                                            text_color='blue')
+            else:
+                window['-DAY-NIGHT-'].update(value='DAY',
+                                            text_color='yellow')
+            
+            time_str = util.time_formatting.time_string_from_sec(shared_data['remaining'])
+            window['-TIME-SWITCH-'].update(time_str)
+            
+            time.sleep(0.05) # ~refresh rate of 20 Hz
+    except KeyboardInterrupt:
+        print("gui: keyboard interrupt detected")
+    finally:
+        window.close()

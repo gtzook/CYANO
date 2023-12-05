@@ -16,7 +16,7 @@ def laser_loop(shared_data: Dict[str, Union[int,float,bool]],
     ctrl = pwm_dev(laser_pin)
     
     def cleanup(*args):
-        print("laser_controller: exiting cleanly")
+        print("laser_controller: Exiting cleanly")
         ctrl.off()
         sys.exit(0)
     
