@@ -24,6 +24,7 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     Main loop for led process
     """
     signal.signal(signal.SIGTERM, cleanup)
+    signal.signal(signal.SIGINT, cleanup)
     
     # Relay
     ctrl = gpio_dev(LED_pin, reverse_polarity=False)
