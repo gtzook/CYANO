@@ -13,22 +13,23 @@ BLED = 19
 GLED = 21
 RLED = 16
 
-def exit(self, signum, frame):
-        # handle closing
-        print("light_controller: Exiting cleanly")
-        self.ser.close()
-        sys.exit(0)
-        
+def cleanup(*args):
+    print("light_controller: cleaning up")
+    sys.exit(0)
+
 def led_loop(shared_data: Dict[str, Union[int,float,bool]], 
              events: Dict[str, Event], 
              debug_mode: bool) -> None:
     """
     Main loop for led process
     """
-    ctrl = gpio_dev(LED_pin, reverse_polarity=False)
+    signal.signal(signal.SIGTERM, cleanup)
     
+    # Relay
+    ctrl = gpio_dev(LED_pin, reverse_polarity=False)
+
     # RGB
-    blue_ctrl = pwm_dev(BLED, ) 
+    blue_ctrl = pwm_dev(BLED, )
     green_ctrl = pwm_dev(GLED, )
     red_ctrl = pwm_dev(RLED, )
     rainbow = np.load('gpio_devs/light_patterns/interpolated_rainbow.npy')
@@ -38,11 +39,6 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     # time to toggle between day and night
     toggle_time = shared_data['period']/2.0
     start_t = time.time()
-    
-    # set handlers for exit to close cleanly
-    signal.signal(signal.SIGINT, exit)
-    signal.signal(signal.SIGTERM, exit)
-    
     while True:
         # Time elapsed since start of this state
         shared_data['elapsed'] = time.time() - start_t
@@ -79,3 +75,4 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
                 #green_ctrl.set_duty(rainbow[pattern_index, 1])
                 pattern_index = pattern_index + 1 if pattern_index < len(rainbow) - 1 else 0
                 time.sleep(.01)
+                
