@@ -60,10 +60,10 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
             if shared_data['state']: # If on, rainbow!
                 if debug_mode:
                     print(f'current RGB: {rainbow[pattern_index]}')
-                #red_ctrl.set_duty(rainbow[pattern_index, 0])
-                #green_ctrl.set_duty(rainbow[pattern_index, 1])
-                #blue_ctrl.set_duty(rainbow[pattern_index, 2])
+                red_ctrl.set_duty(rainbow[pattern_index, 0])
                 green_ctrl.set_duty(rainbow[pattern_index, 1])
+                blue_ctrl.set_duty(rainbow[pattern_index, 2])
+                #green_ctrl.set_duty(rainbow[pattern_index, 1])
                 pattern_index = pattern_index + 1 if pattern_index < len(rainbow) - 1 else 0
                 time.sleep(.01)
                 
