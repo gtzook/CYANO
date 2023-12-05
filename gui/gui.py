@@ -71,7 +71,7 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
         window = sg.Window('CYANO GUI',
                     layout, finalize=True)
         window.maximize()
-        
+
         #PH PLOT
 
         # draw the initial plot in the window
@@ -159,6 +159,5 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
             time.sleep(0.05) # ~refresh rate of 20 Hz
     except KeyboardInterrupt:
         print('gui: Exiting cleanly')
-        if 'window' in locals(): # if window has been made
-            window.close()
+        window.close()
         sys.exit(0)
