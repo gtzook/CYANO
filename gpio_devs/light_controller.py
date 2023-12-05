@@ -23,7 +23,7 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     blue_ctrl = pwm_dev(BLED, )
     green_ctrl = pwm_dev(GLED, )
     red_ctrl = pwm_dev(RLED, )
-    rainbow = np.load('gpio_devs\light_patterns\interpolated_rainbow.npy\light_patterns.npy')
+    rainbow = np.load('gpio_devs/light_patterns/interpolated_rainbow.npy')
     print(rainbow)
     shared_data['state'] = ctrl.on()
     
