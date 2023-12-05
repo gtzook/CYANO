@@ -13,6 +13,12 @@ BLED = 19
 GLED = 21
 RLED = 16
 
+def exit(self, signum, frame):
+        # handle closing
+        print("light_controller: Exiting cleanly")
+        self.ser.close()
+        sys.exit(0)
+        
 def led_loop(shared_data: Dict[str, Union[int,float,bool]], 
              events: Dict[str, Event], 
              debug_mode: bool) -> None:
@@ -73,10 +79,3 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
                 #green_ctrl.set_duty(rainbow[pattern_index, 1])
                 pattern_index = pattern_index + 1 if pattern_index < len(rainbow) - 1 else 0
                 time.sleep(.01)
-
-def exit(self, signum, frame):
-        # handle closing
-        print("light_controller: Exiting cleanly")
-        self.ser.close()
-        sys.exit(0)
-        
