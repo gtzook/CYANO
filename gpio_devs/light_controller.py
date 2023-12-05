@@ -13,16 +13,16 @@ BLED = 19
 GLED = 21
 RLED = 16
 
-def cleanup(*args):
-    print("light_controller: cleaning up \n \n \n")
-    sys.exit(0)
-
 def led_loop(shared_data: Dict[str, Union[int,float,bool]], 
              events: Dict[str, Event], 
              debug_mode: bool) -> None:
     """
     Main loop for led process
     """
+    def cleanup(*args):
+        print("light_controller: cleaning up \n \n \n")
+        sys.exit(0)
+
     signal.signal(signal.SIGTERM, cleanup)
     signal.signal(signal.SIGINT, cleanup)
     
