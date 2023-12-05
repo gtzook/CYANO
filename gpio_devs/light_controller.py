@@ -76,13 +76,6 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
             # Calculate time remaining
             rm_t = toggle_time - shared_data['elapsed']
             shared_data['remaining'] = rm_t
-            if debug_mode:
-                # Get formatted time string
-                time_str = util.time_formatting.time_string_from_sec(int(rm_t))
-                
-                state_str = "night" if shared_data['state'] else "day"
-                print("led_controller: Time to " + state_str + " is " + time_str)  
-            
             if shared_data['demo'] and shared_data['state']: # If demo mode and on, rainbow!
                 if debug_mode:
                     print(f'current RGB: {rainbow[pattern_index]}')
