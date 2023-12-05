@@ -42,11 +42,14 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     signal.signal(signal.SIGTERM, cleanup)
     signal.signal(signal.SIGINT, cleanup)
     
+    # timing setup
     time_str = "%H:%M:%S" 
     night_time = dt.strptime(shared_data['to_night'], time_str)
     day_time = dt.strptime(shared_data['to_day'], time_str)
+    
     #toggle_time = shared_data['period']/2.0
     start_t = time.time()
+    toggle_time = 0
     
     while True:
         # Time elapsed since start of this state
