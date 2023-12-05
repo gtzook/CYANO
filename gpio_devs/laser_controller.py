@@ -14,7 +14,7 @@ def laser_loop(shared_data: Dict[str, Union[int,float,bool]],
     """
     ctrl = pwm_dev(laser_pin)
     val = 100
-    ctrl.set_duty(val)
+    ctrl.set_duty_percent(val)
     if debug_mode:
         print("laser_controller: laser on!")
     while (True):

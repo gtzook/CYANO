@@ -24,7 +24,7 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     green_ctrl = pwm_dev(GLED, )
     red_ctrl = pwm_dev(RLED, )
     rainbow = np.load('gpio_devs/light_patterns/interpolated_rainbow.npy')
-    print(rainbow)
+    pattern_index = 0
     shared_data['state'] = ctrl.on()
     
     # time to toggle between day and night
@@ -57,14 +57,10 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
                 state_str = "night" if shared_data['state'] else "day"
                 print("led_controller: Time to " + state_str + " is " + time_str)  
             
-            vals = [random.randint(0,100),random.randint(0,100),random.randint(0,100)]
-            for i in range(100):
-                for j in range(3):
-                    vals[j] += 10
-                    if vals[j] > 50:
-                        vals[j] = 0
-                blue_ctrl.set_duty(vals[0])
-                green_ctrl.set_duty(vals[1])
-                red_ctrl.set_duty(vals[2])
+            if shared_data['state']: # If on, rainbow!
+                red_ctrl.set_duty(rainbow[pattern_index, 0])
+                green_ctrl.set_duty(rainbow[pattern_index, 1])
+                blue_ctrl.set_duty(rainbow[pattern_index, 2])
+                pattern_index = pattern_index + 1 if pattern_index < rainbow.size[0] - 1 else 0
                 time.sleep(.1)
-            
+                
