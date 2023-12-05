@@ -40,11 +40,11 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
         sys.exit(0)
     
     signal.signal(signal.SIGTERM, cleanup)
-    signal.signal(signal.SIGINT, cleanup)
+    signal.signal(signal.SIGINT, cleanup))
     
-    night_time = dt.strptime(shared_data['to_night'])
-    day_time = dt.strptime(shared_data['to_day'])
-    
+    time_str = "%H:%M:%S" 
+    night_time = dt.strptime(shared_data['to_night'], time_str)
+    day_time = dt.strptime(shared_data['to_day'], time_str)
     #toggle_time = shared_data['period']/2.0
     start_t = time.time()
     
