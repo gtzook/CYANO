@@ -17,7 +17,7 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     """
     Main loop for led process
     """
-    ctrl = gpio_dev(LED_pin, reverse_polarity=True)
+    ctrl = gpio_dev(LED_pin, reverse_polarity=False)
     
     # RGB
     blue_ctrl = pwm_dev(BLED, )
@@ -58,6 +58,8 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
                 print("led_controller: Time to " + state_str + " is " + time_str)  
             
             if shared_data['state']: # If on, rainbow!
+                if debug_mode:
+                    print(f'current RGB: {rainbow[pattern_index]}')
                 red_ctrl.set_duty(rainbow[pattern_index, 0])
                 green_ctrl.set_duty(rainbow[pattern_index, 1])
                 blue_ctrl.set_duty(rainbow[pattern_index, 2])
