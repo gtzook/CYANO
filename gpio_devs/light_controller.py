@@ -7,6 +7,7 @@ from .gpio_dev import pwm_dev
 import numpy as np
 import signal
 import sys
+from datetime import datetime as dt
 
 LED_pin = 26
 BLED = 19
@@ -41,21 +42,29 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     signal.signal(signal.SIGTERM, cleanup)
     signal.signal(signal.SIGINT, cleanup)
     
-    # time to toggle between day and night
-    toggle_time = shared_data['period']/2.0
+    # time to toggle from day to night
+    toggle_time = (shared_data['to_night'] - dt.now()).seconds
+    #toggle_time = shared_data['period']/2.0
     start_t = time.time()
+    
     while True:
         # Time elapsed since start of this state
         shared_data['elapsed'] = time.time() - start_t
 
         # If time elapsed, toggle LED
         if shared_data['elapsed'] > toggle_time:
-            if debug_mode:
-                print("led_controller: Toggling...")
-        
             # Update time measure
             start_t = time.time()
             
+            # update toggle time
+            if shared_data['state']: # it is day
+                toggle_time = (shared_data['to_night'] - dt.now()).seconds
+            else: 
+                toggle_time = (shared_data['to_day'] - dt.now()).seconds
+            if debug_mode:
+                print("led_controller: Toggling...")
+                print(f"led_controller: time to next toggle {toggle_time}")
+        
             # Toggle
             shared_data['state'] = ctrl.toggle()
             events['new_light'].set()
