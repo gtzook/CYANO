@@ -5,6 +5,7 @@ from multiprocessing.synchronize import Event
 from .gpio_dev import gpio_dev
 from .gpio_dev import pwm_dev
 import numpy as np
+import signal
 
 LED_pin = 26
 BLED = 19
@@ -20,7 +21,7 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     ctrl = gpio_dev(LED_pin, reverse_polarity=False)
     
     # RGB
-    blue_ctrl = pwm_dev(BLED, )
+    blue_ctrl = pwm_dev(BLED, ) 
     green_ctrl = pwm_dev(GLED, )
     red_ctrl = pwm_dev(RLED, )
     rainbow = np.load('gpio_devs/light_patterns/interpolated_rainbow.npy')
@@ -30,6 +31,11 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     # time to toggle between day and night
     toggle_time = shared_data['period']/2.0
     start_t = time.time()
+    
+    # set handlers for exit to close cleanly
+    signal.signal(signal.SIGINT, exit)
+    signal.signal(signal.SIGTERM, exit)
+        
     while True:
         # Time elapsed since start of this state
         shared_data['elapsed'] = time.time() - start_t
@@ -67,3 +73,5 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
                 pattern_index = pattern_index + 1 if pattern_index < len(rainbow) - 1 else 0
                 time.sleep(.01)
                 
+def exit(self, signum, frame):
+    print("light_controller: exiting cleanly")

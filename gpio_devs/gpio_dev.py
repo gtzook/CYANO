@@ -11,7 +11,7 @@ class gpio_dev:
         self.reverse_polarity = reverse_polarity
         print(f"gpio_dev initialized pin {self.pin}")
         pi.set_mode(self.pin,pigpio.OUTPUT)
-        self._set_handlers()
+        #self._set_handlers()
         self.off()
     
     def toggle(self):
