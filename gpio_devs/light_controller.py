@@ -14,7 +14,7 @@ GLED = 21
 RLED = 16
 
 def cleanup(*args):
-    print("light_controller: cleaning up")
+    print("light_controller: cleaning up \n \n \n")
     sys.exit(0)
 
 def led_loop(shared_data: Dict[str, Union[int,float,bool]], 
