@@ -17,7 +17,7 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     """
     Main loop for led process
     """
-    ctrl = gpio_dev(LED_pin, reverse_polarity=False)
+    ctrl = gpio_dev(LED_pin, reverse_polarity=True)
     
     # RGB
     blue_ctrl = pwm_dev(BLED, )
