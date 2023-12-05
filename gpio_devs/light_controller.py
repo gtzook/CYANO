@@ -42,8 +42,9 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     signal.signal(signal.SIGTERM, cleanup)
     signal.signal(signal.SIGINT, cleanup)
     
-    # time to toggle from day to night
-    toggle_time = (shared_data['to_night'] - dt.now()).seconds
+    night_time = dt.strptime(shared_data['to_night'])
+    day_time = dt.strptime(shared_data['to_day'])
+    
     #toggle_time = shared_data['period']/2.0
     start_t = time.time()
     
@@ -58,9 +59,9 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
             
             # update toggle time
             if shared_data['state']: # it is day
-                toggle_time = (shared_data['to_night'] - dt.now()).seconds
+                toggle_time = (night_time - dt.now()).seconds
             else: 
-                toggle_time = (shared_data['to_day'] - dt.now()).seconds
+                toggle_time = (day_time - dt.now()).seconds
             if debug_mode:
                 print("led_controller: Toggling...")
                 print(f"led_controller: time to next toggle {toggle_time}")
