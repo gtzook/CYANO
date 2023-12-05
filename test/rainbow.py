@@ -23,7 +23,7 @@ rainbow_colors = [
 ]
 
 # Number of steps for interpolation between each pair of colors
-num_steps = 50
+num_steps = 10
 
 # Interpolate between each pair of rainbow colors
 interpolated_rainbow = np.concatenate([
