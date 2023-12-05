@@ -60,6 +60,10 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
             # Update time measure
             start_t = time.time()
             
+            # Toggle
+            shared_data['state'] = ctrl.toggle()
+            events['new_light'].set()
+            
             # update toggle time
             if shared_data['state']: # it is day
                 toggle_time = (night_time - dt.now()).seconds
@@ -67,12 +71,7 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
                 toggle_time = (day_time - dt.now()).seconds
             if debug_mode:
                 print("led_controller: Toggling...")
-                print(f"led_controller: time to next toggle {toggle_time}")
-        
-            # Toggle
-            shared_data['state'] = ctrl.toggle()
-            events['new_light'].set()
-            
+                print(f"led_controller: time to next toggle {toggle_time}")            
         else:       
             # Calculate time remaining
             rm_t = toggle_time - shared_data['elapsed']
