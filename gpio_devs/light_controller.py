@@ -4,7 +4,7 @@ import util.time_formatting
 from multiprocessing.synchronize import Event
 from .gpio_dev import gpio_dev
 from .gpio_dev import pwm_dev
-import random
+import numpy as np
 
 LED_pin = 26
 BLED = 19
@@ -18,9 +18,13 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     Main loop for led process
     """
     ctrl = gpio_dev(LED_pin, reverse_polarity=False)
+    
+    # RGB
     blue_ctrl = pwm_dev(BLED, )
     green_ctrl = pwm_dev(GLED, )
     red_ctrl = pwm_dev(RLED, )
+    rainbow = np.load('gpio_devs\light_patterns\interpolated_rainbow.npy\light_patterns.npy')
+    print(rainbow)
     shared_data['state'] = ctrl.on()
     
     # time to toggle between day and night
