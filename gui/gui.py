@@ -8,6 +8,8 @@ import util.time_formatting
 from typing import Dict, Union
 import multiprocessing as mp
 import time
+import signal
+import sys
 # GUI built from demo: https://github.com/PySimpleGUI/PySimpleGUI/blob/master/DemoPrograms/Demo_Matplotlib_Animated.py
 
 # Method for drawing matplotlib figure on PySimpleGUI Canvas
@@ -68,6 +70,14 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
     window = sg.Window('CYANO GUI',
                 layout, finalize=True)
     window.maximize()
+    
+    def cleanup(*args):
+        print("laser_controller: exiting cleanly")
+        window.close()
+        sys.exit(0)
+    
+    signal.signal(signal.SIGTERM, cleanup)
+    signal.signal(signal.SIGINT, cleanup)
     #PH PLOT
 
     # draw the initial plot in the window
