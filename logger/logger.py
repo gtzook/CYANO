@@ -1,7 +1,6 @@
 from datetime import datetime # Probably want this to timestamp logs
 import time # Use to set logging frequency
-import csv # Use for file writing operations
-import os
+import sys
 from typing import Dict, Union
 import multiprocessing as mp
 
@@ -14,14 +13,19 @@ def logger_loop(shared_data: Dict[str, Union[int,float,bool]],
     ph = shared_data['ph'] # This is how you get ph measurement
     light_state = shared_data['state'] # State of lights
     
-    # TODO: Add logging code @Brennan
-    with  open('Data_Logging.csv','a') as file: #appends to data log file, or creates if it doesnt exist
-      file.write("Time, pH, OD600, Light") #writes the headers for the file
-      while True:
-        ph = shared_data['ph'] # This is how you get ph measurement
-        light_state = shared_data['state'] # State of lights
-        now = datetime.now() #Gets current time. Time stamps
-        file.write("\r\n")
-        file.write(str(now) + "," + str(ph) + "," 'OD Placeholder' + ',' + str(light_state)) #Writes time of measurement, and
-        file.flush()
-        time.sleep(5) #Set to whatever frequency we need
+    try:
+      with  open('Data_Logging.csv','a') as file: #appends to data log file, or creates if it doesnt exist
+        file.write("Time, pH, OD600, Light") #writes the headers for the file
+        while True:
+          ph = shared_data['ph'] # This is how you get ph measurement
+          light_state = shared_data['state'] # State of lights
+          now = datetime.now() #Gets current time. Time stamps
+          file.write("\r\n")
+          file.write(str(now) + "," + str(ph) + "," 'OD Placeholder' + ',' + str(light_state)) #Writes time of measurement, and
+          file.flush()
+          time.sleep(5) #Set to whatever frequency we need
+    except KeyboardInterrupt:
+      print("logger: Exiting cleanly")
+      file.flush()
+      file.close()
+      sys.exit(0)
