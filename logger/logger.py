@@ -14,6 +14,7 @@ def logger_loop(shared_data: Dict[str, Union[int,float,bool]],
       sys.exit(0)
     #Set up signal handler for Ctrl+C
     signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
     
     # How to get data:
     ph = shared_data['ph'] # This is how you get ph measurement
@@ -24,7 +25,7 @@ def logger_loop(shared_data: Dict[str, Union[int,float,bool]],
       while True:
         ph = shared_data['ph'] # This is how you get ph measurement
         light_state = shared_data['state'] # State of lights
-        od = shared_data['od'] 
+        od = shared_data['od']  
         now = datetime.now() #Gets current time. Time stamps
         file.write("\r\n")
         file.write(str(now) + "," + str(ph) + "," + str(od) + ',' + str(light_state)) #Writes time of measurement, and
