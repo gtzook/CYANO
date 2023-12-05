@@ -21,7 +21,8 @@ if __name__ == "__main__":
                                 'period':10, # period for light cycle
                                 'state':False, # state of lights
                                 'elapsed':-1, # time elapsed in this light state
-                                'remaining':-1}) # time remaining in this light state
+                                'remaining':-1, # time remaining in this light state
+                                'demo': '-demo' in sys.argv}) 
     
     # Events
     events = {'new_adc': mp.Event(),

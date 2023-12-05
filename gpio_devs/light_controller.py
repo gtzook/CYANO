@@ -70,7 +70,7 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
                 state_str = "night" if shared_data['state'] else "day"
                 print("led_controller: Time to " + state_str + " is " + time_str)  
             
-            if shared_data['state']: # If on, rainbow!
+            if shared_data['demo'] and shared_data['state']: # If demo mode and on, rainbow!
                 if debug_mode:
                     print(f'current RGB: {rainbow[pattern_index]}')
                 red_ctrl.set_duty(rainbow[pattern_index, 0])
