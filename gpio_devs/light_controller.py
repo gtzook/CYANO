@@ -19,9 +19,6 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     """
     Main loop for led process
     """
-    def cleanup(*args):
-        print("light_controller: cleaning up \n \n \n")
-        sys.exit(0)
 
     signal.signal(signal.SIGTERM, cleanup)
     signal.signal(signal.SIGINT, cleanup)
@@ -36,6 +33,12 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     rainbow = np.load('gpio_devs/light_patterns/interpolated_rainbow.npy')
     pattern_index = 0
     shared_data['state'] = ctrl.on()
+    
+    def cleanup(*args):
+        print("light_controller: exiting cleanly")
+        ctrl.off()
+        gpio_dev.cleanup()
+        sys.exit(0)
     
     # time to toggle between day and night
     toggle_time = shared_data['period']/2.0

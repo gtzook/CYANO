@@ -33,11 +33,11 @@ class gpio_dev:
         pi.write(self.pin, self.state != self.reverse_polarity) # write opposite state if reversed
         return self.state
     
-    def _exit(self, signum, frame):
+    @staticmethod
+    def cleanup():
         # handle closing
-        print(f"gpio_dev pin {self.pin}: Exiting cleanly")
-        self.off()
-        time.sleep(1)
+        print("gpio_dev: closing pi")
+        pi.stop()
         sys.exit(0)
 
 class pwm_dev(gpio_dev):
