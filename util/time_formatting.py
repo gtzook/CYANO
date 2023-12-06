@@ -45,6 +45,9 @@ def getTimeFromUser() -> dt.time:
 def is_time_between(begin_time: dt.time, end_time: dt.time, check_time=None):
     # If check time is not given, default to current UTC time
     check_time = check_time or dt.utcnow().time()
+    print(f"begin_time: {begin_time}")
+    print(f"end_time: {end_time}")
+    print(f"now_time: {check_time}")
     if begin_time < end_time:
         return check_time >= begin_time and check_time <= end_time
     else: # crosses midnight
