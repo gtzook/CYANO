@@ -55,4 +55,9 @@ def isDay(night, day):
 
 def seconds_until(time: dt.time):
     dttime =  dt.combine(datetime.date.today(), time)
+    left = (dttime - dt.now()).total_seconds()
+    if left > 0:
+        return left
+    # if time is negative, this time has already passed, so check tommorow
+    dttime =  dt.combine(datetime.date.today() + datetime.timedelta(days=1), time)
     return (dttime - dt.now()).total_seconds()
