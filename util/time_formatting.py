@@ -33,7 +33,7 @@ def isTimeFormat(input: str)-> bool:
         print("Invalid time string. Should be HH:MM:SS")
         return  None
 
-def getTimeFromUser() -> dt.struct_time:
+def getTimeFromUser() -> dt.datetime:
     user_str = ""
     ret = None
     while ret == None:
