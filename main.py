@@ -65,7 +65,8 @@ if __name__ == "__main__":
     if not '-nolight' in sys.argv:
         light_proc.start()
     laser_proc.start()
-    gui_proc.start()
+    if not '-nogui' in sys.argv:
+        gui_proc.start()
     log_proc.start()
     
     try:
