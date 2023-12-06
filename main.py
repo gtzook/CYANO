@@ -28,9 +28,9 @@ if __name__ == "__main__":
                                 'demo': '-demo' in sys.argv}) 
     time_str = "%H:%M:%S"
     if not '-noclock' in sys.argv:
-        print("When should I change to night?\n")
+        print("When should I change to night?")
         shared_data['to_night'] = getTimeFromUser()
-        print("And day?\n")
+        print("And day?")
         shared_data['to_day'] = getTimeFromUser()
 
     # Events

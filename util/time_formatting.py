@@ -1,5 +1,5 @@
 from typing import Tuple
-import time
+from datetime import datetime as dt
 
 def sec_to_time(seconds: int) -> Tuple[int,int,int]:
     hours = seconds // (60 * 60)
@@ -27,13 +27,13 @@ def time_string_from_sec(seconds: int) -> str:
 
 def isTimeFormat(input: str)-> bool:
     try:
-        x=time.strptime(input, '%H:%M:%S')
+        x=dt.strptime(input, '%H:%M:%S')
         return x
     except ValueError:
         print("Invalid time string. Should be HH:MM:SS")
         return  None
 
-def getTimeFromUser() -> time.struct_time:
+def getTimeFromUser() -> dt.struct_time:
     user_str = ""
     ret = None
     while ret == None:
