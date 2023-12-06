@@ -25,18 +25,29 @@ def time_string_from_sec(seconds: int) -> str:
     hrs,mins,secs = sec_to_time(seconds)
     return time_string_from_hr_min_sec(hrs,mins,secs)
 
-def isTimeFormat(input: str)-> bool:
+def isTimeFormat(input: str)-> dt.time:
     try:
         x=dt.strptime(input, '%H:%M:%S')
-        return x
+        return x.time()
     except ValueError:
         print("Invalid time string. Should be HH:MM:SS")
         return  None
 
-def getTimeFromUser():
+def getTimeFromUser() -> dt.time:
     user_str = ""
     ret = None
     while ret == None:
         user_str = input()
         ret = isTimeFormat(user_str)
     return ret
+
+def is_time_between(begin_time: dt.time, end_time: dt.time, check_time=None):
+    # If check time is not given, default to current UTC time
+    check_time = check_time or dt.utcnow().time()
+    if begin_time < end_time:
+        return check_time >= begin_time and check_time <= end_time
+    else: # crosses midnight
+        return check_time >= begin_time or check_time <= end_time
+    
+def isDay(night, day):
+    return is_time_between(day,night)

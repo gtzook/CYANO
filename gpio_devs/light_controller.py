@@ -31,8 +31,6 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     rainbow = np.load('gpio_devs/light_patterns/interpolated_rainbow.npy')
     pattern_index = 0
     
-    shared_data['state'] = ctrl.off()
-    
     def cleanup(*args):
         print("light_controller: Exiting cleanly")
         ctrl.off()
@@ -45,6 +43,12 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     # timing setup
     night_time = shared_data['to_night']
     day_time = shared_data['to_day']
+    
+    # initial state
+    if util.time_formatting.isDay(night_time,day_time):
+        shared_data['state'] = ctrl.on()
+    else:
+        shared_data['state'] = ctrl.off()
     
     #toggle_time = shared_data['period']/2.0
     start_t = time.time()
@@ -65,11 +69,11 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
             
             # update toggle time
             if shared_data['state']: # it is day
-                toggle_time = (night_time - dt.now()).seconds
+                toggle_time = (night_time - dt.utcnow().time()).seconds
             else: 
-                toggle_time = (day_time - dt.now()).seconds
+                toggle_time = (day_time - dt.utcnow().time()).seconds
             if debug_mode:
-                print("led_controller: Toggling...")
+                print(f"led_controller: State is now {'day' if shared_data['state'] else 'night'}")
                 print(f"led_controller: time to next toggle {toggle_time}")            
         else:       
             # Calculate time remaining
