@@ -7,7 +7,8 @@ import logger.logger
 import usb.adc
 import multiprocessing as mp
 import sys
-import datetime as dt
+from datetime import datetime as dt
+from util.time_formatting import getTimeFromUser
 
 if __name__ == "__main__":  
     # Shared memory manager
@@ -19,15 +20,19 @@ if __name__ == "__main__":
     # Shared memory items
     shared_data = manager.dict({'ph':-1, # ph value from adc
                                 'od':-1, # processed OD value
-                                #'period':10, # period for light cycle
                                 'to_day': '09:00:00', # time to change to day
                                 'to_night': '18:00:00', # time to change to night
-                                #'use_time': True, # use time (instead of duration)
                                 'state':False, # state of lights
                                 'elapsed':-1, # time elapsed in this light state
                                 'remaining':-1, # time remaining in this light state
                                 'demo': '-demo' in sys.argv}) 
-    
+    time_str = "%H:%M:%S"
+    if not '-noclock' in sys.argv:
+        print("When should I change to night?\n")
+        shared_data['to_night'] = getTimeFromUser()
+        print("And day?\n")
+        shared_data['to_day'] = getTimeFromUser()
+
     # Events
     events = {'new_adc': mp.Event(),
               'new_light': mp.Event()}

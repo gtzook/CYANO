@@ -1,4 +1,5 @@
 from typing import Tuple
+import time
 
 def sec_to_time(seconds: int) -> Tuple[int,int,int]:
     hours = seconds // (60 * 60)
@@ -23,3 +24,19 @@ def time_string_from_hr_min_sec(hours: int, minutes: int, sec: int) -> str:
 def time_string_from_sec(seconds: int) -> str:
     hrs,mins,secs = sec_to_time(seconds)
     return time_string_from_hr_min_sec(hrs,mins,secs)
+
+def isTimeFormat(input: str)-> bool:
+    try:
+        x=time.strptime(input, '%H:%M:%S')
+        return x
+    except ValueError:
+        print("Invalid time string. Should be HH:MM:SS")
+        return  None
+
+def getTimeFromUser() -> time.struct_time:
+    user_str = ""
+    ret = None
+    while ret == None:
+        user_str = input()
+        ret = isTimeFormat(user_str)
+    return ret
