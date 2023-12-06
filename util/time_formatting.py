@@ -1,5 +1,6 @@
 from typing import Tuple
 from datetime import datetime as dt
+import datetime
 
 def sec_to_time(seconds: int) -> Tuple[int,int,int]:
     hours = seconds // (60 * 60)
@@ -51,3 +52,7 @@ def is_time_between(begin_time: dt.time, end_time: dt.time, check_time=None):
     
 def isDay(night, day):
     return is_time_between(day,night)
+
+def seconds_until(time: dt.time):
+    dttime =  dt.combine(datetime.date.today(), time)
+    return (dttime - dt.now()).total_seconds()

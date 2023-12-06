@@ -1,6 +1,6 @@
 import time
 from typing import Dict, Union
-import util.time_formatting
+from util.time_formatting import isDay, seconds_until
 from multiprocessing.synchronize import Event
 from .gpio_dev import gpio_dev
 from .gpio_dev import pwm_dev
@@ -45,10 +45,12 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     day_time = shared_data['to_day']
     
     # initial state
-    if util.time_formatting.isDay(night_time,day_time):
+    if isDay(night_time,day_time):
         shared_data['state'] = ctrl.on()
+        print("light_controller: Starting daytime...")
     else:
         shared_data['state'] = ctrl.off()
+        print("light_controller: Starting nighttime...")
     
     #toggle_time = shared_data['period']/2.0
     start_t = time.time()
@@ -69,9 +71,9 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
             
             # update toggle time
             if shared_data['state']: # it is day
-                toggle_time = (night_time - dt.utcnow().time()).seconds
+                toggle_time = seconds_until(night_time)
             else: 
-                toggle_time = (day_time - dt.utcnow().time()).seconds
+                toggle_time = seconds_until(day_time)
             if debug_mode:
                 print(f"led_controller: State is now {'day' if shared_data['state'] else 'night'}")
                 print(f"led_controller: time to next toggle {toggle_time}")            
