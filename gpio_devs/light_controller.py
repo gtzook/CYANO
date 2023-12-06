@@ -31,7 +31,7 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     rainbow = np.load('gpio_devs/light_patterns/interpolated_rainbow.npy')
     pattern_index = 0
     
-    shared_data['state'] = ctrl.off()
+    shared_data['state'] = ctrl.on()
     
     def cleanup(*args):
         print("light_controller: Exiting cleanly")
