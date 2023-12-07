@@ -28,10 +28,10 @@ if __name__ == "__main__":
                                 'demo': '-demo' in sys.argv}) 
     time_str = "%H:%M:%S"
     if not '-noclock' in sys.argv:
-        print("When should I change to night?")
-        shared_data['to_night'] = getTimeFromUser()
-        print("And day?")
+        print("When should I change to day?")
         shared_data['to_day'] = getTimeFromUser()
+        print("And night?")
+        shared_data['to_night'] = getTimeFromUser()
 
     # Events
     events = {'new_adc': mp.Event(),
