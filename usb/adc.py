@@ -27,6 +27,10 @@ class ADC():
         
     def get_sense_vals(self):
         vals = self.get()
+        if self.debug_mode: # print in debug mode
+            print(f"\nadc: ph_raw is {vals[0]}")
+            print(f"adc: ph is {ADC.val_to_ph(vals[0])}")
+            print(f"adc: od is {vals[1]}\n")
         converted = [ADC.val_to_ph(vals[0]), vals[1]] # convert values
         return converted
     
@@ -90,9 +94,5 @@ def ADC_loop(shared_data: Dict[str, Union[int,float,bool]],
                 
         # Signal new data exists 
         events['new_adc'].set()
-        
-        # print if debugging
-        if debug_mode:
-            print(f"adc: ph is {ph}")
-            print(f"adc: od is {od}")
+
         time.sleep(0.1)
