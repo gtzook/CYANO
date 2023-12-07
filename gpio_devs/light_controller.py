@@ -57,7 +57,7 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
         toggle_time = seconds_until(day_time)
     """
     shared_data['state'] = ctrl.on()
-    toggle_time = 300
+    toggle_time = 180
     #toggle_time = shared_data['period']/2.0
     start_t = time.time()
     
@@ -76,7 +76,7 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
             
             # update toggle time
             if shared_data['state']: # it is day
-                toggle_time = 300#seconds_until(night_time)
+                toggle_time = 180#seconds_until(night_time)
             else: 
                 toggle_time = (24*60*60) - 300  #seconds_until(day_time)
             if debug_mode:
