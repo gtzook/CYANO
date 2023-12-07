@@ -28,7 +28,7 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     rgb_ctrls = [pwm_dev(RLED), pwm_dev(GLED), pwm_dev(BLED)]
     def set_rgb(rgb: list[int]):
         for i in range(3):
-            rgb_ctrls.set_duty(rgb[i])
+            rgb_ctrls[i].set_duty(rgb[i])
     rainbow = np.load('gpio_devs/light_patterns/interpolated_rainbow.npy')
     pattern_index = 0
     
