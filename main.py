@@ -8,7 +8,7 @@ import usb.adc
 import multiprocessing as mp
 import sys
 from datetime import datetime as dt
-from util.time_formatting import getTimeFromUser
+from util.time_formatting import getTimeFromUser, isTimeFormat
 
 if __name__ == "__main__":  
     # Shared memory manager
@@ -32,6 +32,11 @@ if __name__ == "__main__":
         shared_data['to_day'] = getTimeFromUser()
         print("And night?")
         shared_data['to_night'] = getTimeFromUser()
+    else:
+        print("Changing to day at 9 AM")
+        shared_data['to_day'] = isTimeFormat('09:00:00')
+        print("And night?")
+        shared_data['to_night'] = isTimeFormat('18:00:00')
 
     # Events
     events = {'new_adc': mp.Event(),
