@@ -76,9 +76,9 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
             
             # update toggle time
             if shared_data['state']: # it is day
-                toggle_time = 180#seconds_until(night_time)
+                toggle_time = seconds_until(night_time)
             else: 
-                toggle_time = (24*60*60) - 300  #seconds_until(day_time)
+                toggle_time = seconds_until(day_time)
             if debug_mode:
                 print(f"led_controller: State is now {'day' if shared_data['state'] else 'night'}")
                 print(f"led_controller: time to next toggle {toggle_time}")            
