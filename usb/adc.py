@@ -5,7 +5,7 @@ import signal
 import sys
 from typing import Dict, Union
 from multiprocessing.synchronize import Event
-from .signal_processing.ph_filter import ph_filter
+from .signal_processing.ph_filter import ph_filter, od_filter
 
 class ADC():
     TIMEOUT = 5000 # How long to wait before giving up on response
@@ -24,6 +24,10 @@ class ADC():
         voltage = 3.3 * (val / 4096)
         # equation from https://files.atlas-scientific.com/Gravity-pH-datasheet.pdf
         return (-5.6548 * voltage) + 14.509
+
+    def val_to_od(val : int)-> float:
+        # TODO: this
+        return val
         
     def get_sense_vals(self):
         vals = self.get()
@@ -77,6 +81,7 @@ def ADC_loop(shared_data: Dict[str, Union[int,float,bool]],
              debug_mode: bool) -> None:
     adc = ADC(num_sensors=2,debug_mode=debug_mode)
     ph_filt = ph_filter(filter_len=10)
+    od_filt = od_filter(filter_len=10)
     while True:
         vals = adc.get_sense_vals()
         ph = vals[0]
@@ -85,8 +90,11 @@ def ADC_loop(shared_data: Dict[str, Union[int,float,bool]],
         ph_filt.add(ph)
         ph_f = ph_filt.filtered()
         
+        od_filt.add(od)
+        od_f = od_filt.filtered()
+        
         shared_data['ph'] = ADC.val_to_ph(ph_f)
-        shared_data['od'] = od
+        shared_data['od'] = ADC.val_to_od(od_f)
                 
         # Signal new data exists 
         events['new_adc'].set()
@@ -95,5 +103,6 @@ def ADC_loop(shared_data: Dict[str, Union[int,float,bool]],
             print(f"\nadc: ph_raw is {ph}")
             print(f"adc: ph_raw_filtered is {ph_f}")
             print(f"adc: ph is {shared_data['ph']}")
-            print(f"adc: od is {vals[1]}\n")
+            print(f"adc: od_raw is {od}")
+            print(f"adc: od_raw_filtered is {od_f}\n")
         time.sleep(0.1)
