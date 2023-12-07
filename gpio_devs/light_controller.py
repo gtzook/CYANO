@@ -47,7 +47,7 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     toggle_time = 0
     
     # initial state
-    """if isDay(night_time,day_time):
+    if isDay(night_time,day_time):
         shared_data['state'] = ctrl.on()
         print("light_controller: Starting daytime...")
         toggle_time = seconds_until(night_time)
@@ -59,6 +59,7 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     shared_data['state'] = ctrl.on()
     toggle_time = 180
     #toggle_time = shared_data['period']/2.0
+    """
     start_t = time.time()
     
     while True:
