@@ -60,15 +60,16 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
             start_t = time.time()
             
             # Toggle
-            shared_data['state'] = ctrl.toggle()
             events['new_light'].set()
             
             # update toggle time
-            if shared_data['state']: # it is day
-                print("light_controller: Starting daytime...")      
+            if not shared_data['state']: # it is night, turn to day
+                print("light_controller: Starting daytime...")  
+                shared_data['state'] = ctrl.on()    
                 toggle_time = seconds_until(night_time)
-            else: 
+            else: # it is day, turn to night
                 toggle_time = seconds_until(day_time)
+                shared_data['state'] = ctrl.off()   
                 print("light_controller: Starting nighttime...")
             if debug_mode:
                 print(f"led_controller: State is now {'day' if shared_data['state'] else 'night'}")
