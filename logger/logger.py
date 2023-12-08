@@ -26,7 +26,7 @@ def logger_loop(shared_data: Dict[str, Union[int,float,bool]],
       for path in os.listdir(file_path): # count existing files
         if os.path.isfile(os.path.join(file_path,path)):
           log_count = log_count + 1
-    filename = os.path.join(file_path, log_count) + '.csv'# give this log new name
+    filename = os.path.join(file_path, str(log_count)) + '.csv'# give this log new name
     
     # How to get data:
     ph = shared_data['ph'] # This is how you get ph measurement
