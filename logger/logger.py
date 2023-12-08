@@ -18,7 +18,7 @@ def logger_loop(shared_data: Dict[str, Union[int,float,bool]],
     signal.signal(signal.SIGTERM, signal_handler)
     
     now = datetime.now()
-    file_path = os.path.join(str(now.year),str(now.month),str(now.day))
+    file_path = os.path.join('logs',str(now.year),f"{now.month}-{now.day}")
     log_count = 0
     if not os.path.exists(file_path): # make directory if one does not exist
       os.makedirs(file_path)
