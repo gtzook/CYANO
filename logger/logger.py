@@ -21,13 +21,13 @@ def logger_loop(shared_data: Dict[str, Union[int,float,bool]],
     light_state = shared_data['state'] # State of lights
     
     with  open('Data_Logging.csv','a') as file: #appends to data log file, or creates if it doesnt exist
-      file.write("Time, pH, OD600, Light") #writes the headers for the file
+      file.write("Time, pH, OD, Day/Night") #writes the headers for the file
       while True:
         ph = shared_data['ph'] # This is how you get ph measurement
         light_state = shared_data['state'] # State of lights
         od = shared_data['od']  
         now = datetime.now() #Gets current time. Time stamps
         file.write("\r\n")
-        file.write(str(now) + "," + str(ph) + "," + str(od) + ',' + str(light_state)) #Writes time of measurement, and
+        file.write(f"{now}, {ph}, {od}, {'Day' if light_state else 'Night'}") #Writes time of measurement, and
         file.flush()
         time.sleep(5) #Set to whatever frequency we need
