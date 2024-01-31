@@ -17,10 +17,10 @@ pixels = neopixel.NeoPixel(
 )
 
 def cleanup(*args):
-        print("light_controller: Exiting cleanly")
-        ctrl.off()
-        gpio_dev.cleanup()
-        sys.exit(0)
+    print("light_controller: Exiting cleanly")
+    ctrl.off()
+    gpio_dev.cleanup()
+    sys.exit(0)
     
     signal.signal(signal.SIGTERM, cleanup)
     signal.signal(signal.SIGINT, cleanup)
