@@ -3,3 +3,5 @@ echo -e "Starting venv"
 source ~/CYANO/.venv/bin/activate
 echo -e "Display to local screen"
 export DISPLAY=:0
+echo -e "Setting up sudopy"
+alias sudopy="/usr/bin/sudo /home/cyano/CYANO/.venv/bin/python"
