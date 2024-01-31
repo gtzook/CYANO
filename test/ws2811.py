@@ -12,6 +12,6 @@ LED_pin = 26
 # Relay
 ctrl = gpio_dev(LED_pin, reverse_polarity=False)
 ctrl.on()
-pixels.fill((255,0,0)
+pixels.fill((255,0,0))
 sleep(5)
 ctrl.off()
