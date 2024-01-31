@@ -8,3 +8,5 @@ LED_pin = 26
 # Relay
 ctrl = gpio_dev(LED_pin, reverse_polarity=False)
 ctrl.on()
+
+ctrl.off()
