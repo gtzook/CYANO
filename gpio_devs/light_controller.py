@@ -9,6 +9,11 @@ import signal
 import sys
 from datetime import datetime as dt
 
+import board
+import neopixel
+pixels = neopixel.NeoPixel(board.D18, 30)
+
+
 LED_pin = 26
 BLED = 19
 GLED = 21
