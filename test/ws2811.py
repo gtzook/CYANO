@@ -13,7 +13,7 @@ import signal
 ORDER = neopixel.RGB
 
 pixels = neopixel.NeoPixel(
-    board.D18, 100, brightness=1, auto_write=True, pixel_order=ORDER
+    board.D18, 100, brightness=1, auto_write=False, pixel_order=ORDER
 )
 
 def cleanup(*args):
@@ -44,4 +44,5 @@ while True:
         pixels[i] = rainbow[ind]
     #pixels.fill(rainbow[pattern_index])
     pattern_index = pattern_index + 1 if pattern_index < len(rainbow) - 1 else 0     
+    pixels.show()
     sleep(0.1)  # Adjust the sleep duration to change the speed of color change
