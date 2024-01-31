@@ -37,12 +37,11 @@ rainbow = np.load('gpio_devs/light_patterns/interpolated_rainbow.npy')
 pattern_index = 0
 
 while True:
-    """for i in range(len(pixels)): 
+    for i in range(len(pixels)): 
         ind = pattern_index + i
         while ind >= len(rainbow):
             ind -= len(rainbow)
-        pixels[i] = rainbow[ind]"""
-    pixels.fill(rainbow[pattern_index])
+        pixels[i] = rainbow[ind]
+    #pixels.fill(rainbow[pattern_index])
     pattern_index = pattern_index + 1 if pattern_index < len(rainbow) - 1 else 0     
-    pixels.show()
-    sleep(0.01)  # Adjust the sleep duration to change the speed of color change
+    sleep(0.1)  # Adjust the sleep duration to change the speed of color change
