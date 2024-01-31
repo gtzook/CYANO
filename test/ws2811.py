@@ -45,4 +45,4 @@ while True:
     #pixels.fill(rainbow[pattern_index])
     pattern_index = pattern_index + 1 if pattern_index < len(rainbow) - 1 else 0     
     pixels.show()
-    sleep(0.1)  # Adjust the sleep duration to change the speed of color change
+    sleep(0.01)  # Adjust the sleep duration to change the speed of color change
