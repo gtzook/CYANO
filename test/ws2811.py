@@ -39,7 +39,7 @@ pattern_index = 0
 while True:
     for i in range(len(pixels)): 
         ind = pattern_index + i
-        if ind > len(rainbow):
+        if ind >= len(rainbow):
             ind -= len(rainbow)
         pixels[i] = rainbow[ind]
     pattern_index = pattern_index + 1 if pattern_index < len(rainbow) - 1 else 0     
