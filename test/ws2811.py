@@ -1,3 +1,6 @@
+import sys
+sys.path.append('/home/cyano/CYANO')
+
 from gpio_devs.gpio_dev import gpio_dev
 import board
 import neopixel
