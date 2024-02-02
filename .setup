@@ -5,3 +5,5 @@ echo -e "Display to local screen"
 export DISPLAY=:0
 echo -e "Setting up sudopy"
 alias sudopy="/usr/bin/sudo /home/cyano/CYANO/.venv/bin/python"
+echo -e "Xhost command to recognize display:"
+xhost +
