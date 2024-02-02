@@ -33,7 +33,7 @@ ctrl.on()
 def random_color():
     return (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
 
-rainbow = np.load('gpio_devs/light_patterns/interpolated_rainbow.npy')
+rainbow = np.load('/home/cyano/CYANO/gpio_devs/light_patterns/interpolated_rainbow.npy')
 pattern_index = 0
 
 while True:

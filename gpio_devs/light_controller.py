@@ -8,11 +8,10 @@ import numpy as np
 import signal
 import sys
 from datetime import datetime as dt
+import neopixel
+import board
 
 LED_pin = 26
-BLED = 19
-GLED = 21
-RLED = 16
 
 def led_loop(shared_data: Dict[str, Union[int,float,bool]], 
              events: Dict[str, Event], 
@@ -21,23 +20,29 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     Main loop for led process
     """
     
-    # Relay
+    # Define Relay
     ctrl = gpio_dev(LED_pin, reverse_polarity=False)
 
-    # RGB
-    rgb_ctrls = [pwm_dev(RLED), pwm_dev(GLED), pwm_dev(BLED)]
-    def set_rgb(rgb: list[int]):
-        for i in range(3):
-            rgb_ctrls[i].set_duty(rgb[i])
+    #Setup Light Strip
+    ORDER = neopixel.RGB
+    pixels = neopixel.NeoPixel(
+        board.D18, 100, brightness=.5, auto_write=False, pixel_order=ORDER
+    )
+    
+    #For rainbow patterns
     rainbow = np.load('gpio_devs/light_patterns/interpolated_rainbow.npy')
     pattern_index = 0
+
+    #Initialize to White
+    pixels.fill((255,255,255))
     
+    #For Proper Exit
     def cleanup(*args):
         print("light_controller: Exiting cleanly")
         ctrl.off()
         gpio_dev.cleanup()
         sys.exit(0)
-    
+
     signal.signal(signal.SIGTERM, cleanup)
     signal.signal(signal.SIGINT, cleanup)
     
@@ -65,7 +70,9 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
             # update toggle time
             if not shared_data['state']: # it is night, turn to day
                 print("light_controller: Starting daytime...")  
-                shared_data['state'] = ctrl.on()    
+                shared_data['state'] = ctrl.on() 
+                time.sleep(.1)
+                pixels.show()   
                 toggle_time = seconds_until(night_time)
             else: # it is day, turn to night
                 toggle_time = seconds_until(day_time)
@@ -81,7 +88,12 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
             if shared_data['demo'] and shared_data['state']: # If demo mode and on, rainbow!
                 if debug_mode:
                     print(f'current RGB: {rainbow[pattern_index]}')
-                set_rgb(rainbow[pattern_index])
+                for i in range(len(pixels)): 
+                    ind = pattern_index + i
+                    while ind >= len(rainbow):
+                        ind -= len(rainbow)
+                    pixels[i] = rainbow[ind]
                 pattern_index = pattern_index + 1 if pattern_index < len(rainbow) - 1 else 0
+                pixels.show()
                 time.sleep(.01)
                 
