@@ -168,7 +168,9 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
         agitation_percent = 0
         
         window_update()
-        window.un_hide()            
+        window.un_hide()
+        print("sleeping")
+        time.sleep(5)            
         while True:
             event, _ = window.read(timeout=10)
             if event in ('Exit', None):
