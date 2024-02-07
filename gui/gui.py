@@ -25,7 +25,7 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
     ph_datapoints = 30 # max number of ph datapoints to display at once
     od_datapoints = 30 # max number of od datapoints to display at once
     
-    sg.theme('Dark') # set gui colors
+    #sg.theme('Dark') # set gui colors
     
     # pH section
     ph_column = [[sg.Text('pH Sensor', size=(40, 1), key='-PH-',
@@ -105,7 +105,6 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
     # make ph plot
     ph_line, =ax.plot(range(ph_datapoints), phs, 
                 color='purple', linewidth=6)    
-
     
     #OD PLOT
     fig2 = Figure()
@@ -128,14 +127,7 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
     # make od plot
     od_line, =ax2.plot(range(od_datapoints), ods, 
                 color='green', linewidth=6)
-    try:
-        # Splash screen to hide while loading
-        SPLASH_IMAGE_FILE = 'cyano.png'
-        DISPLAY_TIME_MILLISECONDS = 5000
-        splash=sg.Window('',
-                [[sg.Image(SPLASH_IMAGE_FILE)]], no_titlebar=True, keep_on_top=True)
-        #splash.read(timeout=DISPLAY_TIME_MILLISECONDS, close=True)
-        
+    try:       
         # create the form and show it without the plot
         window = sg.Window('CYANO GUI',
                     layout, finalize=True)
