@@ -154,11 +154,11 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
         agitation_percent = 0
         
         splash.close()
-        window.UnHide()
         window.maximize()
         if debug_mode:
             print("Splash closing")
         
+        window.UnHide()
         while True:
             event, _ = window.read(timeout=10)
             if event in ('Exit', None):
