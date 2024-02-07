@@ -146,6 +146,27 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
         od_canvas_elem = window['-OD-CANVAS-']
         od_canvas = od_canvas_elem.TKCanvas
         fig_agg2 = draw_figure(od_canvas, fig2)
+        
+        def window_update():
+            fig_agg.draw() # render plots
+            fig_agg2.draw()
+            
+            window['-PH-VALUE-'].update(value="{:.3f}".format(shared_data['ph'])) # update text displays
+            window['-OD-VALUE-'].update(value=f"{shared_data['od']}")
+            window['-AGITATION-PERCENT-'].update(f'{agitation_percent}%')
+
+            if shared_data['state']:
+                window['-DAY-NIGHT-'].update(value='DAY',
+                                            text_color='yellow')
+            else:
+                window['-DAY-NIGHT-'].update(value='NIGHT',
+                                            text_color='blue')
+            
+            time_str = util.time_formatting.time_string_from_sec(shared_data['remaining'])
+            window['-TIME-SWITCH-'].update(time_str)
+        
+        window_update()
+        window.un_hide()            
 
         agitation_percent = 0
         while True:
@@ -163,23 +184,8 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
             ods.append(shared_data['od']) # add new od data
             od_line.set_ydata(ods)     # update plot
             
-            fig_agg.draw() # render plots
-            fig_agg2.draw()
+            window_update()
             
-            window['-PH-VALUE-'].update(value="{:.3f}".format(shared_data['ph'])) # update text displays
-            window['-OD-VALUE-'].update(value=f"{shared_data['od']}")
-            window['-AGITATION-PERCENT-'].update(f'{agitation_percent}%')
-
-            if shared_data['state']:
-                window['-DAY-NIGHT-'].update(value='DAY',
-                                            text_color='yellow')
-            else:
-                window['-DAY-NIGHT-'].update(value='NIGHT',
-                                            text_color='blue')
-            
-            time_str = util.time_formatting.time_string_from_sec(shared_data['remaining'])
-            window['-TIME-SWITCH-'].update(time_str)
-            window.un_hide()
             time.sleep(0.05) # ~refresh rate of 20 Hz
     except KeyboardInterrupt:
         print('gui: Exiting cleanly')
