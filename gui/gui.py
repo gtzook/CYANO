@@ -133,10 +133,10 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
     try:       
         # create the form and show it without the plot
         splash = sg.Window('Splash Screen', splash_layout, finalize=True, no_titlebar=True, 
-                            grab_anywhere=True, size=size, keep_on_top=True)
+                            grab_anywhere=True, size=size, keep_on_top=True, force_toplevel=True)
         splash.read(timeout=3000, close=True)
         window = sg.Window('CYANO GUI',
-                    layout, finalize=True, size=size, visible=False)
+                    layout, finalize=True, size=size)
         ph_canvas_elem = window['-PH-CANVAS-']
         ph_canvas = ph_canvas_elem.TKCanvas     
         
