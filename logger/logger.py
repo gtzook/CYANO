@@ -32,8 +32,6 @@ def logger_loop(shared_data: Dict[str, Union[int,float,bool]],
     ph = shared_data['ph'] # This is how you get ph measurement
     light_state = shared_data['state'] # State of lights
     
-    print(f"It is now: {datetime.now()}")
-    
     with open(filename,'a') as file: #appends to data log file, or creates if it doesnt exist
       file.write("Time, pH, OD, Day/Night") #writes the headers for the file
       while True:

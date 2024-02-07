@@ -10,7 +10,8 @@ import sys
 from datetime import datetime as dt
 from util.time_formatting import getTimeFromUser, isTimeFormat
 
-if __name__ == "__main__":  
+if __name__ == "__main__":   
+    print(f"CYANO starting at {dt.now()}")
     # Shared memory manager
     manager = mp.Manager()
     
