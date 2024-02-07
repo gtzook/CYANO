@@ -30,12 +30,12 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
     # pH section
     ph_column = [[sg.Text('pH Sensor', size=(40, 1), key='-PH-',
                 justification='center', font='Helvetica 20')],
-              [sg.Canvas(size=(640, 60), key='-PH-CANVAS-', background_color='white')]]
+              [sg.Canvas(size=(640, 600), key='-PH-CANVAS-', background_color='white')]]
     
     # OD section
     od_column = [[sg.Text('OD Sensor', size=(40, 1), key='-OD-',
                 justification='center', font='Helvetica 20')],
-              [sg.Canvas(size=(640, 60), key='-OD-CANVAS-', background_color='white')]]
+              [sg.Canvas(size=(640, 600), key='-OD-CANVAS-', background_color='white')]]
     
     #Value Display section
     status_column = [
