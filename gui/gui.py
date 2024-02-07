@@ -165,7 +165,7 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
             
             time_str = util.time_formatting.time_string_from_sec(shared_data['remaining'])
             window['-TIME-SWITCH-'].update(time_str)
-            
+        print("starting loop")
         while True:
             event, _ = window.read(timeout=10)
             if event in ('Exit', None):
