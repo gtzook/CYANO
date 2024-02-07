@@ -135,7 +135,7 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
         # create the form and show it without the plot
         window = sg.Window('CYANO GUI',
                     layout, finalize=True, size=size)
-        loading = sg.Window('', layout=splash_layout, finalize=True, size=size/2,
+        loading = sg.Window('', layout=splash_layout, finalize=True, size=(300,500),
                             keep_on_top=True, no_titlebar=True)
         loading.read(timeout=5000, close=True)
      
