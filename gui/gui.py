@@ -146,11 +146,12 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
         od_canvas_elem = window['-OD-CANVAS-']
         od_canvas = od_canvas_elem.TKCanvas
         fig_agg2 = draw_figure(od_canvas, fig2)
+        print("rendering plots)")
+        fig_agg.draw() # render plots
+        fig_agg2.draw()
+            
         
         def window_update():
-            fig_agg.draw() # render plots
-            fig_agg2.draw()
-            
             window['-PH-VALUE-'].update(value="{:.3f}".format(shared_data['ph'])) # update text displays
             window['-OD-VALUE-'].update(value=f"{shared_data['od']}")
             window['-AGITATION-PERCENT-'].update(f'{agitation_percent}%')
@@ -167,7 +168,7 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
             
         agitation_percent = 0
         
-        window_update()
+        #window_update()
         window.un_hide()
         print("sleeping")
         time.sleep(5)            
