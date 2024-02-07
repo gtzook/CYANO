@@ -127,12 +127,19 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
     # make od plot
     od_line, =ax2.plot(range(od_datapoints), ods, 
                 color='green', linewidth=6)
+    # Define your splash screen layout
+    splash_layout = [[sg.Text('Loading...')]]
     try:       
         # create the form and show it without the plot
         window = sg.Window('CYANO GUI',
                     layout, finalize=True)
-        window.maximize() 
-        print("ehre")
+        splash = sg.Window('Splash Screen', splash_layout, finalize=True, no_titlebar=True, grab_anywhere=True)
+
+        # Simulate some loading time
+        time.sleep(3)
+
+        # Close the splash screen and show the main window
+        splash.close()
         #PH PLOT        
         ph_canvas_elem = window['-PH-CANVAS-']
         ph_canvas = ph_canvas_elem.TKCanvas
@@ -164,7 +171,6 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
             window['-PH-VALUE-'].update(value="{:.3f}".format(shared_data['ph'])) # update text displays
             window['-OD-VALUE-'].update(value=f"{shared_data['od']}")
             window['-AGITATION-PERCENT-'].update(f'{agitation_percent}%')
-            #window['-AGITATION-PERCENT'].update((value=)) #NEED TO SET AGITATION AMOUNT HERE
 
             if shared_data['state']:
                 window['-DAY-NIGHT-'].update(value='DAY',
