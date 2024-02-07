@@ -164,7 +164,8 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
             
             time_str = util.time_formatting.time_string_from_sec(shared_data['remaining'])
             window['-TIME-SWITCH-'].update(time_str)
-        #window_update()
+        window_update()
+        window.Finalize()
         # window.un_hide()
         print("starting loop")
         while True:
