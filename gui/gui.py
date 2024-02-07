@@ -92,7 +92,7 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
         SPLASH_IMAGE_FILE = 'cyano.png'
         DISPLAY_TIME_MILLISECONDS = 10000
         splash=sg.Window('',
-                [[sg.Image(SPLASH_IMAGE_FILE)]])
+                [[sg.Image(SPLASH_IMAGE_FILE)]], keep_on_top=True)
         #PH PLOT
 
         # draw the initial plot in the window
@@ -168,8 +168,8 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
             ods.append(shared_data['od']) # add new od data
             od_line.set_ydata(ods)     # update plot
             
-            #fig_agg.draw() # render plots
-            #fig_agg2.draw()
+            fig_agg.draw() # render plots
+            fig_agg2.draw()
             
             window['-PH-VALUE-'].update(value="{:.3f}".format(shared_data['ph'])) # update text displays
             window['-OD-VALUE-'].update(value=f"{shared_data['od']}")
