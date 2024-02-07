@@ -128,16 +128,16 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
     od_line, =ax2.plot(range(od_datapoints), ods, 
                 color='green', linewidth=6)
     # Define your splash screen layout
-    splash_layout = [[sg.Text('Loading...')]]
+    splash_layout = [[sg.Image('cyano.png')]]
     size = sg.Window.get_screen_size()
 
     try:       
         # create the form and show it without the plot
         window = sg.Window('CYANO GUI',
-                    layout, finalize=True, size=size)
-        loading = sg.Window('', layout=splash_layout, finalize=True, size=(300,500),
+                    layout, finalize=True, size=size, no_titlebar=True)
+        loading = sg.Window('', layout=splash_layout, finalize=True, size=(500,300),
                             keep_on_top=True, no_titlebar=True)
-        loading.read(timeout=5000, close=True)
+        loading.read(timeout=3000, close=True)
      
         ph_canvas_elem = window['-PH-CANVAS-']
         ph_canvas = ph_canvas_elem.TKCanvas
