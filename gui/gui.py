@@ -137,6 +137,7 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
         splash.read(timeout=10000, close=True)
         window = sg.Window('CYANO GUI',
                     layout, finalize=True, size=size)
+        window.hide()
         ph_canvas_elem = window['-PH-CANVAS-']
         ph_canvas = ph_canvas_elem.TKCanvas     
         
@@ -147,7 +148,6 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
         
         fig_agg2 = draw_figure(od_canvas, fig2) 
         fig_agg = draw_figure(ph_canvas, fig)   
-        
         def window_update():
             fig_agg.draw() # render plots
             fig_agg2.draw()
@@ -165,6 +165,8 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
             
             time_str = util.time_formatting.time_string_from_sec(shared_data['remaining'])
             window['-TIME-SWITCH-'].update(time_str)
+        window_update()
+        window.unhide()
         print("starting loop")
         while True:
             event, _ = window.read(timeout=10)
