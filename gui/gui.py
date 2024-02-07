@@ -153,7 +153,7 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
 
         agitation_percent = 0
         
-        splash.close()
+        #splash.close()
         
         while True:
             event, _ = window.read(timeout=10)
