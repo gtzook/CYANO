@@ -84,17 +84,16 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
     ]
 
     try:
+        # create the form and show it without the plot
+        window = sg.Window('CYANO GUI',
+                    layout, finalize=True)
+        window.maximize()
         # Splash screen to eliminate long loading time on Mac OSX
         SPLASH_IMAGE_FILE = 'cyano.png'
         DISPLAY_TIME_MILLISECONDS = 10000
         sg.Window('',
                 [[sg.Image(SPLASH_IMAGE_FILE)]], transparent_color=sg.theme_background_color(),
                 no_titlebar=True, keep_on_top=True).read(timeout=DISPLAY_TIME_MILLISECONDS, close=True)
-        # create the form and show it without the plot
-        window = sg.Window('CYANO GUI',
-                    layout, finalize=True)
-        window.maximize()
-
         #PH PLOT
 
         # draw the initial plot in the window
