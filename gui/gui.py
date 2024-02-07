@@ -140,6 +140,7 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
         window = sg.Window('CYANO GUI',
                     layout, finalize=True)
         window.maximize() 
+        print("ehre")
         #PH PLOT        
         ph_canvas_elem = window['-PH-CANVAS-']
         ph_canvas = ph_canvas_elem.TKCanvas
