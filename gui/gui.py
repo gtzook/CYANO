@@ -136,7 +136,7 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
                             grab_anywhere=True, size=size, keep_on_top=True)
         splash.read(timeout=3000, close=True)
         window = sg.Window('CYANO GUI',
-                    layout, finalize=True, size=size)
+                    layout, finalize=True, size=size, visible=False)
         window.hide()
         print("window hidden")
      
