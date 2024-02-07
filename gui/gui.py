@@ -134,7 +134,7 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
         # create the form and show it without the plot
         splash = sg.Window('Splash Screen', splash_layout, finalize=True, no_titlebar=True, 
                             grab_anywhere=True, size=size, keep_on_top=True, force_toplevel=True)
-        splash.read(timeout=10000, close=True)
+        splash.read(timeout=5000, close=True)
         window = sg.Window('CYANO GUI',
                     layout, finalize=True, size=size)
         window.hide()
@@ -145,9 +145,10 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
         od_canvas = od_canvas_elem.TKCanvas
             
         agitation_percent = 0
-        
+        print('here')
         fig_agg2 = draw_figure(od_canvas, fig2) 
         fig_agg = draw_figure(ph_canvas, fig)   
+        print('here2')
         def window_update():
             fig_agg.draw() # render plots
             fig_agg2.draw()
@@ -166,7 +167,7 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
             time_str = util.time_formatting.time_string_from_sec(shared_data['remaining'])
             window['-TIME-SWITCH-'].update(time_str)
         window_update()
-        window.unhide()
+        window.un_hide()
         print("starting loop")
         while True:
             event, _ = window.read(timeout=10)
