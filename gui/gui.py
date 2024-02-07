@@ -129,11 +129,12 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
                 color='green', linewidth=6)
     # Define your splash screen layout
     splash_layout = [[sg.Text('Loading...')]]
+    size = sg.Window.get_screen_size()
     try:       
         # create the form and show it without the plot
         window = sg.Window('CYANO GUI',
-                    layout, finalize=True)
-        splash = sg.Window('Splash Screen', splash_layout, finalize=True, no_titlebar=True, grab_anywhere=True)
+                    layout, finalize=True, size=size)
+        splash = sg.Window('Splash Screen', splash_layout, finalize=True, no_titlebar=True, grab_anywhere=True, size=size)
         splash.read()
         # Simulate some loading time
         time.sleep(3)
