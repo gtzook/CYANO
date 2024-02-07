@@ -24,13 +24,6 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
              debug_mode: bool) -> None:
     ph_datapoints = 30 # max number of ph datapoints to display at once
     od_datapoints = 30 # max number of od datapoints to display at once
-     # Splash screen to eliminate long loading time on Mac OSX
-     
-    SPLASH_IMAGE_FILE = 'cyano.png'
-    DISPLAY_TIME_MILLISECONDS = 100
-    sg.Window('',
-              [[sg.Image(SPLASH_IMAGE_FILE)]], transparent_color=sg.theme_background_color(),
-              no_titlebar=True, keep_on_top=True).read(timeout=DISPLAY_TIME_MILLISECONDS, close=True)
     
     sg.theme('Dark') # set gui colors
     
@@ -91,6 +84,12 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
     ]
 
     try:
+        # Splash screen to eliminate long loading time on Mac OSX
+        SPLASH_IMAGE_FILE = 'cyano.png'
+        DISPLAY_TIME_MILLISECONDS = 100
+        sg.Window('',
+                [[sg.Image(SPLASH_IMAGE_FILE)]], transparent_color=sg.theme_background_color(),
+                no_titlebar=True, keep_on_top=True).read(timeout=DISPLAY_TIME_MILLISECONDS, close=True)
         # create the form and show it without the plot
         window = sg.Window('CYANO GUI',
                     layout, finalize=True)
