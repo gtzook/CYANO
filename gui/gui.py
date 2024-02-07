@@ -24,7 +24,14 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
              debug_mode: bool) -> None:
     ph_datapoints = 30 # max number of ph datapoints to display at once
     od_datapoints = 30 # max number of od datapoints to display at once
+     # Splash screen to eliminate long loading time on Mac OSX
      
+    SPLASH_IMAGE_FILE = 'cyano.png'
+    DISPLAY_TIME_MILLISECONDS = 100
+    sg.Window('',
+              [[sg.Image(SPLASH_IMAGE_FILE)]], transparent_color=sg.theme_background_color(),
+              no_titlebar=True, keep_on_top=True).read(timeout=DISPLAY_TIME_MILLISECONDS, close=True)
+    
     sg.theme('Dark') # set gui colors
     
     # pH section
@@ -93,7 +100,6 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
 
         # draw the initial plot in the window
         fig = Figure()
-        fig.patch.set_facecolor('xkcd:seafoam') # background color of plt
         ax = fig.add_subplot(111)
         ax.set_xlabel("Time")
         ax.set_ylabel("pH")
@@ -121,7 +127,6 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
 
         #OD PLOT
         fig2 = Figure()
-        fig2.patch.set_facecolor('xkcd:seafoam') # background color of plt
         ax2 = fig2.add_subplot(111)
         ax2.set_xlabel("Time")
         ax2.set_ylabel("OD")
