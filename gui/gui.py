@@ -185,8 +185,8 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
             time_str = util.time_formatting.time_string_from_sec(shared_data['remaining'])
             window['-TIME-SWITCH-'].update(time_str)
             
-            time.sleep(0.05) # ~refresh rate of 20 Hz
+            time.sleep(0.05) # ~refresh rate of 20 Hz"""
     except KeyboardInterrupt:
         print('gui: Exiting cleanly')
         window.close()
-        sys.exit(0)"""
+        sys.exit(0)
