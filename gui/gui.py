@@ -132,21 +132,18 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
     size = sg.Window.get_screen_size()
     try:       
         # create the form and show it without the plot
-        splash = sg.Window('Splash Screen', splash_layout, finalize=True, no_titlebar=True, 
-                            grab_anywhere=True, size=size, keep_on_top=True, force_toplevel=True)
-        splash.read(timeout=5000, close=True)
         window = sg.Window('CYANO GUI',
-                    layout, finalize=False, size=size)
-        #window.hide()
+                    layout, finalize=True, size=size)
+     
         ph_canvas_elem = window['-PH-CANVAS-']
-        ph_canvas = ph_canvas_elem.TKCanvas     
+        ph_canvas = ph_canvas_elem.TKCanvas
+        fig_agg = draw_figure(ph_canvas, fig)        
         
         od_canvas_elem = window['-OD-CANVAS-']
         od_canvas = od_canvas_elem.TKCanvas
+        fig_agg2 = draw_figure(od_canvas, fig2)
             
         agitation_percent = 0
-        fig_agg2 = draw_figure(od_canvas, fig2) 
-        fig_agg = draw_figure(ph_canvas, fig)
         def window_update():
             fig_agg.draw() # render plots
             fig_agg2.draw()
@@ -163,11 +160,7 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
                                             text_color='blue')
             
             time_str = util.time_formatting.time_string_from_sec(shared_data['remaining'])
-            window['-TIME-SWITCH-'].update(time_str)
-        window_update()
-        window.Finalize()
-        # window.un_hide()
-        print("starting loop")
+            window['-TIME-SWITCH-'].update(time_str)      
         while True:
             event, _ = window.read(timeout=10)
             if event in ('Exit', None):
