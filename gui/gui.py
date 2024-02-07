@@ -145,8 +145,6 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
             
         agitation_percent = 0
         
-        window.un_hide()
-        print("Unhide")
         fig_agg2 = draw_figure(od_canvas, fig2) 
         fig_agg = draw_figure(ph_canvas, fig)   
         
