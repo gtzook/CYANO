@@ -134,15 +134,10 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
         # create the form and show it without the plot
         splash = sg.Window('Splash Screen', splash_layout, finalize=True, no_titlebar=True, 
                             grab_anywhere=True, size=size, keep_on_top=True)
-        splash.read()
+        splash.read(timeout=3000, close=True)
         window = sg.Window('CYANO GUI',
                     layout, finalize=True, size=size)
-        # Simulate some loading time
-        time.sleep(3)
-
-        # Close the splash screen and show the main window
-        splash.close()
-        #PH PLOT        
+     
         ph_canvas_elem = window['-PH-CANVAS-']
         ph_canvas = ph_canvas_elem.TKCanvas
         fig_agg = draw_figure(ph_canvas, fig)        
