@@ -82,7 +82,46 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
     layout = [[*top], [sg.Column(agiation_column), sg.Column(light_column, element_justification = 'center'), sg.Column(slider_column) ],
               [sg.Column(ph_column,vertical_alignment ='bottom'), *spacer_column, sg.Column(status_column), *s_c2, sg.Column(od_column, vertical_alignment = 'bottom')]
     ]
+    
+    # PH PLOT
+    # draw the initial plot in the window
+    fig = Figure()
+    ax = fig.add_subplot(111)
+    ax.set_xlabel("Time")
+    ax.set_ylabel("pH")
+    ax.grid()
+    ax.set_ylim(0,10)
+    for item in ([ax.xaxis.label, ax.yaxis.label] +
+            ax.get_xticklabels() + ax.get_yticklabels()):
+        item.set_fontsize(20) # make fonts bigger
+    for item in (ax.get_xticklabels() + ax.get_yticklabels()):
+        item.set_fontsize(15) # make fonts bigger
+    fig.tight_layout() #tight layout for aesthetics
+    fig.subplots_adjust(bottom=0.15,left=0.12) #expand to include text
 
+    # deque for ph data
+    phs = deque([0]*ph_datapoints,maxlen=ph_datapoints)
+        
+    # make ph plot
+    ph_line, =ax.plot(range(ph_datapoints), phs, 
+                color='purple', linewidth=6)    
+
+    
+    #OD PLOT
+    fig2 = Figure()
+    ax2 = fig2.add_subplot(111)
+    ax2.set_xlabel("Time")
+    ax2.set_ylabel("OD")
+    ax2.grid()
+    ax2.set_ylim(0,4000)
+    for item in ([ax2.xaxis.label, ax2.yaxis.label] +
+            ax2.get_xticklabels() + ax2.get_yticklabels()):
+        item.set_fontsize(20) # make fonts bigger
+    for item in (ax2.get_xticklabels() + ax2.get_yticklabels()):
+        item.set_fontsize(15) # make fonts bigger
+    fig2.tight_layout() #tight layout for aesthetics
+    fig2.subplots_adjust(bottom=0.15,left=0.2) #expand to include text
+    
     try:
         # Splash screen to hide while loading
         SPLASH_IMAGE_FILE = 'cyano.png'
@@ -95,49 +134,10 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
         window = sg.Window('CYANO GUI',
                     layout, finalize=True)
         window.maximize() 
-        #PH PLOT
-
-        # draw the initial plot in the window
-        fig = Figure()
-        ax = fig.add_subplot(111)
-        ax.set_xlabel("Time")
-        ax.set_ylabel("pH")
-        ax.grid()
-        ax.set_ylim(0,10)
-        for item in ([ax.xaxis.label, ax.yaxis.label] +
-                ax.get_xticklabels() + ax.get_yticklabels()):
-            item.set_fontsize(20) # make fonts bigger
-        for item in (ax.get_xticklabels() + ax.get_yticklabels()):
-            item.set_fontsize(15) # make fonts bigger
-        fig.tight_layout() #tight layout for aesthetics
-        fig.subplots_adjust(bottom=0.15,left=0.12) #expand to include text
-        
+        #PH PLOT        
         ph_canvas_elem = window['-PH-CANVAS-']
         ph_canvas = ph_canvas_elem.TKCanvas
-        #fig_agg = draw_figure(ph_canvas, fig)
-
-        # deque for ph data
-        phs = deque([0]*ph_datapoints,maxlen=ph_datapoints)
-        
-        
-        # make ph plot
-        ph_line, =ax.plot(range(ph_datapoints), phs, 
-                    color='purple', linewidth=6)    
-
-        #OD PLOT
-        fig2 = Figure()
-        ax2 = fig2.add_subplot(111)
-        ax2.set_xlabel("Time")
-        ax2.set_ylabel("OD")
-        ax2.grid()
-        ax2.set_ylim(0,4000)
-        for item in ([ax2.xaxis.label, ax2.yaxis.label] +
-                ax2.get_xticklabels() + ax2.get_yticklabels()):
-            item.set_fontsize(20) # make fonts bigger
-        for item in (ax2.get_xticklabels() + ax2.get_yticklabels()):
-            item.set_fontsize(15) # make fonts bigger
-        fig2.tight_layout() #tight layout for aesthetics
-        fig2.subplots_adjust(bottom=0.15,left=0.2) #expand to include text
+        fig_agg = draw_figure(ph_canvas, fig)        
         
         od_canvas_elem = window['-OD-CANVAS-']
         od_canvas = od_canvas_elem.TKCanvas
