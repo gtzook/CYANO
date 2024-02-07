@@ -86,7 +86,7 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
     try:
         # Splash screen to hide while loading
         SPLASH_IMAGE_FILE = 'cyano.png'
-        DISPLAY_TIME_MILLISECONDS = 50000
+        DISPLAY_TIME_MILLISECONDS = 5000
         splash=sg.Window('',
                 [[sg.Image(SPLASH_IMAGE_FILE)]], no_titlebar=True, keep_on_top=True)
         splash.read(timeout=DISPLAY_TIME_MILLISECONDS, close=True)
