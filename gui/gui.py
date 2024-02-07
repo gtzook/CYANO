@@ -140,15 +140,17 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
         window.hide()
      
         ph_canvas_elem = window['-PH-CANVAS-']
-        ph_canvas = ph_canvas_elem.TKCanvas
-        fig_agg = draw_figure(ph_canvas, fig)        
+        ph_canvas = ph_canvas_elem.TKCanvas     
         
         od_canvas_elem = window['-OD-CANVAS-']
         od_canvas = od_canvas_elem.TKCanvas
-        fig_agg2 = draw_figure(od_canvas, fig2)
             
         agitation_percent = 0
-        window.un_hide()    
+        
+        window.un_hide()
+        fig_agg2 = draw_figure(od_canvas, fig2) 
+        fig_agg = draw_figure(ph_canvas, fig)   
+        
         def window_update():
             fig_agg.draw() # render plots
             fig_agg2.draw()
