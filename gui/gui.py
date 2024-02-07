@@ -94,7 +94,7 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
         # create the form and show it without the plot
         window = sg.Window('CYANO GUI',
                     layout, finalize=True)  
-        window.hide()     
+        window.Hide()     
         #PH PLOT
 
         # draw the initial plot in the window
