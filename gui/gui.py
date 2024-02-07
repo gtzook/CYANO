@@ -132,9 +132,9 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
     size = sg.Window.get_screen_size()
     try:       
         # create the form and show it without the plot
-        sg.PopupAnimated(sg.DEFAULT_BASE64_LOADING_GIF, background_color='white', time_between_frames=100)
         window = sg.Window('CYANO GUI',
                     layout, finalize=True, size=size)
+        sg.PopupAnimated(sg.DEFAULT_BASE64_LOADING_GIF, background_color='white', time_between_frames=100)
      
         ph_canvas_elem = window['-PH-CANVAS-']
         ph_canvas = ph_canvas_elem.TKCanvas
