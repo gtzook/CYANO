@@ -86,14 +86,15 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
     try:
         # Splash screen to hide while loading
         SPLASH_IMAGE_FILE = 'cyano.png'
-        #DISPLAY_TIME_MILLISECONDS = 10000
-        #splash=sg.Window('',
-        #        [[sg.Image(SPLASH_IMAGE_FILE)]], keep_on_top=True)
-        #splash.maximize()
+        DISPLAY_TIME_MILLISECONDS = 10000
+        splash=sg.Window('',
+                [[sg.Image(SPLASH_IMAGE_FILE)]], keep_on_top=True, finalize=True)
+        splash.maximize()
         
         # create the form and show it without the plot
         window = sg.Window('CYANO GUI',
                     layout, finalize=True)
+        window.maximize()
         
         #PH PLOT
 
@@ -153,11 +154,10 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
 
         agitation_percent = 0
         
-        #splash.close()
+        splash.close()
         if debug_mode:
             print("Splash closing")
         
-        window.maximize()
         while True:
             event, _ = window.read(timeout=10)
             if event in ('Exit', None):
@@ -194,6 +194,6 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
             time.sleep(0.05) # ~refresh rate of 20 Hz
     except KeyboardInterrupt:
         print('gui: Exiting cleanly')
-        #splash.close()
+        splash.close()
         window.close()
         sys.exit(0)
