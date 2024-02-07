@@ -25,7 +25,7 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
     ph_datapoints = 30 # max number of ph datapoints to display at once
     od_datapoints = 30 # max number of od datapoints to display at once
     
-    #sg.theme('Dark') # set gui colors
+    sg.theme('Dark') # set gui colors
     
     # pH section
     ph_column = [[sg.Text('pH Sensor', size=(40, 1), key='-PH-',
@@ -132,8 +132,11 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
     size = sg.Window.get_screen_size()
     try:       
         # create the form and show it without the plot
+        splash = sg.Window('Splash', splash_layout, finalize=True, size=size, keep_on_top=True)
+        splash.read(timeout=5000, close=True)
         window = sg.Window('CYANO GUI',
                     layout, finalize=True, size=size)
+        splash.bring_to_front()
      
         ph_canvas_elem = window['-PH-CANVAS-']
         ph_canvas = ph_canvas_elem.TKCanvas
