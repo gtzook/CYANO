@@ -135,7 +135,8 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
         # create the form and show it without the plot
         window = sg.Window('CYANO GUI',
                     layout, finalize=True, size=size)
-        sg.popup("Loading", non_blocking=True, size=size)
+        loading = sg.Window('', layout=splash_layout, finalize=True, size=size/2,
+                            keep_on_top=True, no_titlebar=True)
      
         ph_canvas_elem = window['-PH-CANVAS-']
         ph_canvas = ph_canvas_elem.TKCanvas
