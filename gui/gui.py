@@ -114,7 +114,7 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
         
         ph_canvas_elem = window['-PH-CANVAS-']
         ph_canvas = ph_canvas_elem.TKCanvas
-        fig_agg = draw_figure(ph_canvas, fig)
+        #fig_agg = draw_figure(ph_canvas, fig)
 
         # deque for ph data
         phs = deque([0]*ph_datapoints,maxlen=ph_datapoints)
@@ -141,7 +141,7 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
         
         od_canvas_elem = window['-OD-CANVAS-']
         od_canvas = od_canvas_elem.TKCanvas
-        fig_agg2 = draw_figure(od_canvas, fig2)
+        #fig_agg2 = draw_figure(od_canvas, fig2)
 
         # deque of od data
         ods = deque([0]*od_datapoints,maxlen=od_datapoints)
