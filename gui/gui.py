@@ -144,10 +144,7 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
         fig_agg2 = draw_figure(od_canvas, fig2)
             
         agitation_percent = 0
-        def window_update():
-            fig_agg.draw() # render plots
-            fig_agg2.draw()
-            
+        def window_update():            
             window['-PH-VALUE-'].update(value="{:.3f}".format(shared_data['ph'])) # update text displays
             window['-OD-VALUE-'].update(value=f"{shared_data['od']}")
             window['-AGITATION-PERCENT-'].update(f'{agitation_percent}%')
@@ -160,7 +157,10 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
                                             text_color='blue')
             
             time_str = util.time_formatting.time_string_from_sec(shared_data['remaining'])
-            window['-TIME-SWITCH-'].update(time_str)      
+            window['-TIME-SWITCH-'].update(time_str)   
+            fig_agg.draw() # render plots
+            fig_agg2.draw()
+               
         while True:
             event, _ = window.read(timeout=10)
             if event in ('Exit', None):
