@@ -93,8 +93,7 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
         
         # create the form and show it without the plot
         window = sg.Window('CYANO GUI',
-                    layout, finalize=False)
-        window.read()
+                    layout, finalize=True)
         
         #PH PLOT
 
@@ -158,6 +157,7 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
         if debug_mode:
             print("Splash closing")
         
+        window.maximize()
         while True:
             event, _ = window.read(timeout=10)
             if event in ('Exit', None):
