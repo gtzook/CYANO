@@ -134,7 +134,7 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
         window = sg.Window('CYANO GUI',
                     layout, finalize=True)
         splash = sg.Window('Splash Screen', splash_layout, finalize=True, no_titlebar=True, grab_anywhere=True)
-
+        splash.read()
         # Simulate some loading time
         time.sleep(3)
 
