@@ -137,9 +137,6 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
         splash.read(timeout=3000, close=True)
         window = sg.Window('CYANO GUI',
                     layout, finalize=True, size=size, visible=False)
-        window.hide()
-        print("window hidden")
-     
         ph_canvas_elem = window['-PH-CANVAS-']
         ph_canvas = ph_canvas_elem.TKCanvas     
         
@@ -149,6 +146,7 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
         agitation_percent = 0
         
         window.un_hide()
+        print("Unhide")
         fig_agg2 = draw_figure(od_canvas, fig2) 
         fig_agg = draw_figure(ph_canvas, fig)   
         
