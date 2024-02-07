@@ -147,9 +147,9 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
         od_canvas = od_canvas_elem.TKCanvas
         fig_agg2 = draw_figure(od_canvas, fig2)
         print("rendering plots)")
-        fig_agg.draw() # render plots
-        fig_agg2.draw()
             
+        agitation_percent = 0
+        window.un_hide()    
         
         def window_update():
             window['-PH-VALUE-'].update(value="{:.3f}".format(shared_data['ph'])) # update text displays
@@ -164,14 +164,8 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
                                             text_color='blue')
             
             time_str = util.time_formatting.time_string_from_sec(shared_data['remaining'])
-            window['-TIME-SWITCH-'].update(time_str)
+            window['-TIME-SWITCH-'].update(time_str)    
             
-        agitation_percent = 0
-        
-        #window_update()
-        window.un_hide()
-        print("sleeping")
-        time.sleep(5)            
         while True:
             event, _ = window.read(timeout=10)
             if event in ('Exit', None):
