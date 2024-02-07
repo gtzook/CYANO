@@ -136,7 +136,7 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
                             grab_anywhere=True, size=size, keep_on_top=True, force_toplevel=True)
         splash.read(timeout=5000, close=True)
         window = sg.Window('CYANO GUI',
-                    layout, finalize=True, size=size)
+                    layout, finalize=False, size=size)
         #window.hide()
         ph_canvas_elem = window['-PH-CANVAS-']
         ph_canvas = ph_canvas_elem.TKCanvas     
