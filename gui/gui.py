@@ -137,6 +137,7 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
                     layout, finalize=True, size=size)
         loading = sg.Window('', layout=splash_layout, finalize=True, size=size/2,
                             keep_on_top=True, no_titlebar=True)
+        loading.read(timeout=5000, close=True)
      
         ph_canvas_elem = window['-PH-CANVAS-']
         ph_canvas = ph_canvas_elem.TKCanvas
