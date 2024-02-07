@@ -152,7 +152,7 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
 
         agitation_percent = 0
         
-        window.show()
+        window.read()
         splash.close()
         if debug_mode:
             print("Splash closing")
