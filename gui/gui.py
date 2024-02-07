@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import PySimpleGUIQt as sg
+import PySimpleGUI as sg
 from random import randint
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
