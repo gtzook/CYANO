@@ -93,7 +93,7 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
         
         # create the form and show it without the plot
         window = sg.Window('CYANO GUI',
-                    layout, finalize=True, keep_on_top=False)
+                    layout, finalize=True)
         window.maximize() 
         #PH PLOT
 
@@ -150,7 +150,7 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
         od_line, =ax2.plot(range(od_datapoints), ods, 
                     color='green', linewidth=6)
 
-
+        """
         agitation_percent = 0
         while True:
             event, _ = window.read(timeout=10)
@@ -189,4 +189,4 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
     except KeyboardInterrupt:
         print('gui: Exiting cleanly')
         window.close()
-        sys.exit(0)
+        sys.exit(0)"""
