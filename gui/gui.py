@@ -137,6 +137,7 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
         splash.read(timeout=3000, close=True)
         window = sg.Window('CYANO GUI',
                     layout, finalize=True, size=size)
+        window.hide()
      
         ph_canvas_elem = window['-PH-CANVAS-']
         ph_canvas = ph_canvas_elem.TKCanvas
@@ -178,7 +179,7 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
             
             time_str = util.time_formatting.time_string_from_sec(shared_data['remaining'])
             window['-TIME-SWITCH-'].update(time_str)
-            
+            window.un_hide()
             time.sleep(0.05) # ~refresh rate of 20 Hz
     except KeyboardInterrupt:
         print('gui: Exiting cleanly')
