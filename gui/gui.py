@@ -83,18 +83,18 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
               [sg.Column(ph_column,vertical_alignment ='bottom'), *spacer_column, sg.Column(status_column), *s_c2, sg.Column(od_column, vertical_alignment = 'bottom')]
     ]
 
-    try:
+    try:        
+        # create the form and show it without the plot
+        window = sg.Window('CYANO GUI',
+                    layout, finalize=True)  
+        window.Hide()
         # Splash screen to hide while loading
         SPLASH_IMAGE_FILE = 'cyano.png'
         DISPLAY_TIME_MILLISECONDS = 10000
         splash=sg.Window('',
                 [[sg.Image(SPLASH_IMAGE_FILE)]], keep_on_top=True, finalize=True)
-        splash.maximize()
-        
-        # create the form and show it without the plot
-        window = sg.Window('CYANO GUI',
-                    layout, finalize=True)  
-        window.Hide()     
+        splash.maximize()   
+          
         #PH PLOT
 
         # draw the initial plot in the window
