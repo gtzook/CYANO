@@ -61,9 +61,9 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
     
     # light timer
     light_column = [
-            [sg.Text('DAY', size=(30, 3), key='-DAY-NIGHT-',
+            [sg.Text('Loading...', size=(30, 3), key='-DAY-NIGHT-',
                 justification='center', font='Helvetica 40',
-                text_color='yellow')],
+                text_color='white')],
               
               [sg.Text('Time to switch: ', size=(40, 1),
                 justification='center', font='Helvetica 20',
@@ -135,7 +135,7 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
         # create the form and show it without the plot
         window = sg.Window('CYANO GUI',
                     layout, finalize=True, size=size)
-        sg.popup("Loading")
+        sg.popup("Loading", non_blocking=True, size=size)
      
         ph_canvas_elem = window['-PH-CANVAS-']
         ph_canvas = ph_canvas_elem.TKCanvas
