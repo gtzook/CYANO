@@ -88,7 +88,8 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
         SPLASH_IMAGE_FILE = 'cyano.png'
         DISPLAY_TIME_MILLISECONDS = 10000
         splash=sg.Window('',
-                [[sg.Image(SPLASH_IMAGE_FILE)]], keep_on_top=True, finalize=True)
+                [[sg.Image(SPLASH_IMAGE_FILE)]], keep_on_top=True, 
+                transparent_color=sg.theme_background_color(), no_titlebar=True, keep_on_top=True)
         splash.maximize()
         
         # create the form and show it without the plot
