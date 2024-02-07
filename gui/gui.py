@@ -122,6 +122,12 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
     fig2.tight_layout() #tight layout for aesthetics
     fig2.subplots_adjust(bottom=0.15,left=0.2) #expand to include text
     
+    # deque of od data
+    ods = deque([0]*od_datapoints,maxlen=od_datapoints)
+    
+    # make od plot
+    od_line, =ax2.plot(range(od_datapoints), ods, 
+                color='green', linewidth=6)
     try:
         # Splash screen to hide while loading
         SPLASH_IMAGE_FILE = 'cyano.png'
@@ -143,14 +149,6 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
         od_canvas = od_canvas_elem.TKCanvas
         fig_agg2 = draw_figure(od_canvas, fig2)
 
-        # deque of od data
-        ods = deque([0]*od_datapoints,maxlen=od_datapoints)
-        
-        # make od plot
-        od_line, =ax2.plot(range(od_datapoints), ods, 
-                    color='green', linewidth=6)
-
-        """
         agitation_percent = 0
         while True:
             event, _ = window.read(timeout=10)
@@ -185,7 +183,7 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
             time_str = util.time_formatting.time_string_from_sec(shared_data['remaining'])
             window['-TIME-SWITCH-'].update(time_str)
             
-            time.sleep(0.05) # ~refresh rate of 20 Hz"""
+            time.sleep(0.05) # ~refresh rate of 20 Hz
     except KeyboardInterrupt:
         print('gui: Exiting cleanly')
         window.close()
