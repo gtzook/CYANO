@@ -9,7 +9,7 @@ def start_server():
     print("Server started, waiting for connections...")
     conn, addr = server_socket.accept()
     print(f"Connected to {addr}")
-
+    # test
     while True:
         data = conn.recv(1024)
         if not data:
