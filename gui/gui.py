@@ -10,6 +10,7 @@ import multiprocessing as mp
 import time
 import signal
 import sys
+import os
 # GUI built from demo: https://github.com/PySimpleGUI/PySimpleGUI/blob/master/DemoPrograms/Demo_Matplotlib_Animated.py
 
 # Method for drawing matplotlib figure on PySimpleGUI Canvas
@@ -22,6 +23,9 @@ def draw_figure(canvas, figure, loc=(0, 0)):
 def gui_loop(shared_data: Dict[str, Union[int,float,bool]], 
              events: Dict[str, mp.Event], 
              debug_mode: bool) -> None:
+    
+    os.nice(-5) # give this proc high priority
+    
     ph_datapoints = 30 # max number of ph datapoints to display at once
     od_datapoints = 30 # max number of od datapoints to display at once
     
