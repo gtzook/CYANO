@@ -56,6 +56,8 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     while True:
         # Time elapsed since start of this state
         shared_data['elapsed'] = time.time() - start_t
+        print(shared_data['brightness'])
+        pixels.brightness = shared_data['brightness']
 
         # If time elapsed, toggle LED
         if shared_data['elapsed'] > toggle_time:
