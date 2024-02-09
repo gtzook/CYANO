@@ -48,14 +48,14 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
     #Agiation Display section
     agiation_column = [
         [sg.Text('Agitation:', font = 'Helvetica 32'), sg.Text('', font = 'Helvetica 32', key='-AGITATION-PERCENT-')],
-        [sg.Button('Increase', font = 'Helvetica 16', size = (10,3)), sg.Button('Decrease', font= 'Helvetica 16', size = (10,3))],
+        [sg.Button('Increase', font = "Helvetica 16", size = (10,3)), sg.Button('Decrease', font= 'Helvetica 16', size = (10,3))],
     ]
 
     #Day Duration Slider
     slider_column = [
         [sg.Text("Brightness:", font = "Helvetica 32")],
-        [sg.Slider(range=(0, 1), orientation="h", size=(60, 40), resolution=0.01, default_value=.8, key="-SLIDER-")],
-        [sg.Button("OK"), sg.Button("Cancel")]
+        [sg.Slider(range=(0, 1), orientation="h", size=(60, 40), resolution=0.01, default_value=.5, key="-SLIDER-")],
+        [sg.Button("OK", font = 'Helvetica 16', size = (10,3))]
     ]
 
     
