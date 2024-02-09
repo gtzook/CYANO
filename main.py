@@ -42,30 +42,35 @@ if __name__ == "__main__":
     usb_proc = mp.Process(name='usb', 
                         target=usb.adc.ADC_loop,
                         args=[shared_data, events, '-adcdebug' in sys.argv]) 
-    
+    print('usb: ', usb_proc.pid)
     # Light controller
     light_proc =  mp.Process(name='lights', 
                             target=gpio_devs.light_controller.led_loop,
                             args=[shared_data, events, '-lightdebug' in sys.argv])
+    print('lights: ', light_proc.pid)
     # Laser controller
     laser_proc = mp.Process(name='od',
                         target=gpio_devs.laser_controller.laser_loop,
                         args=[shared_data, events, '-oddebug' in sys.argv])
+    print('laser: ', laser_proc.pid)
     
     # GUI
     gui_proc = mp.Process(name = 'gui',
                           target=gui.gui.gui_loop,
                           args=[shared_data, events, '-guidebug' in sys.argv])
+    print('gui: ', gui_proc.pid)
     
     #Logging
     log_proc = mp.Process(name = 'log',
                           target=logger.logger.logger_loop,
                           args=[shared_data, events, '-loggerdebug' in sys.argv])
+    print('log: ', log_proc.pid)
     
     # CO2
     co2_proc = mp.Process(name = 'co2',
                           target=gpio_devs.co2_controller.co2_loop,
                           args=[shared_data, events, '-co2debug' in sys.argv])
+    print('co2: ', co2_proc.pid)
     
     usb_proc.start()
     if not '-nolight' in sys.argv:
