@@ -8,7 +8,7 @@ import sys
 from datetime import datetime as dt
 
 CO2_pin = 19
-CO2_ON_THRESH = 6.2
+CO2_ON_THRESH = 6.0
 
 def co2_loop(shared_data: Dict[str, Union[int,float,bool]], 
              events: Dict[str, Event], 
