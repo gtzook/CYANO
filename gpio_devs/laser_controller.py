@@ -3,6 +3,7 @@ from typing import Dict, Union
 import multiprocessing as mp
 import signal
 import sys
+import time
 laser_pin = 13
 
 def laser_loop(shared_data: Dict[str, Union[int,float,bool]], 
@@ -28,5 +29,4 @@ def laser_loop(shared_data: Dict[str, Union[int,float,bool]],
     if debug_mode:
         print("laser_controller: laser on!")
     while (True):
-        pass
-            
+        time.sleep(5)
