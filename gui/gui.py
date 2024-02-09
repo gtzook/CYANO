@@ -53,8 +53,8 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
 
     #Day Duration Slider
     slider_column = [
-        [sg.Text("Daytime Hours:", font = "Helvetica 32")],
-        [sg.Slider(range=(0, 24), orientation="h", size=(60, 40), default_value=12, key="-SLIDER-")],
+        [sg.Text("Brightness:", font = "Helvetica 32")],
+        [sg.Slider(range=(0, 1), orientation="h", size=(60, 40), resolution=0.01, default_value=.8, key="-SLIDER-")],
         [sg.Button("OK"), sg.Button("Cancel")]
     ]
 
@@ -164,13 +164,16 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
                                             text_color='blue')
                
         while True:
-            event, _ = window.read(timeout=10)
+            event, values = window.read(timeout=10)
             if event in ('Exit', None):
                 break
             elif event == 'Increase':
                 agitation_percent  += 10
             elif event == 'Decrease':
                 agitation_percent -= 10
+            elif event == 'OK':
+                shared_data['brightness'] = values["-SLIDER-"]
+
                 
             phs.append(shared_data['ph'])  # add new ph data
             ph_line.set_ydata(phs)     # update plot
