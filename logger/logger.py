@@ -38,8 +38,10 @@ def logger_loop(shared_data: Dict[str, Union[int,float,bool]],
         ph = shared_data['ph'] # This is how you get ph measurement
         light_state = shared_data['state'] # State of lights
         od = shared_data['od']  
+        co2_state = shared_data['co2']
         now = datetime.now() #Gets current time. Time stamps
         file.write("\r\n")
-        file.write(f"{now}, {ph}, {od}, {'Day' if light_state else 'Night'}") #Writes time of measurement, and
+        file.write(f"{now}, {ph}, {od}, {'Day' if light_state else 'Night'},
+                   {'CO2 on' if co2_state else 'CO2 off'}") # Writes time of measurement, and
         file.flush()
         time.sleep(5) #Set to whatever frequency we need

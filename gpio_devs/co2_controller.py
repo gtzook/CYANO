@@ -32,6 +32,7 @@ def co2_loop(shared_data: Dict[str, Union[int,float,bool]],
     
     while True:
         if shared_data['ph'] < CO2_ON_THRESH:
+            print("co2_controller: ph low, turning on co2")
             ctrl.on()
         else:
             ctrl.off()
