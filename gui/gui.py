@@ -30,6 +30,41 @@ def gui_loop(shared_data: Dict[str, Union[int,float,bool]],
     od_datapoints = 30 # max number of od datapoints to display at once
     
     sg.theme('Dark') # set gui colors
+
+    ##INTRO SCREEN HERE
+    # Define the hours for the dropdown menu
+    hours = [f"{i}:00 {('AM' if i < 12 else 'PM')}" for i in range(1, 13)]
+    # Define the layout for the initial screen
+    layout = [
+        [sg.Text('Welcome to CYANO GUI', font=('Helvetica', 64))],
+        [sg.Text('Please select your Day Start Time:', font=('Helvetica', 32)),
+        sg.DropDown(hours, default_value='7:00 AM', key='-DAY_START-',font= ('Helvetica', 20),size=(25,10))],
+        [sg.Text('Please select your Night Start Time:', font=('Helvetica', 32)),
+        sg.DropDown(hours, default_value='7:00 PM', key='-NIGHT_START-',font=('Helvetica', 20),size=(25,10))],
+        [sg.Button('Submit', size=(20, 3), font=('Helvetica', 20))]
+    ]
+
+    # Create the initial screen window
+    window = sg.Window('CYANO GUI - Initial Screen', layout, finalize=True)
+    window.maximize()
+
+    # Event loop
+    while True:
+        event, values = window.read()
+        if event == sg.WINDOW_CLOSED or event == 'Submit':
+            break
+        # Update the text of the dropdown menu when a new value is selected
+        elif event == '-DAY_START-':
+            window['-DAY_START-'].update(values[event])
+        elif event == '-NIGHT_START-':
+            window['-NIGHT_START-'].update(values[event])
+
+    # Close the initial screen window
+    window.close()
+
+
+
+    #CONTINUE BEYOND THE INITIAL SCREEN
     
     # pH section
     ph_column = [[sg.Text('pH Sensor', size=(40, 1), key='-PH-',
