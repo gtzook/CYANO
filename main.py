@@ -28,7 +28,8 @@ if __name__ == "__main__":
                                 'co2':False, # co2 running
                                 'elapsed':-1, # time elapsed in this light state
                                 'remaining':-1, # time remaining in this light state
-                                'demo': '-demo' in sys.argv}) 
+                                'demo': '-demo' in sys.argv,
+                                'brightness': .8}) 
     time_str = "%H:%M:%S"
     shared_data['to_day'] = isTimeFormat('09:00:00')
     shared_data['to_night'] = isTimeFormat('18:00:00')
