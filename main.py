@@ -30,18 +30,7 @@ if __name__ == "__main__":
     time_str = "%H:%M:%S"
     shared_data['to_day'] = isTimeFormat('09:00:00')
     shared_data['to_night'] = isTimeFormat('18:00:00')
-    """
-    if not '-noclock' in sys.argv:
-        print("When should I change to day?")
-        shared_data['to_day'] = getTimeFromUser()
-        print("And night?")
-        shared_data['to_night'] = getTimeFromUser()
-    else:
-        print("Changing to day at 9 AM")
-        shared_data['to_day'] = isTimeFormat('09:00:00')
-        print("And night?")
-        shared_data['to_night'] = isTimeFormat('18:00:00')
-    """
+
     # Events
     events = {'new_adc': mp.Event(),
               'new_light': mp.Event()}

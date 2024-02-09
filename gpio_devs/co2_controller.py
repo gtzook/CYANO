@@ -1,14 +1,11 @@
 import time
 from typing import Dict, Union
-from util.time_formatting import isDay, seconds_until
 from multiprocessing.synchronize import Event
 from .gpio_dev import gpio_dev
 import numpy as np
 import signal
 import sys
 from datetime import datetime as dt
-import neopixel
-import board
 
 LED_pin = 26
 
@@ -21,22 +18,10 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     
     # Define Relay
     ctrl = gpio_dev(LED_pin, reverse_polarity=False)
-
-    #Setup Light Strip
-    ORDER = neopixel.RGB
-    pixels = neopixel.NeoPixel(
-        board.D18, 100, brightness=.5, auto_write=False, pixel_order=ORDER
-    )
-    #Initialize to White
-    pixels.fill((255,255,255))
-    
-    #For rainbow patterns
-    rainbow = np.load('gpio_devs/light_patterns/interpolated_rainbow.npy')
-    pattern_index = 0
     
     #For Proper Exit
     def cleanup(*args):
-        print("light_controller: Exiting cleanly")
+        print("co2_controller: Exiting cleanly")
         ctrl.off()
         gpio_dev.cleanup()
         sys.exit(0)
