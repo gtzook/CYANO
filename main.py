@@ -10,6 +10,7 @@ import multiprocessing as mp
 import sys
 from datetime import datetime as dt
 from util.time_formatting import getTimeFromUser, isTimeFormat
+import time
 
 if __name__ == "__main__":   
     print(f"CYANO starting at {dt.now()}")
@@ -83,6 +84,6 @@ if __name__ == "__main__":
     
     try:
         while True:
-            pass
+            time.sleep(5)
     except KeyboardInterrupt:
         pass
