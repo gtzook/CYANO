@@ -7,9 +7,10 @@ import signal
 import sys
 from datetime import datetime as dt
 
-LED_pin = 26
+CO2_pin = 19
+CO2_ON_THRESH = 6.2
 
-def led_loop(shared_data: Dict[str, Union[int,float,bool]], 
+def co2_loop(shared_data: Dict[str, Union[int,float,bool]], 
              events: Dict[str, Event], 
              debug_mode: bool) -> None:
     """
@@ -17,7 +18,7 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     """
     
     # Define Relay
-    ctrl = gpio_dev(LED_pin, reverse_polarity=False)
+    ctrl = gpio_dev(CO2_pin, reverse_polarity=False)
     
     #For Proper Exit
     def cleanup(*args):
@@ -29,54 +30,9 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     signal.signal(signal.SIGTERM, cleanup)
     signal.signal(signal.SIGINT, cleanup)
     
-    # timing setup
-    night_time = shared_data['to_night']
-    day_time = shared_data['to_day']
-        
-    toggle_time = 0 # immediately toggle
-    # set to NOT because we will toggle right away
-    shared_data['state'] = not isDay(night_time,day_time)
-    start_t = time.time()
-    
     while True:
-        # Time elapsed since start of this state
-        shared_data['elapsed'] = time.time() - start_t
-
-        # If time elapsed, toggle LED
-        if shared_data['elapsed'] > toggle_time:
-            # Update time measure
-            start_t = time.time()
-            
-            # Toggle
-            events['new_light'].set()
-            
-            # update toggle time
-            if not shared_data['state']: # it is night, turn to day
-                print("light_controller: Starting daytime...")  
-                shared_data['state'] = ctrl.on() 
-                time.sleep(.1)
-                pixels.show()   
-                toggle_time = seconds_until(night_time)
-            else: # it is day, turn to night
-                toggle_time = seconds_until(day_time)
-                shared_data['state'] = ctrl.off()   
-                print("light_controller: Starting nighttime...")
-            if debug_mode:
-                print(f"led_controller: State is now {'day' if shared_data['state'] else 'night'}")
-                print(f"led_controller: time to next toggle {toggle_time}")            
-        else:       
-            # Calculate time remaining
-            rm_t = toggle_time - shared_data['elapsed']
-            shared_data['remaining'] = rm_t
-            if shared_data['demo'] and shared_data['state']: # If demo mode and on, rainbow!
-                if debug_mode:
-                    print(f'current RGB: {rainbow[pattern_index]}')
-                for i in range(len(pixels)): 
-                    ind = pattern_index + i
-                    while ind >= len(rainbow):
-                        ind -= len(rainbow)
-                    pixels[i] = rainbow[ind]
-                pattern_index = pattern_index + 1 if pattern_index < len(rainbow) - 1 else 0
-                pixels.show()
-                time.sleep(.01)
-                
+        if shared_data['ph'] < CO2_ON_THRESH:
+            ctrl.on()
+        else:
+            ctrl.off()
+        time.sleep(1)

@@ -2,6 +2,7 @@
 import gui.gui
 import gpio_devs.light_controller
 import gpio_devs.laser_controller
+import gpio_devs.co2_controller
 import gpio_devs
 import logger.logger
 import usb.adc
@@ -24,6 +25,7 @@ if __name__ == "__main__":
                                 'to_day': '09:00:00', # time to change to day
                                 'to_night': '18:00:00', # time to change to night
                                 'state':False, # state of lights
+                                'co2':False, # co2 running
                                 'elapsed':-1, # time elapsed in this light state
                                 'remaining':-1, # time remaining in this light state
                                 'demo': '-demo' in sys.argv}) 
@@ -59,6 +61,11 @@ if __name__ == "__main__":
                           target=logger.logger.logger_loop,
                           args=[shared_data, events, '-loggerdebug' in sys.argv])
     
+    # CO2
+    co2_proc = mp.Process(name = 'co2',
+                          target=gpio_devs.co2_controller.co2_loop,
+                          args=[shared_data, events, '-co2debug' in sys.argv])
+    
     usb_proc.start()
     if not '-nolight' in sys.argv:
         light_proc.start()
@@ -66,6 +73,7 @@ if __name__ == "__main__":
     if not '-nogui' in sys.argv:
         gui_proc.start()
     log_proc.start()
+    co2_proc.start()
     
     try:
         while True:
