@@ -71,7 +71,8 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
             if not shared_data['state']: # it is night, turn to day
                 print("light_controller: Starting daytime...")  
                 shared_data['state'] = ctrl.on() 
-                time.sleep(.1)  
+                time.sleep(.1)
+                pixels.show()   
                 toggle_time = seconds_until(night_time)
             else: # it is day, turn to night
                 toggle_time = seconds_until(day_time)
@@ -93,6 +94,6 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
                         ind -= len(rainbow)
                     pixels[i] = rainbow[ind]
                 pattern_index = pattern_index + 1 if pattern_index < len(rainbow) - 1 else 0
-        pixels.show()
-        time.sleep(.1)
+                pixels.show()
+                time.sleep(.01)
                 
