@@ -23,6 +23,7 @@ def start_server():
 # Client function
 def start_client():
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    print("Client attempting to connect")
     client_socket.connect(('192.168.1.2', 8888))
 
     while True:
