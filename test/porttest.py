@@ -10,6 +10,6 @@ def check_port(device_ip, port):
         print(f"Port {port} is closed")
     sock.close()
 
-device_ip = "your_device_ip_here"
+device_ip = "192.168.1.1"
 port = 49780
 check_port(device_ip, port)
