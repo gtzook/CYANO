@@ -11,5 +11,5 @@ def check_port(device_ip, port):
     sock.close()
 
 device_ip = "192.168.1.1"
-port = 49780
+port = 8888
 check_port(device_ip, port)
