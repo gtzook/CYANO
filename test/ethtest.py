@@ -4,7 +4,7 @@ import threading
 # Server function
 def start_server():
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.bind(('192.168.1.1', 49780))
+    server_socket.bind(('192.168.1.1', 8888))
     server_socket.listen(1)
     print("Server started, waiting for connections...")
     conn, addr = server_socket.accept()
@@ -23,7 +23,7 @@ def start_server():
 # Client function
 def start_client():
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client_socket.connect(('192.168.1.2', 49780))
+    client_socket.connect(('192.168.1.2', 8888))
 
     while True:
         message = input("Enter message to send: ")
