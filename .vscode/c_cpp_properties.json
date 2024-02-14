@@ -4,7 +4,9 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/usr/include/aarch64-linux-gnu/qt5/QtWidgets"
+                "/usr/include/aarch64-linux-gnu/qt5/QtWidgets",
+                "/usr/include/aarch64-linux-gnu/qt5",
+                "/usr/include/aarch64-linux-gnu/qt5/QtCharts"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
