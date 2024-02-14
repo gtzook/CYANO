@@ -8,4 +8,4 @@ alias sudopy="/usr/bin/sudo /home/cyano/CYANO/.venv/bin/python"
 echo -e "Xhost command to recognize display:"
 xhost +
 echo -e "pig"
-sudo pigpiod -p 8889
+sudo pigpiod

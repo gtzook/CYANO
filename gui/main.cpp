@@ -1,3 +1,8 @@
+#include <iostream>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <string.h>
 #include <QApplication>
 #include <QWidget>
 #include <QVBoxLayout>
@@ -122,6 +127,34 @@ int main(int argc, char *argv[]) {
     mainLayout->addLayout(bottomLayout);
 
     mainWindow.showFullScreen();
+    
+    int sock = 0, valread;
+    struct sockaddr_in serv_addr;
+    char buffer[1024] = {0};
+
+    //create socket
+    if((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0){
+        std::cerr << "Socket creation error" << std::endl;
+        return -1;
+    }
+
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_port = htons(12345);
+
+    //Set to local host
+    if (inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr) <= 0) {
+        std::cerr << "Invalid address/ Address not supported" << std::endl;
+        return -1;
+    }
+
+    if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
+        std::cerr << "Connection Failed" << std::endl;
+        return -1;
+    }
+
+    // Receive data from the server
+    valread = read(sock, buffer, 1024);
+    std::cout << "Message received from server: " << buffer << std::endl;
 
     // Simulating pH and OD sensor data update
     QTimer *pHTimer = new QTimer();
