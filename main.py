@@ -1,5 +1,5 @@
 #!/usr/bin//env python
-import gui.gui
+import gui.gui_server
 import gpio_devs.light_controller
 import gpio_devs.laser_controller
 import gpio_devs.co2_controller
@@ -11,10 +11,6 @@ import sys
 from datetime import datetime as dt
 from util.time_formatting import getTimeFromUser, isTimeFormat
 import time
-import socket
-import json
-import subprocess
-
 
 if __name__ == "__main__":   
     print(f"CYANO starting at {dt.now()}")
@@ -57,9 +53,9 @@ if __name__ == "__main__":
                         args=[shared_data, events, '-oddebug' in sys.argv])
     
     # GUI
-    #gui_proc = mp.Process(name = 'gui',
-    #                      target=gui.gui.gui_loop,
-    #                      args=[shared_data, events, '-guidebug' in sys.argv])
+    gui_serv_proc = mp.Process(name = 'gui',
+                          target=gui.gui_server.server_loop,
+                          args=[shared_data, events, '-guidebug' in sys.argv])
     #process = subprocess.Popen("/home/cyano/CYANO/gui/gui")
     
     #Logging
@@ -76,31 +72,19 @@ if __name__ == "__main__":
     if not '-nolight' in sys.argv:
         light_proc.start()
     laser_proc.start()
-    #if not '-nogui' in sys.argv:
-    #    gui_proc.start()
+    if not '-nogui' in sys.argv:
+        gui_serv_proc.start()
     log_proc.start()
     co2_proc.start()
     print('usb: ', usb_proc.pid)
     print('lights: ', light_proc.pid)
     print('laser: ', laser_proc.pid)
-    #print('gui: ', gui_proc.pid)
+    print('gui serv: ', gui_serv_proc.pid)
     print('log: ', log_proc.pid)
     print('co2: ', co2_proc.pid)
-        
-    # Create socket to send to C++
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.bind(('localhost', 12345))
-    server_socket.listen(1)
-    
-    # Connect to server
-    print("Server started, waiting for connections...")
-    conn, addr = server_socket.accept()
     
     try:
         while True:
-            json_data = json.dumps(shared_data.copy())
-            conn.sendall(json_data.encode('utf-8'))
             time.sleep(1)
     except KeyboardInterrupt:
-        conn.close()
-        server_socket.close()
+        sys.exit(0)

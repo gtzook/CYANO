@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import serial
 import time
+from datetime import datetime as dt
 import signal
 import sys
 from typing import Dict, Union
@@ -43,7 +44,7 @@ class ADC():
             for sense in range(self.num_sensors):
                 vals.append(int(line_vals[sense]))
         except ValueError:
-            print(f"{time.time}: no value from ADC")
+            print(f"{dt.now()}: no value from ADC")
             return [0,0]
         return vals
         
