@@ -11,6 +11,10 @@ import sys
 from datetime import datetime as dt
 from util.time_formatting import getTimeFromUser, isTimeFormat
 import time
+import socket
+import json
+import subprocess
+
 
 if __name__ == "__main__":   
     print(f"CYANO starting at {dt.now()}")
@@ -53,9 +57,10 @@ if __name__ == "__main__":
                         args=[shared_data, events, '-oddebug' in sys.argv])
     
     # GUI
-    gui_proc = mp.Process(name = 'gui',
-                          target=gui.gui.gui_loop,
-                          args=[shared_data, events, '-guidebug' in sys.argv])
+    #gui_proc = mp.Process(name = 'gui',
+    #                      target=gui.gui.gui_loop,
+    #                      args=[shared_data, events, '-guidebug' in sys.argv])
+    process = subprocess.Popen("/home/cyano/CYANO/gui/gui")
     
     #Logging
     log_proc = mp.Process(name = 'log',
@@ -71,19 +76,28 @@ if __name__ == "__main__":
     if not '-nolight' in sys.argv:
         light_proc.start()
     laser_proc.start()
-    if not '-nogui' in sys.argv:
-        gui_proc.start()
+    #if not '-nogui' in sys.argv:
+    #    gui_proc.start()
     log_proc.start()
     co2_proc.start()
     print('usb: ', usb_proc.pid)
     print('lights: ', light_proc.pid)
     print('laser: ', laser_proc.pid)
-    print('gui: ', gui_proc.pid)
+    #print('gui: ', gui_proc.pid)
     print('log: ', log_proc.pid)
     print('co2: ', co2_proc.pid)
+        
+    # Create socket to send to C++
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    
+    # Connect to server
+    server_address = ('localhost',12345)
+    client_socket.connect(server_address)
     
     try:
         while True:
-            time.sleep(5)
+            json_data = json.dumps(shared_data)
+            client_socket.sendall(json_data.encode('utf-8'))
+            time.sleep(1)
     except KeyboardInterrupt:
-        pass
+        client_socket.close()
