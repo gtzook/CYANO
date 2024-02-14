@@ -9,7 +9,6 @@ import sys
 from datetime import datetime as dt
 import neopixel
 import board
-
 LED_pin = 26
 
 def led_loop(shared_data: Dict[str, Union[int,float,bool]], 
