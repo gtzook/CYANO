@@ -98,6 +98,7 @@ if __name__ == "__main__":
     
     try:
         while True:
+            print(shared_data)
             json_data = json.dumps(shared_data.copy())
             server_socket.sendall(json_data.encode('utf-8'))
             time.sleep(1)
