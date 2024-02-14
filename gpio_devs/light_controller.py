@@ -54,6 +54,8 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     # set to NOT because we will toggle right away
     shared_data['state'] = not isDay(night_time,day_time)
     start_t = time.time()
+
+    wait_time = 0.5
     
     while True:
         # Time elapsed since start of this state
@@ -85,6 +87,7 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
             rm_t = toggle_time - shared_data['elapsed']
             shared_data['remaining'] = rm_t
             if shared_data['demo'] and shared_data['state']: # If demo mode and on, rainbow!
+                wait_time = 0.01
                 if debug_mode:
                     print(f'current RGB: {rainbow[pattern_index]}')
                 for i in range(len(pixels)): 
@@ -94,5 +97,5 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
                     pixels[i] = rainbow[ind]
                 pattern_index = pattern_index + 1 if pattern_index < len(rainbow) - 1 else 0
         pixels.show()
-        time.sleep(.001)
+        time.sleep(wait_time)
                 
