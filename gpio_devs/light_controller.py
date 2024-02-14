@@ -92,5 +92,5 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
                     pixels[i] = rainbow[ind]
                 pattern_index = pattern_index + 1 if pattern_index < len(rainbow) - 1 else 0
         pixels.show()
-        time.sleep(.2)
+        time.sleep(.1)
                 
