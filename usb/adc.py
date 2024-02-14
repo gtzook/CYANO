@@ -43,7 +43,7 @@ class ADC():
             for sense in range(self.num_sensors):
                 vals.append(int(line_vals[sense]))
         except ValueError:
-            print("ADC Error")
+            print(f"{time.time}: no value from ADC")
             return [0,0]
         return vals
         
