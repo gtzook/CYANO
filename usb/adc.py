@@ -39,8 +39,12 @@ class ADC():
         line=self.get_line()
         line_vals = line.split(',')
         vals = list()
-        for sense in range(self.num_sensors):
-            vals.append(int(line_vals[sense]))
+        try:
+            for sense in range(self.num_sensors):
+                vals.append(int(line_vals[sense]))
+        except ValueError:
+            print("ADC Error")
+            return [0,0]
         return vals
         
     def get_line(self):
