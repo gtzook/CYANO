@@ -36,8 +36,8 @@ if __name__ == "__main__":
                                 'demo': '-demo' in sys.argv,
                                 'brightness': .8}) 
     time_str = "%H:%M:%S"
-    shared_data['to_day'] = isTimeFormat('09:00:00')
-    shared_data['to_night'] = isTimeFormat('21:00:00')
+    shared_data['to_day'] = '09:00:00'
+    shared_data['to_night'] = '21:00:00'
 
     # Events
     events = {'new_adc': mp.Event(),

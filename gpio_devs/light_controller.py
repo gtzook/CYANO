@@ -1,6 +1,6 @@
 import time
 from typing import Dict, Union
-from util.time_formatting import isDay, seconds_until
+from util.time_formatting import isDay, seconds_until, isTimeFormat
 from multiprocessing.synchronize import Event
 from .gpio_dev import gpio_dev
 import numpy as np
@@ -46,8 +46,8 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     signal.signal(signal.SIGINT, cleanup)
     
     # timing setup
-    night_time = shared_data['to_night']
-    day_time = shared_data['to_day']
+    night_time = isTimeFormat(shared_data['to_night'])
+    day_time = isTimeFormat(shared_data['to_day'])
         
     toggle_time = 0 # immediately toggle
     # set to NOT because we will toggle right away
