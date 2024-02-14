@@ -40,9 +40,9 @@ def start_client():
 server_thread = threading.Thread(target=start_server)
 client_thread = threading.Thread(target=start_client)
 
-server_thread.start()
+#server_thread.start()
 client_thread.start()
 
 # Wait for both threads to finish
-server_thread.join()
+#server_thread.join()
 client_thread.join()
