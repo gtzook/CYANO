@@ -88,16 +88,19 @@ if __name__ == "__main__":
     print('co2: ', co2_proc.pid)
         
     # Create socket to send to C++
-    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.bind(('localhost', 12345))
+    server_socket.listen(1)
     
     # Connect to server
-    server_address = ('localhost',12345)
-    client_socket.connect(server_address)
+    print("Server started, waiting for connections...")
+    conn, addr = server_socket.accept()
     
     try:
         while True:
             json_data = json.dumps(shared_data)
-            client_socket.sendall(json_data.encode('utf-8'))
+            server_socket.sendall(json_data.encode('utf-8'))
             time.sleep(1)
     except KeyboardInterrupt:
-        client_socket.close()
+        conn.close()
+        server_socket.close()
