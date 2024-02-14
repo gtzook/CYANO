@@ -60,7 +60,7 @@ if __name__ == "__main__":
     #gui_proc = mp.Process(name = 'gui',
     #                      target=gui.gui.gui_loop,
     #                      args=[shared_data, events, '-guidebug' in sys.argv])
-    process = subprocess.Popen("/home/cyano/CYANO/gui/gui")
+    #process = subprocess.Popen("/home/cyano/CYANO/gui/gui")
     
     #Logging
     log_proc = mp.Process(name = 'log',
