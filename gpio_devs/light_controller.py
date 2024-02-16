@@ -59,7 +59,6 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     while True:
         # Time elapsed since start of this state
         shared_data['elapsed'] = time.time() - start_t
-        #pixels.brightness = shared_data['brightness']
         # If time elapsed, toggle LED
         if shared_data['elapsed'] > toggle_time:
             # Update time measure
@@ -94,6 +93,8 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
                         ind -= len(rainbow)
                     pixels[i] = rainbow[ind]
                 pattern_index = pattern_index + 1 if pattern_index < len(rainbow) - 1 else 0
+                
+            pixels.brightness = shared_data['brightness']
             pixels.show()
         time.sleep(wait_time)
                 
