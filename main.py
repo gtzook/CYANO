@@ -75,7 +75,8 @@ if __name__ == "__main__":
     if not '-nogui' in sys.argv:
         gui_serv_proc.start()
     log_proc.start()
-    co2_proc.start()
+    if not '-noco2' in sys.argv:
+        co2_proc.start()
     print('usb: ', usb_proc.pid)
     print('lights: ', light_proc.pid)
     print('laser: ', laser_proc.pid)
