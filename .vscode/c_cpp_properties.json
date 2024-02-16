@@ -6,7 +6,8 @@
                 "${workspaceFolder}/**",
                 "/usr/include/aarch64-linux-gnu/qt5/QtWidgets",
                 "/usr/include/aarch64-linux-gnu/qt5",
-                "/usr/include/aarch64-linux-gnu/qt5/QtCharts"
+                "/usr/include/aarch64-linux-gnu/qt5/QtCharts",
+                "/usr/include/aarch64-linux-gnu/qt5/QtCore"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
