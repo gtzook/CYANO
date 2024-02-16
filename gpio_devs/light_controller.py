@@ -24,7 +24,7 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     #Setup Light Strip
     ORDER = neopixel.RGB
     pixels = neopixel.NeoPixel(
-        board.D18, 100, brightness=.8, auto_write=False, pixel_order=ORDER
+        board.D18, 100, brightness=.5, auto_write=False, pixel_order=ORDER
     )
     #Initialize to White
     pixels.fill((255,255,255)) # Blue, Red, Green
