@@ -56,6 +56,8 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
 
     wait_time = 1
     
+    update_pixels = True
+    
     while True:
         # Time elapsed since start of this state
         shared_data['elapsed'] = time.time() - start_t
@@ -93,9 +95,14 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
                         ind -= len(rainbow)
                     pixels[i] = rainbow[ind]
                 pattern_index = pattern_index + 1 if pattern_index < len(rainbow) - 1 else 0
-                
-        pixels.brightness = shared_data['brightness']
-        pixels.fill((255,255,255))
-        pixels.show()
+                update_pixels = True # update colors
+        
+        if pixels.brightness != shared_data['brightness']:
+            update_pixels = True # update brightness
+            pixels.brightness = shared_data['brightness']
+            
+        if update_pixels: # only update when flag is set to avoid flickering
+            pixels.show()
+            update_pixels = False
         time.sleep(wait_time)
                 
