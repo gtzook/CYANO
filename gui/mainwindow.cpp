@@ -68,165 +68,92 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     
     qApp->setStyle(QStyleFactory::create("Fusion"));
 
-    // Create the main window
-    QWidget mainWindow;
-    mainWindow.setWindowTitle("CYANO GUI");
-    mainWindow.resize(800, 600);
+    // Create the central widget
+    QWidget *centralWidget = new QWidget(this);
+    setCentralWidget(centralWidget);
 
-    // Layout for the main window
-    QVBoxLayout *mainLayout = new QVBoxLayout(&mainWindow);
+    // Layout for the central widget
+    QVBoxLayout *mainLayout = new QVBoxLayout(centralWidget);
 
-    // top buttons
-    QPushButton *button1 = new QPushButton("Button 1");
-    button1->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    button1->setFont(QFont("Arial", 16));
-    mainLayout->addWidget(button1);
-
-    QPushButton *button2 = new QPushButton("Button 2");
-    button2->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    button2->setFont(QFont("Arial", 16));
-    mainLayout->addWidget(button2);
+    // Top buttons
+    QPushButton *button1 = new QPushButton("Button 1", centralWidget);
+    QPushButton *button2 = new QPushButton("Button 2", centralWidget);
 
     // Agitation Display section
-    QLabel *agitationLabel = new QLabel("Agitation:");
-    agitationLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    agitationLabel->setFont(QFont("Arial", 16));
-    agitationLabel->setAlignment(Qt::AlignCenter);
-    mainLayout->addWidget(agitationLabel);
-
-    QLabel *agitationValue = new QLabel("0%");
-    agitationValue->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    agitationValue->setFont(QFont("Arial", 16));
-    agitationValue->setAlignment(Qt::AlignCenter);
-    mainLayout->addWidget(agitationValue);
-
-    QPushButton *increaseButton = new QPushButton("Increase");
-    increaseButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    increaseButton->setFont(QFont("Arial", 16));
-    mainLayout->addWidget(increaseButton);
-
-    QPushButton *decreaseButton = new QPushButton("Decrease");
-    decreaseButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    decreaseButton->setFont(QFont("Arial", 16));
-    mainLayout->addWidget(decreaseButton);
+    QLabel *agitationLabel = new QLabel("Agitation:", centralWidget);
+    QLabel *agitationValue = new QLabel("0%", centralWidget);
+    QPushButton *increaseButton = new QPushButton("Increase", centralWidget);
+    QPushButton *decreaseButton = new QPushButton("Decrease", centralWidget);
 
     // Day Duration Slider
-    QLabel *brightnessLabel = new QLabel("Brightness:");
-    brightnessLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    brightnessLabel->setFont(QFont("Arial", 16));
-    brightnessLabel->setAlignment(Qt::AlignCenter);
-    mainLayout->addWidget(brightnessLabel);
-
-    QSlider *brightnessSlider = new QSlider(Qt::Horizontal);
+    QLabel *brightnessLabel = new QLabel("Brightness:", centralWidget);
+    QSlider *brightnessSlider = new QSlider(Qt::Horizontal, centralWidget);
     brightnessSlider->setRange(0, 100);
     brightnessSlider->setValue(50);
-    brightnessSlider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    mainLayout->addWidget(brightnessSlider);
-
-    QPushButton *okButton = new QPushButton("OK");
-    okButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    okButton->setFont(QFont("Arial", 16));
-    mainLayout->addWidget(okButton);
+    QPushButton *okButton = new QPushButton("OK", centralWidget);
 
     // Light Timer
-    QLabel *dayNightLabel = new QLabel("DAY");
-    dayNightLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    dayNightLabel->setFont(QFont("Arial", 16));
-    dayNightLabel->setAlignment(Qt::AlignCenter);
+    QLabel *dayNightLabel = new QLabel("DAY", centralWidget);
     dayNightLabel->setStyleSheet("QLabel { color: yellow; }");
-    mainLayout->addWidget(dayNightLabel);
+    QLabel *timeSwitchLabel = new QLabel("Time to switch:", centralWidget);
+    QLabel *timeSwitchValue = new QLabel("00:00", centralWidget);
 
-    QLabel *timeSwitchLabel = new QLabel("Time to switch:");
-    timeSwitchLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    timeSwitchLabel->setFont(QFont("Arial", 16));
-    timeSwitchLabel->setAlignment(Qt::AlignCenter);
-    mainLayout->addWidget(timeSwitchLabel);
-
-    QLabel *timeSwitchValue = new QLabel("00:00");
-    timeSwitchValue->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    timeSwitchValue->setFont(QFont("Arial", 16));
-    timeSwitchValue->setAlignment(Qt::AlignCenter);
-    mainLayout->addWidget(timeSwitchValue);
-
-    // Create a horizontal layout for the bottom graphs
+    // Create layouts for the bottom graphs
     QVBoxLayout *bottomLayout = new QVBoxLayout();
 
     // pH section
     QVBoxLayout *pHLayout = new QVBoxLayout();
-    QLabel *phLabel = new QLabel("pH Sensor");
-    phLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    phLabel->setFont(QFont("Arial", 16));
-    phLabel->setAlignment(Qt::AlignCenter);
-    pHLayout->addWidget(phLabel);
-
-    // Chart for pH Display
+    QLabel *phLabel = new QLabel("pH Sensor", centralWidget);
     QChart *pHChart = new QChart;
-    QChartView *pHChartView = new QChartView(pHChart);
-    pHChartView->setRenderHint(QPainter::Antialiasing);
-    pHLayout->addWidget(pHChartView);
-    bottomLayout->addLayout(pHLayout);
-
+    QChartView *pHChartView = new QChartView(pHChart, centralWidget);
     QLineSeries *pHSeries = new QLineSeries;
     pHChart->addSeries(pHSeries);
     pHChart->createDefaultAxes();
-
     QValueAxis *pHXAxis = qobject_cast<QValueAxis *>(pHChart->axes(Qt::Horizontal).at(0));
     QValueAxis *pHYAxis = qobject_cast<QValueAxis *>(pHChart->axes(Qt::Vertical).at(0));
-    pHXAxis->setRange(0, 100); // Adjust range as needed
-    pHYAxis->setRange(0, 14);  // pH range
+    pHXAxis->setRange(0, 100);
+    pHYAxis->setRange(0, 14);
     pHXAxis->setTitleText("Time");
     pHYAxis->setTitleText("pH");
+    pHLayout->addWidget(phLabel);
+    pHLayout->addWidget(pHChartView);
+    bottomLayout->addLayout(pHLayout);
 
     // OD section
     QVBoxLayout *odLayout = new QVBoxLayout();
-    QLabel *odLabel = new QLabel("Optical Density Sensor");
-    odLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    odLabel->setFont(QFont("Arial", 16));
-    odLabel->setAlignment(Qt::AlignCenter);
-    odLayout->addWidget(odLabel);
-
-    // Chart for OD Display
+    QLabel *odLabel = new QLabel("Optical Density Sensor", centralWidget);
     QChart *odChart = new QChart;
-    QChartView *odChartView = new QChartView(odChart);
-    odChartView->setRenderHint(QPainter::Antialiasing);
-    odLayout->addWidget(odChartView);
-    bottomLayout->addLayout(odLayout);
-
+    QChartView *odChartView = new QChartView(odChart, centralWidget);
     QLineSeries *odSeries = new QLineSeries;
     odChart->addSeries(odSeries);
     odChart->createDefaultAxes();
-
     QValueAxis *odXAxis = qobject_cast<QValueAxis *>(odChart->axes(Qt::Horizontal).at(0));
     QValueAxis *odYAxis = qobject_cast<QValueAxis *>(odChart->axes(Qt::Vertical).at(0));
-    odXAxis->setRange(0, 100); // Adjust range as needed
-    odYAxis->setRange(0, 100); // OD range
+    odXAxis->setRange(0, 100);
+    odYAxis->setRange(0, 100);
     odXAxis->setTitleText("Time");
     odYAxis->setTitleText("OD");
+    odLayout->addWidget(odLabel);
+    odLayout->addWidget(odChartView);
+    bottomLayout->addLayout(odLayout);
 
+    // Add widgets to the main layout
+    mainLayout->addWidget(button1);
+    mainLayout->addWidget(button2);
+    mainLayout->addWidget(agitationLabel);
+    mainLayout->addWidget(agitationValue);
+    mainLayout->addWidget(increaseButton);
+    mainLayout->addWidget(decreaseButton);
+    mainLayout->addWidget(brightnessLabel);
+    mainLayout->addWidget(brightnessSlider);
+    mainLayout->addWidget(okButton);
+    mainLayout->addWidget(dayNightLabel);
+    mainLayout->addWidget(timeSwitchLabel);
+    mainLayout->addWidget(timeSwitchValue);
     mainLayout->addLayout(bottomLayout);
-    mainWindow.showFullScreen();
 
-    // Simulating pH and OD sensor data update
-    QTimer *pHTimer = new QTimer();
-    /*
-    QObject::connect(pHTimer, &QTimer::timeout, [&]()
-                     {
-                         static int timeElapsed = 0;
-                         qreal pHValue = qrand() % 14; // Simulated pH sensor reading
-                         pHSeries->append(timeElapsed, pHValue);
-                         timeElapsed++; });
-    pHTimer->start(1000); // Update interval in milliseconds
-    */
-    /*
-    QTimer *odTimer = new QTimer();
-    QObject::connect(odTimer, &QTimer::timeout, [&]()
-                     {
-                         static int timeElapsed = 0;
-                         qreal odValue = qrand() % 100; // Simulated OD sensor reading
-                         odSeries->append(timeElapsed, odValue);
-                         timeElapsed++; });
-    odTimer->start(1000); // Update interval in milliseconds
-    */
+    // Show the window
+    showFullScreen();
 }
 
 void MainWindow::updateGUI(const QString &data)
