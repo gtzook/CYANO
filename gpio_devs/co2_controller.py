@@ -35,5 +35,6 @@ def co2_loop(shared_data: Dict[str, Union[int,float,bool]],
             print(f"co2_controller: ph {shared_data['ph']}, turning on co2")
             ctrl.on()
         else:
+            print(f"co2_controller: ph {shared_data['ph']}, turning off co2")
             ctrl.off()
         time.sleep(1)
