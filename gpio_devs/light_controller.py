@@ -28,7 +28,7 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     )
     #Initialize to White
     pixels.fill((255,255,255)) # Blue, Red, Green
-    pixels.show()
+
     #For rainbow patterns
     rainbow = np.load('gpio_devs/light_patterns/interpolated_rainbow.npy')
     rainbow[:,[1,0]] = rainbow[:,[0,1]]
@@ -54,7 +54,7 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     shared_data['state'] = not isDay(night_time,day_time)
     start_t = time.time()
 
-    wait_time = 0.5
+    wait_time = 1
     
     while True:
         # Time elapsed since start of this state
@@ -93,8 +93,9 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
                         ind -= len(rainbow)
                     pixels[i] = rainbow[ind]
                 pattern_index = pattern_index + 1 if pattern_index < len(rainbow) - 1 else 0
-            print(shared_data['brightness'])
-            pixels.brightness = shared_data['brightness']
-            #pixels.show()
+                
+        print(shared_data['brightness'])
+        pixels.brightness = shared_data['brightness']
+        pixels.show()
         time.sleep(wait_time)
                 
