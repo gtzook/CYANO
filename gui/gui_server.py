@@ -5,10 +5,13 @@ from multiprocessing.synchronize import Event
 import socket
 import json
 import time
+import subprocess
 
 def server_loop(shared_data: Dict[str, Union[int,float,bool]], 
              events: Dict[str, Event], 
              debug_mode: bool) -> None:
+  
+    process = subprocess.Popen("/home/cyano/CYANO/gui/gui")
     
     # Create socket to send to C++
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
