@@ -30,11 +30,15 @@ def co2_loop(shared_data: Dict[str, Union[int,float,bool]],
     signal.signal(signal.SIGTERM, cleanup)
     signal.signal(signal.SIGINT, cleanup)
     
+    state = ctrl.off()
+    
     while True:
         if shared_data['ph'] != -1 and shared_data['ph'] > CO2_ON_THRESH:
-            print(f"co2_controller: ph {shared_data['ph']}, turning on co2")
-            ctrl.on()
+            if not state:
+                print(f"co2_controller: ph {shared_data['ph']}, turning on co2")
+            state = ctrl.on()
         else:
-            print(f"co2_controller: ph {shared_data['ph']}, turning off co2")
-            ctrl.off()
+            if state:
+                print(f"co2_controller: ph {shared_data['ph']}, turning off co2")
+            state = ctrl.off()
         time.sleep(1)
