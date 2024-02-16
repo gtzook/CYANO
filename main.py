@@ -30,7 +30,7 @@ if __name__ == "__main__":
                                 'elapsed':-1, # time elapsed in this light state
                                 'remaining':-1, # time remaining in this light state
                                 'demo': '-demo' in sys.argv,
-                                'brightness': .8}) 
+                                'brightness': .5}) 
     time_str = "%H:%M:%S"
     shared_data['to_day'] = '09:00:00'
     shared_data['to_night'] = '21:00:00'

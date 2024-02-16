@@ -99,7 +99,7 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
         
         if pixels.brightness != shared_data['brightness']:
             if debug_mode:
-                print("light_controller: brightness change request received to" + 
+                print("light_controller: brightness change request received to " + 
                       f"{shared_data['brightness']} from {pixels.brightness}")
             update_pixels = True # update brightness
             pixels.brightness = shared_data['brightness']
