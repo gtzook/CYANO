@@ -72,16 +72,13 @@ std::string receiveMessage(int sock)
 }
 
 
-class WorkerThread : public QThread {
+class WorkerThread : public QObject {
     Q_OBJECT
 public:
-    WorkerThread(int socket) : socket(socket) {}
+    explicit WorkerThread(QObject *parent = nullptr) : QObject(parent) {}
 
-signals:
-    void dataReceived(QString data);
-
-protected:
-    void run() override {
+public slots:
+    void run() {
         while(true) {
             // Receive data from the socket
             std::string data = receiveMessage(socket);
@@ -91,6 +88,9 @@ protected:
         }
     }
 
+signals:
+    void dataReceived(QString data);
+
 private:
     int socket;
 };
@@ -98,8 +98,6 @@ private:
 int main(int argc, char *argv[])
 {
     int sock = createSocket();
-    WorkerThread worker(sock);
-    worker.start();
     
     QApplication app(argc, argv);
 
