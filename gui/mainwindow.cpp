@@ -65,7 +65,7 @@ std::string receiveMessage(int sock)
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
-
+    
     qApp->setStyle(QStyleFactory::create("Fusion"));
 
     // Create the main window
@@ -204,11 +204,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     odYAxis->setTitleText("OD");
 
     mainLayout->addLayout(bottomLayout);
-
     mainWindow.showFullScreen();
 
     // Simulating pH and OD sensor data update
     QTimer *pHTimer = new QTimer();
+    /*
     QObject::connect(pHTimer, &QTimer::timeout, [&]()
                      {
                          static int timeElapsed = 0;
@@ -216,7 +216,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
                          pHSeries->append(timeElapsed, pHValue);
                          timeElapsed++; });
     pHTimer->start(1000); // Update interval in milliseconds
-
+    */
+    /*
     QTimer *odTimer = new QTimer();
     QObject::connect(odTimer, &QTimer::timeout, [&]()
                      {
@@ -225,27 +226,24 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
                          odSeries->append(timeElapsed, odValue);
                          timeElapsed++; });
     odTimer->start(1000); // Update interval in milliseconds
-}
-
-MainWindow::~MainWindow()
-{
-    // Clean up resources here
+    */
 }
 
 void MainWindow::updateGUI(const QString &data)
 {
     // Update GUI with received data
     // For demonstration, let's just print the received data
-    qDebug() << "Received data: " << data;
+    //qDebug() << "Received data: " << data;
 }
 
 
 int main(int argc, char *argv[])
 {
-    int sock = createSocket();
-
+    //int sock = createSocket();
     QApplication app(argc, argv);
     MainWindow w;
     w.show();
+    w.showFullScreen();
+    std::cerr << "here4" << std::endl;
     return app.exec();
 }
