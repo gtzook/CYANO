@@ -77,8 +77,8 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
                 shared_data['state'] = ctrl.off()   
                 print("light_controller: Starting nighttime...")
             if debug_mode:
-                print(f"led_controller: State is now {'day' if shared_data['state'] else 'night'}")
-                print(f"led_controller: time to next toggle {toggle_time}")            
+                print(f"light_controller: State is now {'day' if shared_data['state'] else 'night'}")
+                print(f"light_controller: time to next toggle {toggle_time}")            
         else:       
             # Calculate time remaining
             rm_t = toggle_time - shared_data['elapsed']
@@ -93,7 +93,7 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
                         ind -= len(rainbow)
                     pixels[i] = rainbow[ind]
                 pattern_index = pattern_index + 1 if pattern_index < len(rainbow) - 1 else 0
-                
+            print(shared_data['brightness'])
             pixels.brightness = shared_data['brightness']
             pixels.show()
         time.sleep(wait_time)
