@@ -1,21 +1,13 @@
+#include "mainwindow.h"
 #include <iostream>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <string.h>
-#include <QApplication>
-#include <QWidget>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-#include <QLabel>
-#include <QSlider>
-#include <QPushButton>
-#include <QChartView>
-#include <QLineSeries>
-#include <QValueAxis>
-#include <QtCharts>
-#include <QThread>
-#include <QObject>
+#include <QTimer>
+#include <QDebug>
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -71,37 +63,10 @@ std::string receiveMessage(int sock)
     }
 }
 
-
-class WorkerThread : public QObject {
-    Q_OBJECT
-public:
-    explicit WorkerThread(QObject *parent = nullptr) : QObject(parent) {}
-
-public slots:
-    void run() {
-        while(true) {
-            // Receive data from the socket
-            std::string data = receiveMessage(socket);
-            
-            // Emit signal with the received data
-            emit dataReceived(QString::fromStdString(data));
-        }
-    }
-
-signals:
-    void dataReceived(QString data);
-
-private:
-    int socket;
-};
-
-int main(int argc, char *argv[])
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
-    int sock = createSocket();
-    
-    QApplication app(argc, argv);
 
-    app.setStyle("fusion");
+    qApp->setStyle(QStyleFactory::create("Fusion"));
 
     // Create the main window
     QWidget mainWindow;
@@ -111,7 +76,7 @@ int main(int argc, char *argv[])
     // Layout for the main window
     QVBoxLayout *mainLayout = new QVBoxLayout(&mainWindow);
 
-    //top buttons
+    // top buttons
     QPushButton *button1 = new QPushButton("Button 1");
     button1->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     button1->setFont(QFont("Arial", 16));
@@ -208,7 +173,7 @@ int main(int argc, char *argv[])
     QValueAxis *pHXAxis = qobject_cast<QValueAxis *>(pHChart->axes(Qt::Horizontal).at(0));
     QValueAxis *pHYAxis = qobject_cast<QValueAxis *>(pHChart->axes(Qt::Vertical).at(0));
     pHXAxis->setRange(0, 100); // Adjust range as needed
-    pHYAxis->setRange(0, 14);   // pH range
+    pHYAxis->setRange(0, 14);  // pH range
     pHXAxis->setTitleText("Time");
     pHYAxis->setTitleText("pH");
 
@@ -234,7 +199,7 @@ int main(int argc, char *argv[])
     QValueAxis *odXAxis = qobject_cast<QValueAxis *>(odChart->axes(Qt::Horizontal).at(0));
     QValueAxis *odYAxis = qobject_cast<QValueAxis *>(odChart->axes(Qt::Vertical).at(0));
     odXAxis->setRange(0, 100); // Adjust range as needed
-    odYAxis->setRange(0, 100);  // OD range
+    odYAxis->setRange(0, 100); // OD range
     odXAxis->setTitleText("Time");
     odYAxis->setTitleText("OD");
 
@@ -249,8 +214,7 @@ int main(int argc, char *argv[])
                          static int timeElapsed = 0;
                          qreal pHValue = qrand() % 14; // Simulated pH sensor reading
                          pHSeries->append(timeElapsed, pHValue);
-                         timeElapsed++;
-                     });
+                         timeElapsed++; });
     pHTimer->start(1000); // Update interval in milliseconds
 
     QTimer *odTimer = new QTimer();
@@ -259,9 +223,29 @@ int main(int argc, char *argv[])
                          static int timeElapsed = 0;
                          qreal odValue = qrand() % 100; // Simulated OD sensor reading
                          odSeries->append(timeElapsed, odValue);
-                         timeElapsed++;
-                     });
+                         timeElapsed++; });
     odTimer->start(1000); // Update interval in milliseconds
+}
 
-    app.exec();
+MainWindow::~MainWindow()
+{
+    // Clean up resources here
+}
+
+void MainWindow::updateGUI(const QString &data)
+{
+    // Update GUI with received data
+    // For demonstration, let's just print the received data
+    qDebug() << "Received data: " << data;
+}
+
+
+int main(int argc, char *argv[])
+{
+    int sock = createSocket();
+
+    QApplication app(argc, argv);
+    MainWindow w;
+    w.show();
+    return app.exec();
 }
