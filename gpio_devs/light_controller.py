@@ -28,7 +28,7 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     )
     #Initialize to White
     pixels.fill((255,255,255)) # Blue, Red, Green
-    
+    pixels.show()
     #For rainbow patterns
     rainbow = np.load('gpio_devs/light_patterns/interpolated_rainbow.npy')
     rainbow[:,[1,0]] = rainbow[:,[0,1]]
