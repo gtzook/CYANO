@@ -1,0 +1,3 @@
+[submodule "masterflex-serial"]
+	path = masterflex-serial
+	url = https://github.com/masterflexbp/masterflex-serial.git
