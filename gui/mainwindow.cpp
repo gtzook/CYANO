@@ -75,7 +75,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     // Layout for the central widget
     QVBoxLayout *mainLayout = new QVBoxLayout(centralWidget);
 
-    // Top buttons
+    // Menu Buttons
     QPushButton *button1 = new QPushButton("Button 1", centralWidget);
     QPushButton *button2 = new QPushButton("Button 2", centralWidget);
 
