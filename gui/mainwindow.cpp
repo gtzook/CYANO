@@ -73,6 +73,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     QWidget *centralWidget = new QWidget(this);
     setCentralWidget(centralWidget);
 
+    // Create client interface
+    Client client;
+    client.connectToHost("12345")
+
     // Layout for the central widget
     QVBoxLayout *mainLayout = new QVBoxLayout(centralWidget);
 
