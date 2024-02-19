@@ -13,6 +13,7 @@ from util.time_formatting import getTimeFromUser, isTimeFormat
 import time
 
 if __name__ == "__main__":   
+    print("------------------------------")
     print(f"CYANO starting at {dt.now()}")
     # Shared memory manager
     manager = mp.Manager()
