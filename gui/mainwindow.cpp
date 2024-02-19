@@ -153,7 +153,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     mainLayout->addLayout(bottomLayout);
 
     // Show the window
-    showFullScreen();
+    //showFullScreen();
 }
 
 void MainWindow::updateGUI(const QString &data)
@@ -169,7 +169,7 @@ int main(int argc, char *argv[])
     //int sock = createSocket();
     QApplication app(argc, argv);
     MainWindow w;
-    w.show();
+    //w.show();
     w.showFullScreen();
     std::cerr << "here4" << std::endl;
     return app.exec();
