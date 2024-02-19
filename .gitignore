@@ -1,3 +1,5 @@
+moc*
+*.o
 *.csv
 logs/
 *.png
