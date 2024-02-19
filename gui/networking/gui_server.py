@@ -23,7 +23,7 @@ def server_loop(shared_data: Dict[str, Union[int,float,bool]],
     
     conn, addr = server_socket.accept()
     
-    print(f"gui_server: connection at {addr}")
+    print(f"gui_server: connection at {addr}")  
     
     def clean():
       conn.close()

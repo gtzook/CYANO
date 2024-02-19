@@ -7,9 +7,9 @@ Client::Client(QObject *parent) : QObject(parent)
     socket = new QTcpSocket(this);
 }
 
-bool Client::connectToHost(QString host)
+bool Client::connectToHost(QString host, qint32 port)
 {
-    socket->connectToHost(host, 1024);
+    socket->connectToHost(host, port);
     return socket->waitForConnected();
 }
 

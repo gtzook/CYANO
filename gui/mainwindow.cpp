@@ -75,7 +75,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     // Create client interface
     Client client;
-    client.connectToHost("12345")
+    client.connectToHost('127.0.0.1', 12345)
 
     // Layout for the central widget
     QVBoxLayout *mainLayout = new QVBoxLayout(centralWidget);
