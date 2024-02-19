@@ -1,5 +1,5 @@
 #!/usr/bin//env python
-import gui.gui_server
+import gui.networking.gui_server
 import gpio_devs.light_controller
 import gpio_devs.laser_controller
 import gpio_devs.co2_controller
@@ -54,7 +54,7 @@ if __name__ == "__main__":
     
     # GUI
     gui_serv_proc = mp.Process(name = 'gui',
-                          target=gui.gui_server.server_loop,
+                          target=gui.networking.gui_server.server_loop,
                           args=[shared_data, events, '-guidebug' in sys.argv])
     #process = subprocess.Popen("/home/cyano/CYANO/gui/gui")
     
