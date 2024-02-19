@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "networking/client.h"
 #include <iostream>
 #include <sys/socket.h>
 #include <arpa/inet.h>
