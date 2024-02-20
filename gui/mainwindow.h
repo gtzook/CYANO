@@ -10,6 +10,10 @@
 #include <QLineSeries>
 #include <QValueAxis>
 #include <QtCharts>
+#include <QTcpSocket>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <map>
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -20,7 +24,8 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
 
 public slots:
-    void updateGUI(const QString &data);
+    std::map<QString, QJsonValue> parseJSON(QByteArray raw);
+    void updateGUI();
 
 private:
     QPushButton *button1;
@@ -36,7 +41,10 @@ private:
     QLabel *timeSwitchLabel;
     QLabel *timeSwitchValue;
     QLineSeries *pHSeries;
+    QValueAxis *pHXAxis;
     QLineSeries *odSeries;
+    QValueAxis *odXAxis;
+    QTcpSocket socket;
 };
 
 #endif // MAINWINDOW_H

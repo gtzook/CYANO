@@ -15,6 +15,7 @@ def server_loop(shared_data: Dict[str, Union[int,float,bool]],
     
     # Create socket to send to C++
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server_socket.bind(('localhost', 12345))
     server_socket.listen(1)
     
@@ -42,8 +43,8 @@ def server_loop(shared_data: Dict[str, Union[int,float,bool]],
         try:
           json_data = json.dumps(shared_data.copy())
           conn.sendall(json_data.encode('utf-8'))
-          time.sleep(1)
-        except ConnectionResetError:
-          print('gui_server: connection reset by GUI')
+          time.sleep(.5)
+        except (ConnectionResetError, BrokenPipeError):
+          print('gui_server: connection to GUI lost')
           clean()
           sys.exit(0)

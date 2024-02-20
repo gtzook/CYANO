@@ -5,13 +5,11 @@ import pigpio
 
 class gpio_dev:
     pi = pigpio.pi()
-    dev_count = 0
     def __init__(self, pin: int, reverse_polarity: bool=False):
         self.pin = pin
         self.reverse_polarity = reverse_polarity
         print(f"gpio_dev initialized pin {self.pin}")
         gpio_dev.pi.set_mode(self.pin,pigpio.OUTPUT)
-        gpio_dev.dev_count += 1
         self.off()
     
     def toggle(self):
@@ -31,10 +29,8 @@ class gpio_dev:
     @staticmethod
     def cleanup():
         # handle closing
-        if gpio_dev.dev_count == 1:
-            print("gpio_dev: closing pi")
-            gpio_dev.pi.stop()
-        gpio_dev.dev_count -= 1
+        print("gpio_dev: closing pi")
+        gpio_dev.pi.stop()
         sys.exit(0)
 
 class pwm_dev(gpio_dev):

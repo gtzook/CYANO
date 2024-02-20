@@ -1,5 +1,4 @@
 #include "mainwindow.h"
-#include "networking/client.h"
 #include <iostream>
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -9,61 +8,14 @@
 #include <QHBoxLayout>
 #include <QTimer>
 #include <QDebug>
+#include <QJsonDocument>
+#include <QJsonObject>
+
+#define GRAPH_WIDTH 20
+#define SCROLL_THRESH 15
+#define DATA_INTERVAL 0.5
 
 QT_CHARTS_USE_NAMESPACE
-
-int createSocket()
-{
-    int sock = socket(AF_INET, SOCK_STREAM, 0);
-    if (sock < 0)
-    {
-        std::cerr << "Socket creation error" << std::endl;
-    }
-    struct sockaddr_in serv_addr;
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = htons(12345);
-
-    if (inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr) <= 0)
-    {
-        std::cerr << "Invalid address/ Address not supported" << std::endl;
-        return false;
-    }
-
-    if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
-    {
-        std::cerr << "Connection Failed" << std::endl;
-        return false;
-    }
-
-    std::cerr << "Connected" << std::endl;
-    return sock;
-}
-
-std::string receiveMessage(int sock)
-{
-    char buffer[1024] = {0};
-    int valread;
-
-    // Receive data from the server
-    std::cout << "Waiting for message: " << std::endl;
-    valread = read(sock, buffer, 1024);
-    if (valread < 0)
-    {
-        std::cerr << "Read error" << std::endl;
-        return "";
-    }
-    else if (valread == 0)
-    {
-        std::cerr << "Connection closed by server" << std::endl;
-        return "";
-    }
-    else
-    {
-        std::cout << "Message received from server: " << buffer << std::endl;
-        return std::string(buffer);
-    }
-}
-
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
     
@@ -72,12 +24,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     // Create the central widget
     QWidget *centralWidget = new QWidget(this);
     setCentralWidget(centralWidget);
-
-    // Create client interface
-    std::cerr << "Creating GUI Client" << std::endl;
-    Client client;
-    client.connectToHost('127.0.0.1', 12345)
-    std::cerr << "GUI Client Connected" << std::endl;
 
     // Layout for the central widget
     QVBoxLayout *mainLayout = new QVBoxLayout(centralWidget);
@@ -113,36 +59,52 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     QLabel *phLabel = new QLabel("pH Sensor", centralWidget);
     QChart *pHChart = new QChart;
     QChartView *pHChartView = new QChartView(pHChart, centralWidget);
-    QLineSeries *pHSeries = new QLineSeries;
+    pHSeries = new QLineSeries;
     pHChart->addSeries(pHSeries);
+    // graph cosmetics
+    QPen phpen = pHSeries->pen();
+    phpen.setWidth(7);
+    phpen.setColor(Qt::red);
+    pHSeries->setPen(phpen);
+    
     pHChart->createDefaultAxes();
-    QValueAxis *pHXAxis = qobject_cast<QValueAxis *>(pHChart->axes(Qt::Horizontal).at(0));
+    pHXAxis = qobject_cast<QValueAxis *>(pHChart->axes(Qt::Horizontal).at(0));
     QValueAxis *pHYAxis = qobject_cast<QValueAxis *>(pHChart->axes(Qt::Vertical).at(0));
-    pHXAxis->setRange(0, 100);
+    pHXAxis->setRange(0, GRAPH_WIDTH);
     pHYAxis->setRange(0, 14);
     pHXAxis->setTitleText("Time");
     pHYAxis->setTitleText("pH");
     pHLayout->addWidget(phLabel);
     pHLayout->addWidget(pHChartView);
     bottomLayout->addLayout(pHLayout);
-
     // OD section
     QVBoxLayout *odLayout = new QVBoxLayout();
     QLabel *odLabel = new QLabel("Optical Density Sensor", centralWidget);
     QChart *odChart = new QChart;
     QChartView *odChartView = new QChartView(odChart, centralWidget);
-    QLineSeries *odSeries = new QLineSeries;
+    odSeries = new QLineSeries;
     odChart->addSeries(odSeries);
+    // graph cosmetics
+    QPen odpen = odSeries->pen();
+    odpen.setWidth(7);
+    odpen.setColor(Qt::green);
+    odSeries->setPen(odpen);
+    
     odChart->createDefaultAxes();
-    QValueAxis *odXAxis = qobject_cast<QValueAxis *>(odChart->axes(Qt::Horizontal).at(0));
+    odXAxis = qobject_cast<QValueAxis *>(odChart->axes(Qt::Horizontal).at(0));
     QValueAxis *odYAxis = qobject_cast<QValueAxis *>(odChart->axes(Qt::Vertical).at(0));
-    odXAxis->setRange(0, 100);
+    odXAxis->setRange(0, GRAPH_WIDTH);
     odYAxis->setRange(0, 100);
     odXAxis->setTitleText("Time");
     odYAxis->setTitleText("OD");
     odLayout->addWidget(odLabel);
     odLayout->addWidget(odChartView);
     bottomLayout->addLayout(odLayout);
+
+    // Create client interface
+    socket.connectToHost("127.0.0.1", 12345);
+    // Connect socket signals to slots
+    connect(&socket, &QTcpSocket::readyRead, this, &MainWindow::updateGUI);
 
     // Add widgets to the main layout
     mainLayout->addWidget(button1);
@@ -161,17 +123,70 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
 }
 
-void MainWindow::updateGUI(const QString &data)
+void MainWindow::updateGUI()
 {
-    // Update GUI with received data
-    // For demonstration, let's just print the received data
-    //qDebug() << "Received data: " << data;
+    while (socket.bytesAvailable() > 0) {
+        QByteArray rawData = socket.readAll();
+        // Parse the JSON data
+        std::map<QString, QJsonValue> data = parseJSON(rawData);
+        if (data["success"].toBool()){
+            auto count = pHSeries->count(); // number of existing points
+            auto farthest_x = pHSeries->at(count - 1).x();
+
+            // new values to append
+            auto ph = data["ph"].toDouble();
+            auto od = data["od"].toDouble();
+
+            auto pos = 0.0;
+            if(count > 0){                   
+                pos = farthest_x + DATA_INTERVAL;  // one further than highest
+            }
+            // Add to line series
+            pHSeries->append(pos,ph);
+            odSeries->append(pos,od);
+
+            // Scroll graphs
+            if(farthest_x > SCROLL_THRESH){
+                odXAxis->setMax(odXAxis->max() + DATA_INTERVAL);
+                odXAxis->setMin(odXAxis->min() + DATA_INTERVAL);
+                odSeries->remove(0);
+
+                pHXAxis->setMax(pHXAxis->max() + DATA_INTERVAL);
+                pHXAxis->setMin(pHXAxis->min() + DATA_INTERVAL);
+                pHSeries->remove(0);
+            }
+        }
+    }
+}
+
+std::map<QString, QJsonValue> MainWindow::parseJSON(QByteArray raw)
+{
+    QJsonDocument doc = QJsonDocument::fromJson(raw);
+    std::map<QString, QJsonValue> ret; // return map
+    QJsonValue success = false;
+    if (!doc.isNull()) {
+        if (doc.isObject()) {
+            QJsonObject jsonObj = doc.object();
+            // Iterate through JSON          
+            foreach(QString key, jsonObj.keys()) {
+                QJsonValue value = jsonObj.value(key);
+                // Add JSON things to map
+                ret.insert({key,value});
+            }
+            success = true;
+        } else {
+            qWarning() << "JSON data is not an object.";
+        }
+    } else {
+        qWarning() << "Failed to parse JSON data.";
+    }
+    ret.insert({"success", success});
+    return ret;
 }
 
 
 int main(int argc, char *argv[])
 {
-    //int sock = createSocket();
     QApplication app(argc, argv);
     MainWindow w;
     w.showFullScreen();

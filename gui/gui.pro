@@ -7,5 +7,6 @@ INCLUDEPATH += .
 # Input
 QT += widgets
 QT += charts
+QT += network
 SOURCES += mainwindow.cpp
 HEADERS += mainwindow.h

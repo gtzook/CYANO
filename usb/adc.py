@@ -29,7 +29,7 @@ class ADC():
 
     def val_to_od(val : int)-> float:
         # TODO: this
-        return val
+        return 100 * (val / 4096)
         
     def get_sense_vals(self):
         vals = self.get()
