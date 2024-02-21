@@ -13,6 +13,7 @@
 #include <QTcpSocket>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QFont>
 #include <map>
 
 QT_CHARTS_USE_NAMESPACE
@@ -28,28 +29,37 @@ private slots:
     void updateGUI();
     void agitationDecrease();
     void agitationIncrease();
-    void agitationSend();
-    void brightnessClicked();
-
+    void brightnessMoved();
+    void brightnessReleased();
 
 private:
+    void makeAgitation(QWidget *parent, QBoxLayout *layout);
+    void makeBrightness(QWidget *parent, QBoxLayout *layout);
+    void makeText(QWidget *parent, QBoxLayout *layout);
+    void makePH(QWidget *parent, QBoxLayout *layout);
+    void makeOD(QWidget *parent, QBoxLayout *layout);
+    void makeFonts();
+    void updatePlots(double ph, double od);
+    void updateText(bool isDay, int remaining);
+    void agitationSend();
     QPushButton *button1;
     QPushButton *button2;
-    QLabel *agitationLabel;
-    QLabel *agitationValue;
-    QPushButton *increaseButton;
-    QPushButton *decreaseButton;
-    QLabel *brightnessLabel;
-    QSlider *brightnessSlider;
-    QPushButton *okButton;
-    QLabel *dayNightLabel;
-    QLabel *timeSwitchLabel;
-    QLabel *timeSwitchValue;
     QLineSeries *pHSeries;
     QValueAxis *pHXAxis;
     QLineSeries *odSeries;
     QValueAxis *odXAxis;
     QTcpSocket socket;
+    QLabel *brightnessLabel;
+    QSlider *brightnessSlider;
+    QLabel *agitationValue;
+    QLabel *dayNightLabel;
+    QLabel *timeSwitchLabel;
+    // fonts
+    QFont plotTitles;
+    QFont plotLabels;
+    QFont plotTicks;
+    QFont buttons;
+    QFont labels;
     int agi;
 };
 
