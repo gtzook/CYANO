@@ -23,9 +23,14 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
 
-public slots:
+private slots:
     std::map<QString, QJsonValue> parseJSON(QByteArray raw);
     void updateGUI();
+    void agitationDecrease();
+    void agitationIncrease();
+    void agitationSend();
+    void brightnessClicked();
+
 
 private:
     QPushButton *button1;
@@ -45,6 +50,7 @@ private:
     QLineSeries *odSeries;
     QValueAxis *odXAxis;
     QTcpSocket socket;
+    int agi;
 };
 
 #endif // MAINWINDOW_H

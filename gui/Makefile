@@ -376,7 +376,8 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean
 
 ####### Compile
 
-mainwindow.o: mainwindow.cpp mainwindow.h
+mainwindow.o: mainwindow.cpp mainwindow.h \
+		networking/ip_finder.cpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o mainwindow.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 

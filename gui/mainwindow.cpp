@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "networking/ip_finder.cpp"
 #include <iostream>
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -7,6 +8,7 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QTimer>
+#include <QString>
 #include <QDebug>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -34,16 +36,36 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     // Agitation Display section
     QLabel *agitationLabel = new QLabel("Agitation:", centralWidget);
-    QLabel *agitationValue = new QLabel("0%", centralWidget);
+    QLabel *agitationValue = new QLabel("100%", centralWidget);
+    agi = 100;
     QPushButton *increaseButton = new QPushButton("Increase", centralWidget);
     QPushButton *decreaseButton = new QPushButton("Decrease", centralWidget);
 
     // Day Duration Slider
     QLabel *brightnessLabel = new QLabel("Brightness:", centralWidget);
-    QSlider *brightnessSlider = new QSlider(Qt::Horizontal, centralWidget);
+    brightnessSlider = new QSlider(Qt::Horizontal, centralWidget);
     brightnessSlider->setRange(0, 100);
     brightnessSlider->setValue(50);
+    brightnessSlider->setFixedHeight(200); // Adjust the height of the slider box
+    brightnessSlider->setStyleSheet(
+    "QSlider::groove:horizontal {"
+    "    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,"
+    "        stop:0 #bbb, stop:1 #ddd);"
+    "    border: 1px solid #999;"
+    "    height: 200px;"
+    "    border-radius: 4px;"
+    "}"
+    "QSlider::handle:horizontal {"
+    "    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,"
+    "        stop:0 #eee, stop:1 #ccc);"
+    "    border: 1px solid #777;"
+    "    width: 300px;"
+    "    margin: -2px 0;"
+    "    border-radius: 4px;"
+    "}"
+);
     QPushButton *okButton = new QPushButton("OK", centralWidget);
+    connect(okButton, &QPushButton::pressed, this, &MainWindow::brightnessClicked);
 
     // Light Timer
     QLabel *dayNightLabel = new QLabel("DAY", centralWidget);
@@ -51,8 +73,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     QLabel *timeSwitchLabel = new QLabel("Time to switch:", centralWidget);
     QLabel *timeSwitchValue = new QLabel("00:00", centralWidget);
 
+    // IP Display
+    QLabel *ipLabel = new QLabel("", centralWidget);
+    ipLabel->setText(QString::fromStdString("IP: " + get_ip()));
+
     // Create layouts for the bottom graphs
-    QVBoxLayout *bottomLayout = new QVBoxLayout();
+    QHBoxLayout *bottomLayout = new QHBoxLayout();
 
     // pH section
     QVBoxLayout *pHLayout = new QVBoxLayout();
@@ -74,9 +100,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     pHYAxis->setRange(0, 14);
     pHXAxis->setTitleText("Time");
     pHYAxis->setTitleText("pH");
+    
+    pHChartView->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     pHLayout->addWidget(phLabel);
     pHLayout->addWidget(pHChartView);
-    bottomLayout->addLayout(pHLayout);
+    bottomLayout->addLayout(pHLayout,.2);
     // OD section
     QVBoxLayout *odLayout = new QVBoxLayout();
     QLabel *odLabel = new QLabel("Optical Density Sensor", centralWidget);
@@ -97,9 +125,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     odYAxis->setRange(0, 100);
     odXAxis->setTitleText("Time");
     odYAxis->setTitleText("OD");
+    odChartView->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     odLayout->addWidget(odLabel);
     odLayout->addWidget(odChartView);
-    bottomLayout->addLayout(odLayout);
+    bottomLayout->addLayout(odLayout,.2);
 
     // Create client interface
     socket.connectToHost("127.0.0.1", 12345);
@@ -117,6 +146,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     mainLayout->addWidget(brightnessSlider);
     mainLayout->addWidget(okButton);
     mainLayout->addWidget(dayNightLabel);
+    mainLayout->addWidget(ipLabel);
     mainLayout->addWidget(timeSwitchLabel);
     mainLayout->addWidget(timeSwitchValue);
     mainLayout->addLayout(bottomLayout);
@@ -126,6 +156,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 void MainWindow::updateGUI()
 {
     while (socket.bytesAvailable() > 0) {
+        qDebug()<<"update gui";
         QByteArray rawData = socket.readAll();
         // Parse the JSON data
         std::map<QString, QJsonValue> data = parseJSON(rawData);
@@ -184,6 +215,28 @@ std::map<QString, QJsonValue> MainWindow::parseJSON(QByteArray raw)
     return ret;
 }
 
+void MainWindow::agitationDecrease(){
+    if (agi > 0){
+        agi -= 10;
+    }
+    qDebug() << "agi dec";    
+}
+void MainWindow::agitationIncrease(){    
+    if (agi <100){
+        agi += 10;
+    }
+    qDebug() << "agi inc";    
+}
+void MainWindow::agitationSend(){
+    QString s= QString("%1\n").arg(agi);
+    agitationValue->setText();
+    QString s = QString("a%1\n").arg(agi);
+    socket.write(s.toUtf8());
+}
+void MainWindow::brightnessClicked(){
+    QString s = QString("b%1\n").arg(brightnessSlider->value());
+    socket.write(s.toUtf8());
+}
 
 int main(int argc, char *argv[])
 {
@@ -192,3 +245,4 @@ int main(int argc, char *argv[])
     w.showFullScreen();
     return app.exec();
 }
+

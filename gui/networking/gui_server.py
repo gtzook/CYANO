@@ -23,6 +23,7 @@ def server_loop(shared_data: Dict[str, Union[int,float,bool]],
     print("gui_server: waiting for connections...")
     
     conn, addr = server_socket.accept()
+    conn.settimeout(.1)
     
     print(f"gui_server: connection at {addr}")  
     
@@ -44,6 +45,10 @@ def server_loop(shared_data: Dict[str, Union[int,float,bool]],
           json_data = json.dumps(shared_data.copy())
           conn.sendall(json_data.encode('utf-8'))
           time.sleep(.5)
+          try:
+            print(conn.recv(1024).decode('utf-8'))
+          except TimeoutError:
+            pass
         except (ConnectionResetError, BrokenPipeError):
           print('gui_server: connection to GUI lost')
           clean()
