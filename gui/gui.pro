@@ -9,4 +9,6 @@ QT += widgets
 QT += charts
 QT += network
 SOURCES += mainwindow.cpp
+SOURCES += settings_window/settings.cpp
 HEADERS += mainwindow.h
+HEADERS += settings_window/settings.h

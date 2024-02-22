@@ -1,20 +1,8 @@
 #include "mainwindow.h"
 #include "networking/ip_finder.cpp"
-#include <iostream>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <string.h>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QTimer>
-#include <QString>
-#include <QDebug>
-#include <QJsonDocument>
-#include <QJsonObject>
 
 #define GRAPH_WIDTH 200
-#define SCROLL_THRESH 15
+#define SCROLL_THRESH 150
 #define DATA_INTERVAL 0.5
 
 QT_CHARTS_USE_NAMESPACE
@@ -28,7 +16,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     // Layout for the central widget
     QVBoxLayout *mainLayout = new QVBoxLayout(centralWidget);
-    mainLayout->addSpacing(20);
+    // IP Display
+    QLabel *ipLabel = new QLabel("", parent);
+    ipLabel->setText(QString::fromStdString("IP: " + get_ip()));
+    mainLayout->addWidget(ipLabel);
+    mainLayout->addSpacing(10);
 
     // Create layouts for the bottom graphs
     const int plotSpacer = 30;
@@ -39,33 +31,39 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     makeOD(centralWidget, plotLayout);
     plotLayout->addSpacing(plotSpacer);
     mainLayout->addLayout(plotLayout);
+    mainLayout->addSpacing(10);
 
     QHBoxLayout *lineLayout = new QHBoxLayout();
-    
+
     lineLayout->addSpacing(20);
     makeAgitation(centralWidget, lineLayout);
     lineLayout->addSpacing(290);
     makeText(centralWidget, lineLayout);
+    lineLayout->addSpacing(150);
     makeBrightness(centralWidget, lineLayout);
-    lineLayout->addSpacing(20);
+    lineLayout->addSpacing(25);
+    lineLayout->addStretch();
     mainLayout->addLayout(lineLayout);
 
+    mainLayout->addSpacing(100);    
+
     // Menu Buttons
-    QPushButton *button1 = new QPushButton("Parameters", centralWidget);
+    QPushButton *button1 = new QPushButton("Demo", centralWidget);
+    button1->setFixedSize(100, 100);
     mainLayout->addWidget(button1);
 
-    mainLayout->addSpacing(150);
-
-    // IP Display
-    QLabel *ipLabel = new QLabel("", parent);
-    ipLabel->setText(QString::fromStdString("IP: " + get_ip()));
-    mainLayout->addWidget(ipLabel);
-    mainLayout->addSpacing(10);
     // Create client interface
     socket.connectToHost("127.0.0.1", 12345);
     // Connect socket signals to slots
     connect(&socket, &QTcpSocket::readyRead, this, &MainWindow::updateGUI);
+    
+    showFullScreen(); //make window fullscreen
 
+    // Start settings wizard
+    SettingsWizard *wiz = new SettingsWizard(this);
+    connect(wiz, &QDialog::finished, this, &MainWindow::parseSettings);
+    wiz->show();
+    agitationManual(); // add to turn on agitation on startup
 }
 
 void MainWindow::updateGUI()
@@ -77,12 +75,13 @@ void MainWindow::updateGUI()
         std::map<QString, QJsonValue> data = parseJSON(rawData);
         if (data["success"].toBool())
         {
-            updatePlots(data["ph"].toDouble(),data["od"].toDouble());
-            updateText(data["state"].toBool(),(int)(data["remaining"].toDouble() + 0.5));
+            updatePlots(data["ph"].toDouble(), data["od"].toDouble());
+            updateText(data["state"].toBool(), (int)(data["remaining"].toDouble() + 0.5));
         }
     }
 }
-void MainWindow::updatePlots(double ph, double od){
+void MainWindow::updatePlots(double ph, double od)
+{
     auto count = pHSeries->count(); // number of existing points
     auto farthest_x = pHSeries->at(count - 1).x();
 
@@ -107,36 +106,42 @@ void MainWindow::updatePlots(double ph, double od){
         pHSeries->remove(0);
     }
 }
-void MainWindow::updateText(bool isDay, int remaining){
-    if (isDay){
+void MainWindow::updateText(bool isDay, int remaining)
+{
+    if (isDay)
+    {
         dayNightLabel->setStyleSheet("QLabel { color: #edd000; }");
         dayNightLabel->setText("DAY");
     }
-    else{
+    else
+    {
         dayNightLabel->setStyleSheet("QLabel { color: #054170; }");
-        dayNightLabel->setText("NIGHT");        
+        dayNightLabel->setText("NIGHT");
     }
     auto minutes = remaining / 60;
     auto hours = minutes / 60;
     auto seconds = remaining - (minutes * 60);
     minutes -= 60 * hours;
-    QString h = QString("%1").arg(hours), 
-            m = QString("%1").arg(minutes), 
+    QString h = QString("%1").arg(hours),
+            m = QString("%1").arg(minutes),
             s = QString("%1").arg(seconds);
     h = (hours < 10) ? '0' + h : h;
     m = (minutes < 10) ? '0' + m : m;
     s = (seconds < 10) ? '0' + s : s;
     QString ts = "Time to switch: " +
-                    h + ':' + m + ':' + s;
+                 h + ':' + m + ':' + s;
     timeSwitchLabel->setText(ts);
 }
-void MainWindow::makeFonts(){
+void MainWindow::makeFonts()
+{
     plotTitles = QFont("Papyrus", 30, 50);
     plotLabels = QFont("Papyrus", 15, 100);
     plotTicks = QFont("Papyrus", 10, 20);
     labels = QFont("Papyrus", 20, 30);
+    labels2 = QFont("Papyrus", 15, 50);
 }
-void MainWindow::makeOD(QWidget *parent, QBoxLayout *layout){
+void MainWindow::makeOD(QWidget *parent, QBoxLayout *layout)
+{
     // OD section
     QChart *odChart = new QChart;
     odChart->legend()->hide();
@@ -155,21 +160,22 @@ void MainWindow::makeOD(QWidget *parent, QBoxLayout *layout){
 
     odXAxis = qobject_cast<QValueAxis *>(odChart->axes(Qt::Horizontal).at(0));
     QValueAxis *odYAxis = qobject_cast<QValueAxis *>(odChart->axes(Qt::Vertical).at(0));
-        
+
     odXAxis->setRange(0, GRAPH_WIDTH);
-    odYAxis->setRange(0, 100);    
-    odXAxis->setTitleText("Time");    
+    odYAxis->setRange(0, 100);
+    odXAxis->setTitleText("Time");
     odXAxis->setLabelsFont(plotTicks);
     odXAxis->setTitleFont(plotLabels);
     odYAxis->setTitleText("OD");
     odYAxis->setTitleFont(plotLabels);
     odYAxis->setLabelsFont(plotTicks);
-    
+
     odChartView->setFixedHeight(600);
 
     layout->addWidget(odChartView);
 }
-void MainWindow::makePH(QWidget *parent, QBoxLayout *layout){
+void MainWindow::makePH(QWidget *parent, QBoxLayout *layout)
+{
     // pH section
     QChart *pHChart = new QChart;
     pHChart->legend()->hide();
@@ -200,7 +206,8 @@ void MainWindow::makePH(QWidget *parent, QBoxLayout *layout){
 
     layout->addWidget(pHChartView);
 }
-void MainWindow::makeText(QWidget *parent, QBoxLayout *layout){
+void MainWindow::makeText(QWidget *parent, QBoxLayout *layout)
+{
     QVBoxLayout *timeText = new QVBoxLayout();
     timeText->setSpacing(12);
     // Light Timer
@@ -211,19 +218,25 @@ void MainWindow::makeText(QWidget *parent, QBoxLayout *layout){
     timeSwitchLabel->setFont(labels);
     // Add widgets to the main layout
     timeText->setAlignment(Qt::AlignCenter);
+    timeText->addSpacing(50);
     timeText->addWidget(dayNightLabel);
     timeText->addWidget(timeSwitchLabel);
 
-    layout->addLayout(timeText);
+    timeText->addStretch();
+    timeText->setAlignment(dayNightLabel, Qt::AlignCenter);
+    timeText->setAlignment(timeSwitchLabel, Qt::AlignHCenter);
+    layout->addLayout(timeText, Qt::AlignCenter);
 }
-void MainWindow::makeBrightness(QWidget *parent, QBoxLayout *layout){
+void MainWindow::makeBrightness(QWidget *parent, QBoxLayout *layout)
+{
     // Day Duration Slider
     brightnessLabel = new QLabel("Brightness: 50%", parent);
     brightnessLabel->setFont(labels);
     brightnessSlider = new QSlider(Qt::Horizontal, parent);
     brightnessSlider->setRange(0, 100);
     brightnessSlider->setValue(50);
-    brightnessSlider->setFixedHeight(50); // Adjust the height of the slider box
+    brightnessSlider->setFixedHeight(50);
+    brightnessSlider->setFixedWidth(600);
     brightnessSlider->setStyleSheet(
         "QSlider::groove:horizontal {"
         "    border: 1px solid #bbb;"
@@ -275,40 +288,72 @@ void MainWindow::makeBrightness(QWidget *parent, QBoxLayout *layout){
     connect(brightnessSlider, &QSlider::sliderMoved, this, &MainWindow::brightnessMoved);
     connect(brightnessSlider, &QSlider::sliderReleased, this, &MainWindow::brightnessReleased);
     QVBoxLayout *sLayout = new QVBoxLayout();
+    sLayout->addSpacing(50);
     sLayout->addWidget(brightnessLabel);
     sLayout->setAlignment(brightnessLabel, Qt::AlignHCenter);
     sLayout->addWidget(brightnessSlider);
+    sLayout->setSpacing(30);
+    sLayout->setContentsMargins(0, 0, 0, 0);
+    sLayout->addStretch();
     layout->addLayout(sLayout);
 }
-void MainWindow::makeAgitation(QWidget *parent, QBoxLayout *layout){
+void MainWindow::makeAgitation(QWidget *parent, QBoxLayout *layout)
+{
     // Agitation Display section
-    QLabel *agitationLabel = new QLabel("Agitation: ", parent);
+    QLabel *agitationLabel = new QLabel("Pump: ", parent);
     agitationLabel->setFont(labels);
     agitationValue = new QLabel("100%", parent);
     agitationValue->setFont(labels);
     agitationValue->setFixedWidth(agitationValue->width());
     agi = 100;
+    QLabel *switchLabel = new QLabel("Mode");
+    switchLabel->setFont(labels2);
+    manualCheck = new QCheckBox(parent);
+    connect(manualCheck, &QCheckBox::stateChanged, this, &MainWindow::agitationManual);
+    manualCheck->setTristate(true);
+    manualCheck->setCheckState(Qt::Checked);
+    manualCheck->setStyleSheet(
+        "QCheckBox::indicator { width:150px; height: 100px;}"
+        "QCheckBox::indicator::checked {image: url(/home/cyano/CYANO/gui/lib/auto.png);}"
+        "QCheckBox::indicator::unchecked {image: url(/home/cyano/CYANO/gui/lib/on.png);}"
+        "QCheckBox::indicator::indeterminate {image: url(/home/cyano/CYANO/gui/lib/off.png);}");
     QPushButton *increaseButton = new QPushButton("Increase", parent);
     QPushButton *decreaseButton = new QPushButton("Decrease", parent);
     connect(increaseButton, &QPushButton::pressed, this, &MainWindow::agitationIncrease);
     connect(decreaseButton, &QPushButton::pressed, this, &MainWindow::agitationDecrease);
-    
+
     increaseButton->setFont(labels);
     decreaseButton->setFont(labels);
-    increaseButton->setFixedSize(200,100);
-    decreaseButton->setFixedSize(200,100);
+    increaseButton->setFixedSize(200, 100);
+    decreaseButton->setFixedSize(200, 100);
 
     QVBoxLayout *butLayout = new QVBoxLayout();
     QHBoxLayout *agiLayout = new QHBoxLayout();
+    QVBoxLayout *labelSwitchLayout = new QVBoxLayout();
+    QHBoxLayout *labelLayout = new QHBoxLayout();
     butLayout->addWidget(increaseButton);
     butLayout->addWidget(decreaseButton);
+    butLayout->addStretch();
+
+    labelLayout->addWidget(agitationLabel);
+    labelLayout->addWidget(agitationValue);
+
+    labelSwitchLayout->setSpacing(0);
+    labelSwitchLayout->addLayout(labelLayout);
+    labelSwitchLayout->addSpacing(30);
+    labelSwitchLayout->addWidget(switchLabel);
+    labelSwitchLayout->setAlignment(switchLabel, Qt::AlignHCenter);
+    labelSwitchLayout->addWidget(manualCheck);
+    labelSwitchLayout->setAlignment(manualCheck, Qt::AlignHCenter);
+    labelSwitchLayout->addSpacing(20);
+    labelSwitchLayout->addStretch(1);
 
     agiLayout->setSpacing(0);
     agiLayout->addLayout(butLayout);
     agiLayout->addSpacing(30);
-    agiLayout->addWidget(agitationLabel);
-    agiLayout->addWidget(agitationValue);
+    agiLayout->addLayout(labelSwitchLayout);
     agiLayout->setAlignment(Qt::AlignLeft);
+    agiLayout->addStretch();
     // Add to layout
     layout->addLayout(agiLayout);
 }
@@ -343,27 +388,36 @@ std::map<QString, QJsonValue> MainWindow::parseJSON(QByteArray raw)
     ret.insert({"success", success});
     return ret;
 }
+void MainWindow::agitationManual()
+{
+    auto state = manualCheck->checkState();
+    int val = agi;
+    manual = !(state == Qt::Checked);
+    if (manual)
+        val = state == Qt::Unchecked ? 100 : 0;
+    agitationSend(val);
+}
 void MainWindow::agitationDecrease()
 {
-    if (agi > 0)
+    if (!manual)
     {
-        agi -= 10;
+        agi = agi > 0 ? agi - 10 : agi;
+        agitationSend(agi);
     }
-    agitationSend();
 }
 void MainWindow::agitationIncrease()
 {
-    if (agi < 100)
+    if (!manual)
     {
-        agi += 10;
+        agi = agi < 100 ? agi + 10 : agi;
+        agitationSend(agi);
     }
-    agitationSend();
 }
-void MainWindow::agitationSend()
+void MainWindow::agitationSend(int val)
 {
-    QString s = QString("%1\%").arg(agi);
+    QString s = QString("%1\%").arg(val);
     agitationValue->setText(s);
-    s = QString("a%1").arg(agi);
+    s = QString("a%1\n").arg(val);
     socket.write(s.toUtf8());
 }
 void MainWindow::brightnessMoved()
@@ -378,10 +432,12 @@ void MainWindow::brightnessReleased()
     QString s = QString("b%1").arg(value);
     socket.write(s.toUtf8());
 }
+void MainWindow::parseSettings()
+{
+}
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     MainWindow w;
-    w.showFullScreen();
     return app.exec();
 }

@@ -46,7 +46,7 @@ def server_loop(shared_data: Dict[str, Union[int,float,bool]],
           conn.sendall(json_data.encode('utf-8'))
           time.sleep(.5)
           try:
-            print(conn.recv(1024).decode('utf-8'))
+            print(conn.recv(1024).decode('utf-8').strip())
           except TimeoutError:
             pass
         except (ConnectionResetError, BrokenPipeError):
