@@ -30,6 +30,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QDialog>
+#include <QMessageBox>
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -46,7 +47,8 @@ private slots:
     void agitationManual();
     void brightnessMoved();
     void brightnessReleased();
-    void parseSettings();
+    void demo();
+    void blank();
 
 private:
     void makeAgitation(QWidget *parent, QBoxLayout *layout);

@@ -77,9 +77,17 @@ def server_loop(shared_data: Dict[str, Union[int,float,bool]],
             # brightness command
             if 'b' in rec:
               shared_data['brightness'] = num / 100.0
+              events['new_brightness'].set()
             # agitation command
-            if 'a' in rec:
+            elif 'a' in rec:
               shared_data['agi_duty'] = num
+              events['new_agi'].set()
+            # demo state change command
+            elif 'p' in rec:
+              shared_data['demo'] = not shared_data['demo']
+            # blank requested
+            elif 'x' in rec:
+              events['blank_request'].set()
           except TimeoutError:
             pass
         except (ConnectionResetError, BrokenPipeError):

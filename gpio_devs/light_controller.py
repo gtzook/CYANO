@@ -67,6 +67,7 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     
     while True:
         if events['new_settings'].is_set():
+            events['new_agi'].set() # notify agi to update with settings
             update_times()
             
         # Time elapsed since start of this state
@@ -107,12 +108,13 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
                 pattern_index = pattern_index + 1 if pattern_index < len(rainbow) - 1 else 0
                 update_pixels = True # update colors
         
-        if pixels.brightness != shared_data['brightness']:
+        if events['new_brightness'].is_set():
             if debug_mode:
                 print("light_controller: brightness change request received to " + 
                       f"{shared_data['brightness']} from {pixels.brightness}")
             update_pixels = True # update brightness
             pixels.brightness = shared_data['brightness']
+            events['new_brightness'].clear()
             
         if update_pixels: # only update when flag is set to avoid flickering
             pixels.show()
