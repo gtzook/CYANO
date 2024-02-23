@@ -9,12 +9,6 @@ SettingsWizard::SettingsWizard(QWidget *parent) : QWizard(parent)
     addPage(new IntroPage);
     showFullScreen();
 }
-void SettingsWizard::accept()
-{
-    QByteArray daytime = field("day").toByteArray();
-    qDebug() << daytime;
-    QDialog::accept();
-}
 
 IntroPage::IntroPage(QWidget *parent)
     : QWizardPage(parent)
@@ -34,6 +28,13 @@ IntroPage::IntroPage(QWidget *parent)
     main->addStretch();
 
     setLayout(main);
+}
+
+QJsonArray SettingsWizard::getSettings(){
+    int daySel = field("day").toInt();
+    int nightSel = field("night").toInt();
+    QJsonArray settings;
+    settings.append(QJsonValue)
 }
 
 void IntroPage::makeCycles(QBoxLayout *layout){
@@ -69,6 +70,7 @@ void IntroPage::makeCycles(QBoxLayout *layout){
     cycleLayout->addStretch();
 
     registerField("day", day);
+    registerField("night", night);
 
     layout->addLayout(cycleLayout);
 }
@@ -101,3 +103,4 @@ QList<QString> IntroPage::makeTimes(){
     times.append("12:00 AM");
     return times;
 }
+

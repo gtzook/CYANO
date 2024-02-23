@@ -14,12 +14,8 @@ class SettingsWizard : public QWizard
 {
     Q_OBJECT
 public:
-    SettingsWizard(QWidget *parent = nullptr);
-    void accept() override;
-    QByteArray getSettings();
-
-private:
-    QByteArray settings;
+    SettingsWizard(QWidget *parent = nullptr);;
+    QJsonArray getSettings();
 };
 
 class IntroPage : public QWizardPage
