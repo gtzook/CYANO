@@ -51,19 +51,20 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     QPushButton *button1 = new QPushButton("Demo", centralWidget);
     button1->setFixedSize(100, 100);
     mainLayout->addWidget(button1);
-
-    // Create client interface
-    socket.connectToHost("127.0.0.1", 12345);
-    // Connect socket signals to slots
-    connect(&socket, &QTcpSocket::readyRead, this, &MainWindow::updateGUI);
-    
-    showFullScreen(); //make window fullscreen
+     showFullScreen(); //make window fullscreen
 
     // Start settings wizard
     SettingsWizard *wiz = new SettingsWizard(this);
     connect(wiz, &QDialog::finished, this, &MainWindow::parseSettings);
     wiz->show();
-    agitationManual(); // add to turn on agitation on startup
+    
+    // Create client interface
+    socket.connectToHost("127.0.0.1", 12345);
+    // Connect socket signals to slots
+    connect(&socket, &QTcpSocket::readyRead, this, &MainWindow::updateGUI);
+
+    // send user settings to Python
+    socket.write(wiz.getSettings());
 }
 
 void MainWindow::updateGUI()

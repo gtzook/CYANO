@@ -23,7 +23,7 @@ def server_loop(shared_data: Dict[str, Union[int,float,bool]],
     print("gui_server: waiting for connections...")
     
     conn, addr = server_socket.accept()
-    conn.settimeout(.1)
+    conn.settimeout(100)
     
     print(f"gui_server: connection at {addr}")  
     
@@ -40,13 +40,46 @@ def server_loop(shared_data: Dict[str, Union[int,float,bool]],
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
     
+    print("gui_server: waiting for user settings")
+    # Receive settings
+    conn.settimeout(None) # Wait until user is done inputting settings
+    received_data = conn.recv(1024)
+    if received_data:
+        # Decode the received bytes to a string (if necessary)
+        received_string = received_data.decode('utf-8')
+        
+        # Parse the JSON string
+        settings = json.loads(received_string)
+        
+        # set time strings
+        shared_data['to_night'] = settings["night"]
+        shared_data['to_day'] = settings["day"]
+        
+        # set agitation period
+        shared_data['agi_freq'] = settings['agi_freq']
+        
+        # Print the parsed JSON data
+        print("gui_server: Received JSON data:", settings)
+    else:
+        print("gui_server: Failed to retrieve settings.")
+    # notify services that settings are received
+    events['new_settings'].set()
+    conn.settimeout(0.1)
+    # Normal loop
     while True:
         try:
           json_data = json.dumps(shared_data.copy())
           conn.sendall(json_data.encode('utf-8'))
           time.sleep(.5)
           try:
-            print(conn.recv(1024).decode('utf-8').strip())
+            rec = conn.recv(1024).decode('utf-8').strip()
+            num = int(rec[1:])
+            # brightness command
+            if 'b' in rec:
+              shared_data['brightness'] = num / 100.0
+            # agitation command
+            if 'a' in rec:
+              shared_data['agi_duty'] = num
           except TimeoutError:
             pass
         except (ConnectionResetError, BrokenPipeError):

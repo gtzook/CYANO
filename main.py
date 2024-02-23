@@ -26,6 +26,7 @@ if __name__ == "__main__":
                                 'od':-1, # processed OD value
                                 'to_day': '09:00:00', # time to change to day
                                 'to_night': '18:00:00', # time to change to night
+                                'agi_freq': 0, # agitation period
                                 'state':False, # state of lights
                                 'co2':False, # co2 running
                                 'elapsed':-1, # time elapsed in this light state
@@ -38,7 +39,8 @@ if __name__ == "__main__":
 
     # Events
     events = {'new_adc': mp.Event(),
-              'new_light': mp.Event()}
+              'new_light': mp.Event(),
+              'new_settings': mp.Event()}
 
     # ADC serial monitor
     usb_proc = mp.Process(name='usb', 
@@ -69,12 +71,12 @@ if __name__ == "__main__":
                           target=gpio_devs.co2_controller.co2_loop,
                           args=[shared_data, events, '-co2debug' in sys.argv])
     
+    if not '-nogui' in sys.argv:
+        gui_serv_proc.start()
     usb_proc.start()
     if not '-nolight' in sys.argv:
         light_proc.start()
     laser_proc.start()
-    if not '-nogui' in sys.argv:
-        gui_serv_proc.start()
     log_proc.start()
     if not '-noco2' in sys.argv:
         co2_proc.start()

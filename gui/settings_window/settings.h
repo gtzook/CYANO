@@ -14,8 +14,11 @@ class SettingsWizard : public QWizard
 {
     Q_OBJECT
 public:
-    SettingsWizard(QWidget *parent = nullptr);;
-    QJsonArray getSettings();
+    SettingsWizard(QWidget *parent = nullptr);
+    QByteArray getSettings();
+private:
+    int SettingsWizard::getTime;
+    QJsonValue getTimeStr(int i);
 };
 
 class IntroPage : public QWizardPage
@@ -28,6 +31,8 @@ public:
 private:
     QLabel *label;
     void makeCycles(QBoxLayout *layout);
+    void makeAgi(QBoxLayout *layout);
+    QList<QString> makeAgis()
     QList<QString> makeTimes();
 };
 

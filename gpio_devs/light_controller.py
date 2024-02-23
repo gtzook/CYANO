@@ -45,20 +45,30 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     signal.signal(signal.SIGTERM, cleanup)
     signal.signal(signal.SIGINT, cleanup)
     
-    # timing setup
-    night_time = isTimeFormat(shared_data['to_night'])
-    day_time = isTimeFormat(shared_data['to_day'])
-        
-    toggle_time = 0 # immediately toggle
-    # set to NOT because we will toggle right away
-    shared_data['state'] = not isDay(night_time,day_time)
-    start_t = time.time()
+    def update_times():      
+        global toggle_time, night_time, day_time, start_t  
+        toggle_time = 0 # immediately toggle
+        night_time = isTimeFormat(shared_data['to_night'])
+        day_time = isTimeFormat(shared_data['to_day'])
+        # set to not because we will toggle right after
+        shared_data['state'] = not isDay(night_time, day_time)
+        start_t = time.time()
+        events['new_settings'].clear()
 
     wait_time = 1
     
     update_pixels = True
     
+    # Wait for settings to be processed
+    first_start = True
+    if first_start:
+        while not events['new_settings'].is_set():
+            time.sleep(1)
+    
     while True:
+        if events['new_settings'].is_set():
+            update_times()
+            
         # Time elapsed since start of this state
         shared_data['elapsed'] = time.time() - start_t
         # If time elapsed, toggle LED
