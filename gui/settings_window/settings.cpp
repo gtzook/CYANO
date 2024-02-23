@@ -9,12 +9,6 @@ SettingsWizard::SettingsWizard(QWidget *parent) : QWizard(parent)
     addPage(new IntroPage);
     showFullScreen();
 }
-void SettingsWizard::accept()
-{
-    QByteArray daytime = field("day").toByteArray();
-    qDebug() << daytime;
-    QDialog::accept();
-}
 
 IntroPage::IntroPage(QWidget *parent)
     : QWizardPage(parent)
@@ -22,7 +16,6 @@ IntroPage::IntroPage(QWidget *parent)
     setTitle(tr("CYANO Bioreactor Growth Settings"));
 
     QHBoxLayout *main = new QHBoxLayout();  
-    QVBoxLayout *agiLayout = new QVBoxLayout(); 
 
     QLabel *test = new QLabel("test");
     agiLayout->addWidget(test);
@@ -30,10 +23,23 @@ IntroPage::IntroPage(QWidget *parent)
     main->addSpacing(100);
     makeCycles(main);
     main->addSpacing(600);
-    main->addLayout(agiLayout);
+    makeAgis(main);
     main->addStretch();
 
     setLayout(main);
+}
+
+QByteArray SettingsWizard::getSettings(){
+    int daySel = field("day").toInt();
+    int nightSel = field("night").toInt();
+    int freqSel = field("agi_freq").toInt();
+
+    QJsonArray settings;
+    settings["day"] = getTimeStr(daySel);
+    settings["night"] = getTimeStr(nightSel);
+    settings["agi_freq"] = freqSel;
+
+    return QJsonDocument(settings).toJson();
 }
 
 void IntroPage::makeCycles(QBoxLayout *layout){
@@ -69,8 +75,44 @@ void IntroPage::makeCycles(QBoxLayout *layout){
     cycleLayout->addStretch();
 
     registerField("day", day);
+    registerField("night", night);
 
     layout->addLayout(cycleLayout);
+}
+void IntroPage::mageAgi(QBokxLayout *layout){
+    QVBoxLayout *agiLayout = new QVBoxLayout();
+    
+    QList<QString> agis = makeAgis();
+
+    QFont comboBoxFont = QFont("Papyrus", 20, 30);
+
+    // Init objects for day
+    QLabel *agiLabel = new QLabel("Agitate every:");
+    QComboBox *agiFreq = new QComboBox;
+    agiFreq->setFont(comboBoxFont);
+    agiFreq->addAgis(agis);
+    agiFreq->setFixedWidth(400);
+
+    // Add to layout
+    agiLayout->addSpacing(200);
+    agiLayout->addWidget(dayBoxLabel);
+    agiLayout->addWidget(day, Qt::AlignHCenter);
+    agiLayout->addStretch();
+
+    registerField("agi_freq", agiFreq);
+
+    layout->addLayout(agiLayout);
+}
+
+QList<QString> IntroPage::makeAgis(){
+    QList<QString> agis;
+    agis.append("Always");
+    agis.append("1 minute");
+    agis.append("5 minutes");
+    agis.append("10 minutes");
+    agis.append("30 minutes");
+    agis.append("1 hour");
+    return agis;
 }
 
 QList<QString> IntroPage::makeTimes(){
@@ -100,4 +142,35 @@ QList<QString> IntroPage::makeTimes(){
     times.append("11:00 PM");
     times.append("12:00 AM");
     return times;
+}
+
+QJsonValue SettingsWizard::getTimeStr(int i)
+{
+    QList<QString> times;
+    times.append("1:00");
+    times.append("2:00");
+    times.append("3:00");
+    times.append("4:00");
+    times.append("5:00");
+    times.append("6:00");
+    times.append("7:00");
+    times.append("8:00");
+    times.append("9:00");
+    times.append("10:00");
+    times.append("11:00");
+    times.append("12:00");
+    times.append("13:00");
+    times.append("14:00");
+    times.append("15:00");
+    times.append("16:00");
+    times.append("17:00");
+    times.append("18:00");
+    times.append("19:00");
+    times.append("20:00");
+    times.append("21:00");
+    times.append("22:00");
+    times.append("23:00");
+    times.append("00:00");
+
+    return QJsonValue(times.at(i));
 }

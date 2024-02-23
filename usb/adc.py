@@ -15,6 +15,7 @@ class ADC():
         self._set_handlers()
         self.num_sensors = num_sensors
         self.debug_mode = debug_mode
+        self.od_zero = 0
         # open serial interface
         self.ser = serial.Serial('/dev/ttyACM0',9600, timeout = 0.01)
         
@@ -22,14 +23,17 @@ class ADC():
         for i in range(5):
             self._next()
     @staticmethod
-    def val_to_ph(val : int) -> float:
+    def val_to_ph(self, val : int) -> float:
         voltage = 3.3 * (val / 4096)
         # equation from https://files.atlas-scientific.com/Gravity-pH-datasheet.pdf
         return (-5.6548 * voltage) + 14.509
 
-    def val_to_od(val : int)-> float:
+    def val_to_od(self, val : int)-> float:
         # TODO: this
-        return 100 * (val / 1024)
+        return (100 * (val / 4096)) - self.od_zero
+    
+    def blank_od(self, zero):
+        self.od_zero = zero
         
     def get_sense_vals(self):
         vals = self.get()
@@ -99,11 +103,14 @@ def ADC_loop(shared_data: Dict[str, Union[int,float,bool]],
         od_filt.add(od)
         od_f = od_filt.filtered()
         
-        shared_data['ph'] = ADC.val_to_ph(ph_f)
-        shared_data['od'] = ADC.val_to_od(od_f)
+        shared_data['ph'] = adc.val_to_ph(ph_f)
+        shared_data['od'] = adc.val_to_od(od_f)
                 
         # Signal new data exists 
         events['new_adc'].set()
+        
+        if events['blank_request'].is_set():
+            adc.blank_od(shared_data['od'] )
         
         if debug_mode: # print in debug mode
             print(f"\nadc: ph_raw is {ph}")

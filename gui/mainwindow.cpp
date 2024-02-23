@@ -45,25 +45,38 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     lineLayout->addStretch();
     mainLayout->addLayout(lineLayout);
 
-    mainLayout->addSpacing(100);    
+    mainLayout->addSpacing(100);
 
     // Menu Buttons
-    QPushButton *button1 = new QPushButton("Demo", centralWidget);
-    button1->setFixedSize(100, 100);
-    mainLayout->addWidget(button1);
+    QHBoxLayout *menuButtons = new QHBLayout();
 
-    // Create client interface
-    socket.connectToHost("127.0.0.1", 12345);
-    // Connect socket signals to slots
-    connect(&socket, &QTcpSocket::readyRead, this, &MainWindow::updateGUI);
-    
-    showFullScreen(); //make window fullscreen
+    QPushButton *demoButton = new QPushButton("Demo", centralWidget);
+    demoButton->setFixedSize(100, 100);
+    QPushButton *blankButton = new QPushButton("Blank OD", centralWidget);
+    blankButton->setFixedSize(100, 100);
+
+    connect(demoButton, &QPushButton::pressed, this, &MainWindow::demo);
+    demo = false;
+
+    connect(blankButton, &QPushButton::pressed, this, &MainWindow::blank);
+
+    menuButtons->addWidget(demoButton);
+    mainLayout->addLayout(menuButtons);
+
+    showFullScreen(); // make window fullscreen
 
     // Start settings wizard
     SettingsWizard *wiz = new SettingsWizard(this);
     connect(wiz, &QDialog::finished, this, &MainWindow::parseSettings);
     wiz->show();
-    agitationManual(); // add to turn on agitation on startup
+
+    // Create client interface
+    socket.connectToHost("127.0.0.1", 12345);
+    // Connect socket signals to slots
+    connect(&socket, &QTcpSocket::readyRead, this, &MainWindow::updateGUI);
+
+    // send user settings to Python
+    socket.write(wiz.getSettings());
 }
 
 void MainWindow::updateGUI()
@@ -432,8 +445,34 @@ void MainWindow::brightnessReleased()
     QString s = QString("b%1").arg(value);
     socket.write(s.toUtf8());
 }
-void MainWindow::parseSettings()
+void MainWindow::demo()
 {
+    QString s = QString("p\n");
+    socket.write(s.toUtf8());
+}
+void MainWindow::blank()
+{
+    QMessageBox::StandardButton reply;
+    reply.setStyleSheet("QMessageBox {
+                        width = 600;
+                        height = 600;
+                    }
+                    QMessageBox QLabel {
+                        font-size: 25pt;
+                    }
+                    QMessageBox QPushButton {
+                        width = 300;
+                        height = 100;
+                        font-size: 25pt;
+                    }")
+    reply = QMessageBox::question(this, "OD Blank", "Really blank?",
+                                  QMessageBox::Yes | QMessageBox::No);
+    if (reply == QMessageBox::Yes)
+    {
+        qDebug() << "Blank requested";
+        QString s = QString("x\n");
+        socket.write(s.toUtf8());
+    }
 }
 int main(int argc, char *argv[])
 {

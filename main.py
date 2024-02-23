@@ -3,6 +3,7 @@ import gui.networking.gui_server
 import gpio_devs.light_controller
 import gpio_devs.laser_controller
 import gpio_devs.co2_controller
+import gpio_devs.agi_controller
 import gpio_devs
 import logger.logger
 import usb.adc
@@ -26,6 +27,8 @@ if __name__ == "__main__":
                                 'od':-1, # processed OD value
                                 'to_day': '09:00:00', # time to change to day
                                 'to_night': '18:00:00', # time to change to night
+                                'agi_freq': 0, # agitation period code (0 is always on)
+                                'agi_duty': 100, # agitation duty cycle
                                 'state':False, # state of lights
                                 'co2':False, # co2 running
                                 'elapsed':-1, # time elapsed in this light state
@@ -38,7 +41,11 @@ if __name__ == "__main__":
 
     # Events
     events = {'new_adc': mp.Event(),
-              'new_light': mp.Event()}
+              'new_light': mp.Event(),
+              'new_settings': mp.Event(),
+              'new_brightness': mp.Event(),
+              'new_agi': mp.Event(),
+              'blank_request': mp.Event()}
 
     # ADC serial monitor
     usb_proc = mp.Process(name='usb', 
@@ -57,7 +64,6 @@ if __name__ == "__main__":
     gui_serv_proc = mp.Process(name = 'gui',
                           target=gui.networking.gui_server.server_loop,
                           args=[shared_data, events, '-guidebug' in sys.argv])
-    #process = subprocess.Popen("/home/cyano/CYANO/gui/gui")
     
     #Logging
     log_proc = mp.Process(name = 'log',
@@ -69,21 +75,29 @@ if __name__ == "__main__":
                           target=gpio_devs.co2_controller.co2_loop,
                           args=[shared_data, events, '-co2debug' in sys.argv])
     
+    # Agitation
+    agi_proc = mp.Process(name = 'agi',
+                          target=gpio_devs.agi_controller.agi_loop,
+                          args=[shared_data, events, '-agidebug' in sys.argv])
+    
+    if not '-nogui' in sys.argv:
+        gui_serv_proc.start()
     usb_proc.start()
     if not '-nolight' in sys.argv:
         light_proc.start()
     laser_proc.start()
-    if not '-nogui' in sys.argv:
-        gui_serv_proc.start()
     log_proc.start()
     if not '-noco2' in sys.argv:
         co2_proc.start()
+    if not '-noagi' in sys.argv:
+        agi_proc.start()
     print('usb: ', usb_proc.pid)
     print('lights: ', light_proc.pid)
     print('laser: ', laser_proc.pid)
     print('gui serv: ', gui_serv_proc.pid)
     print('log: ', log_proc.pid)
     print('co2: ', co2_proc.pid)
+    print('agi: ', agi_proc.pid)
     
     try:
         while True:
