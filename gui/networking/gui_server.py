@@ -47,7 +47,6 @@ def server_loop(shared_data: Dict[str, Union[int,float,bool]],
     if received_data:
         # Decode the received bytes to a string (if necessary)
         received_string = received_data.decode('utf-8')
-        
         # Parse the JSON string
         settings = json.loads(received_string)
         
@@ -73,7 +72,13 @@ def server_loop(shared_data: Dict[str, Union[int,float,bool]],
           time.sleep(.5)
           try:
             rec = conn.recv(1024).decode('utf-8').strip()
-            num = int(rec[1:])
+            num = 0
+            end = rec.rfind('B') # last occurence of B
+            rec = rec[0:end]
+            start = rec.rfind('A') # last occurence of A
+            rec = rec[start + 1:]
+            if len(rec) > 1:
+              num = int(rec[1:])
             # brightness command
             if 'b' in rec:
               shared_data['brightness'] = num / 100.0

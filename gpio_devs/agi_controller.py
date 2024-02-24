@@ -9,7 +9,7 @@ from datetime import datetime as dt
 
 AGI_pin = 13
 
-def agiloop(shared_data: Dict[str, Union[int,float,bool]], 
+def agi_loop(shared_data: Dict[str, Union[int,float,bool]], 
              events: Dict[str, Event], 
              debug_mode: bool) -> None:
     """
@@ -37,35 +37,44 @@ def agiloop(shared_data: Dict[str, Union[int,float,bool]],
     period = 0
     start = time.time()
     elapsed = -1
+    timer_mode = True
     
-    def update_times():
-        global period, on_time, start, elapsed
-        period = get_period(shared_data['agi_freq'])
-        if period == 0:
-            duty = 100
-        else:
-            duty = shared_data['agi_duty']
-        duty /= 100.0
-        on_time = duty * period
-        start = time.time()
-        elapsed = 0
+    # Wait for settings to be processed
+    while not events['new_agi'].is_set():
+        time.sleep(1)
         
     while True:
         if events['new_agi'].is_set():
-            update_times()
-            if debug_mode:
-                print(f"agi_controller: time update: 
-                      period {period}s 
-                      on_time {on_time}s")
-            
-        elapsed = time.time() - start
-        if elapsed < on_time:
-            ctrl.on()
-        else:
-            if elapsed > period:
-                start = time.time()
+            period = get_period(shared_data['agi_freq'])
+            duty = shared_data['agi_duty']/100.0
+            if period == 0:
+                timer_mode = False
             else:
+                timer_mode = True
+            on_time = duty * period
+            start = time.time()
+            elapsed = 0
+            if debug_mode:
+                print(f"agi_controller: time update:\n \
+                      period {period}s\n \
+                      on_time {on_time}s\n \
+                      duty {duty}")
+            events['new_agi'].clear()
+        
+        if timer_mode:
+            elapsed = time.time() - start
+            if elapsed < on_time:
+                ctrl.on()
+            else:
+                if elapsed > period:
+                    start = time.time()
+                else:
+                    ctrl.off()
+        else:
+            if shared_data['agi_duty'] == 0:
                 ctrl.off()
+            else:
+                ctrl.on()
                 
         time.sleep(1)
                 

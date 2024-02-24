@@ -17,13 +17,10 @@ IntroPage::IntroPage(QWidget *parent)
 
     QHBoxLayout *main = new QHBoxLayout();  
 
-    QLabel *test = new QLabel("test");
-    agiLayout->addWidget(test);
-    //cycleLayout->addWidget(night);
     main->addSpacing(100);
     makeCycles(main);
     main->addSpacing(600);
-    makeAgis(main);
+    makeAgi(main);
     main->addStretch();
 
     setLayout(main);
@@ -34,7 +31,7 @@ QByteArray SettingsWizard::getSettings(){
     int nightSel = field("night").toInt();
     int freqSel = field("agi_freq").toInt();
 
-    QJsonArray settings;
+    QJsonObject settings;
     settings["day"] = getTimeStr(daySel);
     settings["night"] = getTimeStr(nightSel);
     settings["agi_freq"] = freqSel;
@@ -79,7 +76,7 @@ void IntroPage::makeCycles(QBoxLayout *layout){
 
     layout->addLayout(cycleLayout);
 }
-void IntroPage::mageAgi(QBokxLayout *layout){
+void IntroPage::makeAgi(QBoxLayout *layout){
     QVBoxLayout *agiLayout = new QVBoxLayout();
     
     QList<QString> agis = makeAgis();
@@ -90,13 +87,13 @@ void IntroPage::mageAgi(QBokxLayout *layout){
     QLabel *agiLabel = new QLabel("Agitate every:");
     QComboBox *agiFreq = new QComboBox;
     agiFreq->setFont(comboBoxFont);
-    agiFreq->addAgis(agis);
+    agiFreq->addItems(agis);
     agiFreq->setFixedWidth(400);
 
     // Add to layout
     agiLayout->addSpacing(200);
-    agiLayout->addWidget(dayBoxLabel);
-    agiLayout->addWidget(day, Qt::AlignHCenter);
+    agiLayout->addWidget(agiLabel);
+    agiLayout->addWidget(agiFreq, Qt::AlignHCenter);
     agiLayout->addStretch();
 
     registerField("agi_freq", agiFreq);
@@ -147,30 +144,30 @@ QList<QString> IntroPage::makeTimes(){
 QJsonValue SettingsWizard::getTimeStr(int i)
 {
     QList<QString> times;
-    times.append("1:00");
-    times.append("2:00");
-    times.append("3:00");
-    times.append("4:00");
-    times.append("5:00");
-    times.append("6:00");
-    times.append("7:00");
-    times.append("8:00");
-    times.append("9:00");
-    times.append("10:00");
-    times.append("11:00");
-    times.append("12:00");
-    times.append("13:00");
-    times.append("14:00");
-    times.append("15:00");
-    times.append("16:00");
-    times.append("17:00");
-    times.append("18:00");
-    times.append("19:00");
-    times.append("20:00");
-    times.append("21:00");
-    times.append("22:00");
-    times.append("23:00");
-    times.append("00:00");
+    times.append("01:00:00");
+    times.append("02:00:00");
+    times.append("03:00:00");
+    times.append("04:00:00");
+    times.append("05:00:00");
+    times.append("06:00:00");
+    times.append("07:00:00");
+    times.append("08:00:00");
+    times.append("09:00:00");
+    times.append("10:00:00");
+    times.append("11:00:00");
+    times.append("12:00:00");
+    times.append("13:00:00");
+    times.append("14:00:00");
+    times.append("15:00:00");
+    times.append("16:00:00");
+    times.append("17:00:00");
+    times.append("18:00:00");
+    times.append("19:00:00");
+    times.append("20:00:00");
+    times.append("21:00:00");
+    times.append("22:00:00");
+    times.append("23:00:00");
+    times.append("00:00:00");
 
     return QJsonValue(times.at(i));
 }

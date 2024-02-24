@@ -17,7 +17,7 @@ public:
     SettingsWizard(QWidget *parent = nullptr);
     QByteArray getSettings();
 private:
-    int SettingsWizard::getTime;
+    int getTime;
     QJsonValue getTimeStr(int i);
 };
 
@@ -32,7 +32,7 @@ private:
     QLabel *label;
     void makeCycles(QBoxLayout *layout);
     void makeAgi(QBoxLayout *layout);
-    QList<QString> makeAgis()
+    QList<QString> makeAgis();
     QList<QString> makeTimes();
 };
 

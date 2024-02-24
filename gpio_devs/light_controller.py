@@ -27,8 +27,10 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
         board.D18, 104, brightness=.5, auto_write=False, pixel_order=ORDER
     )
     #Initialize to White
-    pixels.fill((255,255,255)) # Blue, Red, Green
-
+    def to_white(pixels):
+        for i in range(len(pixels)): 
+            pixels[i] = (255,255,255)
+    to_white(pixels)
     #For rainbow patterns
     rainbow = np.load('gpio_devs/light_patterns/interpolated_rainbow.npy')
     rainbow[:,[1,0]] = rainbow[:,[0,1]]
@@ -45,30 +47,30 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     signal.signal(signal.SIGTERM, cleanup)
     signal.signal(signal.SIGINT, cleanup)
     
-    def update_times():      
-        global toggle_time, night_time, day_time, start_t  
-        toggle_time = 0 # immediately toggle
-        night_time = isTimeFormat(shared_data['to_night'])
-        day_time = isTimeFormat(shared_data['to_day'])
-        # set to not because we will toggle right after
-        shared_data['state'] = not isDay(night_time, day_time)
-        start_t = time.time()
-        events['new_settings'].clear()
-
+    toggle_time = 0
+    night_time = 0
+    day_time = 0
+    start_t = 0
+    
     wait_time = 1
     
     update_pixels = True
     
     # Wait for settings to be processed
-    first_start = True
-    if first_start:
-        while not events['new_settings'].is_set():
+    while not events['new_settings'].is_set():
             time.sleep(1)
-    
     while True:
         if events['new_settings'].is_set():
+            print("light_controller: new settings received")
             events['new_agi'].set() # notify agi to update with settings
-            update_times()
+            toggle_time = 0 # immediately toggle
+            night_time = isTimeFormat(shared_data['to_night'])
+            day_time = isTimeFormat(shared_data['to_day'])
+            # set to not because we will toggle right after
+            shared_data['state'] = not isDay(night_time, day_time)
+            start_t = time.time()
+            events['new_settings'].clear()
+            print(night_time)
             
         # Time elapsed since start of this state
         shared_data['elapsed'] = time.time() - start_t
@@ -96,18 +98,21 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
             # Calculate time remaining
             rm_t = toggle_time - shared_data['elapsed']
             shared_data['remaining'] = rm_t
-            if shared_data['demo'] and shared_data['state']: # If demo mode and on, rainbow!
-                wait_time = 0.01
-                if debug_mode:
-                    print(f'current RGB: {rainbow[pattern_index]}')
-                for i in range(len(pixels)): 
-                    ind = pattern_index + i
-                    while ind >= len(rainbow):
-                        ind -= len(rainbow)
-                    pixels[i] = rainbow[ind]
-                pattern_index = pattern_index + 1 if pattern_index < len(rainbow) - 1 else 0
-                update_pixels = True # update colors
-        
+            if shared_data['state']:
+                if shared_data['demo']: # If demo mode and on, rainbow!
+                    wait_time = 0.01
+                    if debug_mode:
+                        print(f'current RGB: {rainbow[pattern_index]}')
+                    for i in range(len(pixels)): 
+                        ind = pattern_index + i
+                        while ind >= len(rainbow):
+                            ind -= len(rainbow)
+                        pixels[i] = rainbow[ind]
+                    pattern_index = pattern_index + 1 if pattern_index < len(rainbow) - 1 else 0
+                    update_pixels = True # update colors
+                else:
+                    to_white(pixels)
+                    update_pixels = True
         if events['new_brightness'].is_set():
             if debug_mode:
                 print("light_controller: brightness change request received to " + 

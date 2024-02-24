@@ -22,7 +22,7 @@ class ADC():
         # send received messages and flush out buffers
         for i in range(5):
             self._next()
-    @staticmethod
+    
     def val_to_ph(self, val : int) -> float:
         voltage = 3.3 * (val / 4096)
         # equation from https://files.atlas-scientific.com/Gravity-pH-datasheet.pdf
@@ -30,7 +30,7 @@ class ADC():
 
     def val_to_od(self, val : int)-> float:
         # TODO: this
-        return (100 * (val / 4096)) - self.od_zero
+        return (100 * (val / 600)) - self.od_zero
     
     def blank_od(self, zero):
         self.od_zero = zero
@@ -111,11 +111,13 @@ def ADC_loop(shared_data: Dict[str, Union[int,float,bool]],
         
         if events['blank_request'].is_set():
             adc.blank_od(shared_data['od'] )
+            events['blank_request'].clear()
         
         if debug_mode: # print in debug mode
             print(f"\nadc: ph_raw is {ph}")
             print(f"adc: ph_raw_filtered is {ph_f}")
             print(f"adc: ph is {shared_data['ph']}")
             print(f"adc: od_raw is {od}")
-            print(f"adc: od_raw_filtered is {od_f}\n")
+            print(f"adc: od_raw_filtered is {od_f}")
+            print(f"adc: od is {shared_data['od']}\n")
         time.sleep(0.1)

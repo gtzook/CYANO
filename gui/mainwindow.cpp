@@ -26,9 +26,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     const int plotSpacer = 30;
     QHBoxLayout *plotLayout = new QHBoxLayout();
     plotLayout->addSpacing(plotSpacer);
-    makePH(centralWidget, plotLayout);
-    plotLayout->addSpacing(plotSpacer);
     makeOD(centralWidget, plotLayout);
+    plotLayout->addSpacing(plotSpacer);
+    makePH(centralWidget, plotLayout);
     plotLayout->addSpacing(plotSpacer);
     mainLayout->addLayout(plotLayout);
     mainLayout->addSpacing(10);
@@ -48,35 +48,37 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     mainLayout->addSpacing(100);
 
     // Menu Buttons
-    QHBoxLayout *menuButtons = new QHBLayout();
+    QHBoxLayout *menuButtons = new QHBoxLayout();
 
     QPushButton *demoButton = new QPushButton("Demo", centralWidget);
-    demoButton->setFixedSize(100, 100);
+    demoButton->setFixedSize(200, 100);
+    demoButton->setFont(labels);
     QPushButton *blankButton = new QPushButton("Blank OD", centralWidget);
-    blankButton->setFixedSize(100, 100);
+    blankButton->setFixedSize(200, 100);
+    blankButton->setFont(labels);
 
     connect(demoButton, &QPushButton::pressed, this, &MainWindow::demo);
-    demo = false;
 
     connect(blankButton, &QPushButton::pressed, this, &MainWindow::blank);
 
     menuButtons->addWidget(demoButton);
+    menuButtons->addWidget(blankButton);
+    menuButtons->addStretch();
     mainLayout->addLayout(menuButtons);
 
     showFullScreen(); // make window fullscreen
 
     // Start settings wizard
-    SettingsWizard *wiz = new SettingsWizard(this);
-    connect(wiz, &QDialog::finished, this, &MainWindow::parseSettings);
+    wiz = new SettingsWizard(this);
     wiz->show();
-
+    connect(wiz, &QDialog::finished, this, &MainWindow::sendSettings);
     // Create client interface
     socket.connectToHost("127.0.0.1", 12345);
     // Connect socket signals to slots
     connect(&socket, &QTcpSocket::readyRead, this, &MainWindow::updateGUI);
 
     // send user settings to Python
-    socket.write(wiz.getSettings());
+    // socket.write(wiz->getSettings());
 }
 
 void MainWindow::updateGUI()
@@ -322,7 +324,6 @@ void MainWindow::makeAgitation(QWidget *parent, QBoxLayout *layout)
     QLabel *switchLabel = new QLabel("Mode");
     switchLabel->setFont(labels2);
     manualCheck = new QCheckBox(parent);
-    connect(manualCheck, &QCheckBox::stateChanged, this, &MainWindow::agitationManual);
     manualCheck->setTristate(true);
     manualCheck->setCheckState(Qt::Checked);
     manualCheck->setStyleSheet(
@@ -330,6 +331,8 @@ void MainWindow::makeAgitation(QWidget *parent, QBoxLayout *layout)
         "QCheckBox::indicator::checked {image: url(/home/cyano/CYANO/gui/lib/auto.png);}"
         "QCheckBox::indicator::unchecked {image: url(/home/cyano/CYANO/gui/lib/on.png);}"
         "QCheckBox::indicator::indeterminate {image: url(/home/cyano/CYANO/gui/lib/off.png);}");
+    manual = false;
+    connect(manualCheck, &QCheckBox::stateChanged, this, &MainWindow::agitationManual);
     QPushButton *increaseButton = new QPushButton("Increase", parent);
     QPushButton *decreaseButton = new QPushButton("Decrease", parent);
     connect(increaseButton, &QPushButton::pressed, this, &MainWindow::agitationIncrease);
@@ -430,8 +433,12 @@ void MainWindow::agitationSend(int val)
 {
     QString s = QString("%1\%").arg(val);
     agitationValue->setText(s);
-    s = QString("a%1\n").arg(val);
+    s = QString("Aa%1B").arg(val);
     socket.write(s.toUtf8());
+}
+void MainWindow::sendSettings()
+{
+    socket.write(wiz->getSettings());
 }
 void MainWindow::brightnessMoved()
 {
@@ -442,35 +449,41 @@ void MainWindow::brightnessMoved()
 void MainWindow::brightnessReleased()
 {
     int value = brightnessSlider->value();
-    QString s = QString("b%1").arg(value);
+    QString s = QString("Ab%1B").arg(value);
     socket.write(s.toUtf8());
 }
 void MainWindow::demo()
 {
-    QString s = QString("p\n");
+    QString s = QString("ApB\n");
     socket.write(s.toUtf8());
 }
 void MainWindow::blank()
 {
-    QMessageBox::StandardButton reply;
-    reply.setStyleSheet("QMessageBox {
-                        width = 600;
-                        height = 600;
-                    }
-                    QMessageBox QLabel {
-                        font-size: 25pt;
-                    }
-                    QMessageBox QPushButton {
-                        width = 300;
-                        height = 100;
-                        font-size: 25pt;
-                    }")
-    reply = QMessageBox::question(this, "OD Blank", "Really blank?",
-                                  QMessageBox::Yes | QMessageBox::No);
+    QMessageBox msgBox;
+    msgBox.setWindowTitle("OD Blank");
+    msgBox.setText("Really blank?");
+    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+
+    msgBox.setStyleSheet("QMessageBox {"
+                         "width: 600px;"
+                         "height: 600px;"
+                         "}"
+                         "QLabel {"
+                         "font-size: 25pt;"
+                         "}"
+                         "QPushButton {"
+                         "width: 300px;"
+                         "height: 100px;"
+                         "font-size: 25pt;"
+                         "}");
+
+    int ret = msgBox.exec();
+    QMessageBox::StandardButton reply = static_cast<QMessageBox::StandardButton>(ret);
+
     if (reply == QMessageBox::Yes)
     {
         qDebug() << "Blank requested";
-        QString s = QString("x\n");
+        QString s = QString("AxB\n");
         socket.write(s.toUtf8());
     }
 }

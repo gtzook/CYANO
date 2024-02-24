@@ -49,6 +49,7 @@ private slots:
     void brightnessReleased();
     void demo();
     void blank();
+    void sendSettings();
 
 private:
     void makeAgitation(QWidget *parent, QBoxLayout *layout);
@@ -61,6 +62,7 @@ private:
     void updateText(bool isDay, int remaining);
     void agitationSend(int val);
     std::map<QString, QJsonValue> parseJSON(QByteArray raw);
+    SettingsWizard *wiz;
     QPushButton *button1;
     QPushButton *button2;
     QLineSeries *pHSeries;
