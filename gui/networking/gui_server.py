@@ -57,6 +57,10 @@ def server_loop(shared_data: Dict[str, Union[int,float,bool]],
         # set agitation period
         shared_data['agi_freq'] = settings['agi_freq']
         
+        #set ph warning thresholds
+        shared_data['ph_upper'] = settings['ph_upper']
+        shared_data['ph_lower'] = settings['ph_lower']
+        
         # Print the parsed JSON data
         print("gui_server: Received JSON data:", settings)
     else:

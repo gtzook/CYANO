@@ -4,6 +4,7 @@ import time
 from datetime import datetime as dt
 import signal
 import sys
+import numpy as np
 from typing import Dict, Union
 from multiprocessing.synchronize import Event
 from .signal_processing.ph_filter import ph_filter
@@ -26,11 +27,12 @@ class ADC():
     def val_to_ph(self, val : int) -> float:
         voltage = 3.3 * (val / 4096)
         # equation from https://files.atlas-scientific.com/Gravity-pH-datasheet.pdf
-        return (-5.6548 * voltage) + 14.509
+        #return (-5.6548 * voltage) + 14.509
+        return 16 + (-0.00503 * val)
 
     def val_to_od(self, val : int)-> float:
-        # TODO: this
-        return (100 * (val / 600)) - self.od_zero
+        #return (100 * (val / 600)) - self.od_zero
+        return np.clip(1.06 * np.log(val) - 4.57,0,5)
     
     def blank_od(self, zero):
         self.od_zero = zero

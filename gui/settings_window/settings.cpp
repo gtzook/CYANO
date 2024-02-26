@@ -21,20 +21,33 @@ IntroPage::IntroPage(QWidget *parent)
     makeCycles(main);
     main->addSpacing(600);
     makeAgi(main);
-    main->addStretch();
+    main->addStretch(); //5 - 9
 
     setLayout(main);
+}
+
+std::array<double, 2> SettingsWizard::getPhSettings(){
+    double ph_upper = field("ph_upper").toDouble()/100.0;
+    double ph_lower = field("ph_lower").toDouble()/100.0;
+
+    std::array<double, 2> arr = {ph_upper, ph_lower};
+
+    return arr;
 }
 
 QByteArray SettingsWizard::getSettings(){
     int daySel = field("day").toInt();
     int nightSel = field("night").toInt();
     int freqSel = field("agi_freq").toInt();
-
+    double ph_upper = field("ph_upper").toDouble()/100.0;
+    double ph_lower = field("ph_lower").toDouble()/100.0;
+    
     QJsonObject settings;
     settings["day"] = getTimeStr(daySel);
     settings["night"] = getTimeStr(nightSel);
     settings["agi_freq"] = freqSel;
+    settings["ph_upper"] = ph_upper;
+    settings["ph_lower"] = ph_lower;
 
     return QJsonDocument(settings).toJson();
 }
@@ -53,6 +66,7 @@ void IntroPage::makeCycles(QBoxLayout *layout){
     day->addItems(times);
     day->setFixedWidth(400);
     day->view()->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    day->setCurrentIndex(8);
 
     // Init objects for night
     QLabel *nightBoxLabel = new QLabel("Nighttime:");
@@ -61,6 +75,7 @@ void IntroPage::makeCycles(QBoxLayout *layout){
     night->setFixedWidth(400);
     night->addItems(times);
     night->view()->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    night->setCurrentIndex(20);
 
     // Add to layout
     cycleLayout->addSpacing(200);
@@ -95,10 +110,162 @@ void IntroPage::makeAgi(QBoxLayout *layout){
     agiLayout->addWidget(agiLabel);
     agiLayout->addWidget(agiFreq, Qt::AlignHCenter);
     agiLayout->addStretch();
-
+    makePh(agiLayout);
     registerField("agi_freq", agiFreq);
 
     layout->addLayout(agiLayout);
+}
+
+void IntroPage::makePh(QBoxLayout *layout){
+    QVBoxLayout *phLayout = new QVBoxLayout();
+    
+    // Init objects for day
+    upperLabel = new QLabel("Upper Bound:");
+    upper = new QSlider(Qt::Horizontal);
+    upper->setRange(700, 900); // Range from 5.0 to 9.0
+    upper->setValue(800);
+    upper->setSingleStep(1); // Single step
+    upper->setPageStep(1); // Page step
+    upper->setTickInterval(1); // Tick interval
+    upper->setFixedHeight(50);
+    upper->setFixedWidth(600);
+    upper->setTickPosition(QSlider::TicksBelow);
+    upper->setStyleSheet(
+        "QSlider::groove:horizontal {"
+        "    border: 1px solid #bbb;"
+        "    background: white;"
+        "    height: 100px;"
+        "    border-radius: 4px;"
+        "}"
+        "QSlider::sub-page:horizontal {"
+        "    background: qlineargradient(x1: 0, y1: 0.2, x2: 1, y2: 1,"
+        "        stop: 0 #d9ead3, stop: 1 #109210);"
+        "    border: 1px solid #777;"
+        "    height: 10px;"
+        "    border-radius: 4px;"
+        "}"
+        "QSlider::add-page:horizontal {"
+        "    background: #fff;"
+        "    border: 1px solid #777;"
+        "    height: 10px;"
+        "    border-radius: 4px;"
+        "}"
+        "QSlider::handle:horizontal {"
+        "    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,"
+        "        stop:0 #eee, stop:1 #ccc);"
+        "    border: 1px solid #777;"
+        "    width: 50px;"
+        "    margin-top: -2px;"
+        "    margin-bottom: -2px;"
+        "    border-radius: 200px;"
+        "}"
+        "QSlider::handle:horizontal:hover {"
+        "    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,"
+        "        stop:0 #fff, stop:1 #ddd);"
+        "    border: 1px solid #444;"
+        "    border-radius: 4px;"
+        "}"
+        "QSlider::sub-page:horizontal:disabled {"
+        "    background: #bbb;"
+        "    border-color: #999;"
+        "}"
+        "QSlider::add-page:horizontal:disabled {"
+        "    background: #eee;"
+        "    border-color: #999;"
+        "}"
+        "QSlider::handle:horizontal:disabled {"
+        "    background: #eee;"
+        "    border: 1px solid #aaa;"
+        "    border-radius: 4px;"
+        "}");
+
+    connect(upper, &QSlider::valueChanged, this, &IntroPage::updateUpper);
+    updateUpper();
+    //Lower begins here
+    lowerLabel = new QLabel("Lower Bound:");
+    lower = new QSlider(Qt::Horizontal);
+    lower->setRange(500, 700);
+    lower->setValue(600);
+    lower->setSingleStep(1); // Single step
+    lower->setPageStep(1); // Page step
+    lower->setTickInterval(1); // Tick interval
+    lower->setFixedHeight(50);
+    lower->setFixedWidth(600);
+    lower->setTickPosition(QSlider::TicksBelow);
+    lower->setStyleSheet(
+        "QSlider::groove:horizontal {"
+        "    border: 1px solid #bbb;"
+        "    background: white;"
+        "    height: 100px;"
+        "    border-radius: 4px;"
+        "}"
+        "QSlider::sub-page:horizontal {"
+        "    background: qlineargradient(x1: 0, y1: 0.2, x2: 1, y2: 1,"
+        "        stop: 0 #d9ead3, stop: 1 #109210);"
+        "    border: 1px solid #777;"
+        "    height: 10px;"
+        "    border-radius: 4px;"
+        "}"
+        "QSlider::add-page:horizontal {"
+        "    background: #fff;"
+        "    border: 1px solid #777;"
+        "    height: 10px;"
+        "    border-radius: 4px;"
+        "}"
+        "QSlider::handle:horizontal {"
+        "    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,"
+        "        stop:0 #eee, stop:1 #ccc);"
+        "    border: 1px solid #777;"
+        "    width: 50px;"
+        "    margin-top: -2px;"
+        "    margin-bottom: -2px;"
+        "    border-radius: 200px;"
+        "}"
+        "QSlider::handle:horizontal:hover {"
+        "    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,"
+        "        stop:0 #fff, stop:1 #ddd);"
+        "    border: 1px solid #444;"
+        "    border-radius: 4px;"
+        "}"
+        "QSlider::sub-page:horizontal:disabled {"
+        "    background: #bbb;"
+        "    border-color: #999;"
+        "}"
+        "QSlider::add-page:horizontal:disabled {"
+        "    background: #eee;"
+        "    border-color: #999;"
+        "}"
+        "QSlider::handle:horizontal:disabled {"
+        "    background: #eee;"
+        "    border: 1px solid #aaa;"
+        "    border-radius: 4px;"
+        "}");
+
+    connect(lower, &QSlider::valueChanged, this, &IntroPage::updateLower);
+    updateLower();
+
+    // Add to layout
+    phLayout->addWidget(upperLabel);
+    phLayout->addWidget(upper);
+    phLayout->addWidget(lowerLabel);
+    phLayout->addWidget(lower);
+    phLayout->addStretch();
+
+    registerField("ph_lower", lower);
+    registerField("ph_upper", upper);
+
+    layout->addLayout(phLayout);
+}
+
+void IntroPage::updateUpper(){
+     double value = upper->value()/100.0;
+     QString s = QString("Upper limit: %1 pH").arg(value, 3, 'f', 2);
+     upperLabel->setText(s);
+}
+void IntroPage::updateLower(){
+     double value = lower->value()/100.0;
+     QString s = QString("Lower limit: %1 pH").arg(value, 3, 'f', 2);
+     lowerLabel->setText(s);
 }
 
 QList<QString> IntroPage::makeAgis(){

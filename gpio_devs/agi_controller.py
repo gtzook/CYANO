@@ -39,6 +39,8 @@ def agi_loop(shared_data: Dict[str, Union[int,float,bool]],
     elapsed = -1
     timer_mode = True
     
+    ctrl.off()
+    
     # Wait for settings to be processed
     while not events['new_agi'].is_set():
         time.sleep(1)

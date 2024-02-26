@@ -18,10 +18,7 @@ if __name__ == "__main__":
     print(f"CYANO starting at {dt.now()}")
     # Shared memory manager
     manager = mp.Manager()
-    
-    # TODO: If we are having speed issues, consider moving to Queue-only design
-    # https://www.geeksforgeeks.org/python-multiprocessing-queue-vs-multiprocessing-manager-queue/
-    
+
     # Shared memory items
     shared_data = manager.dict({'ph':-1, # ph value from adc
                                 'od':-1, # processed OD value
@@ -34,7 +31,10 @@ if __name__ == "__main__":
                                 'elapsed':-1, # time elapsed in this light state
                                 'remaining':-1, # time remaining in this light state
                                 'demo': '-demo' in sys.argv,
-                                'brightness': .5}) 
+                                'brightness': .5,
+                                'ph_upper': 9, # upper ph warning threshold
+                                'ph_lower': 6 # lower ph warning threshold 
+                                }) 
     time_str = "%H:%M:%S"
     shared_data['to_day'] = '09:00:00'
     shared_data['to_night'] = '21:00:00'

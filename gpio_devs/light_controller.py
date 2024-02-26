@@ -56,6 +56,8 @@ def led_loop(shared_data: Dict[str, Union[int,float,bool]],
     
     update_pixels = True
     
+    ctrl.off()
+    
     # Wait for settings to be processed
     while not events['new_settings'].is_set():
             time.sleep(1)

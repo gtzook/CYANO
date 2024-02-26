@@ -66,6 +66,8 @@ private:
     QPushButton *button1;
     QPushButton *button2;
     QLineSeries *pHSeries;
+    QLineSeries *pHUpper;
+    QLineSeries *pHLower;
     QValueAxis *pHXAxis;
     QLineSeries *odSeries;
     QValueAxis *odXAxis;
@@ -85,6 +87,8 @@ private:
     QFont labels2;
     bool manual;
     int agi;
+    double upper;
+    double lower;
 };
 
 #endif // MAINWINDOW_H

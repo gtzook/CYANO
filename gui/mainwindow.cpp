@@ -76,9 +76,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     socket.connectToHost("127.0.0.1", 12345);
     // Connect socket signals to slots
     connect(&socket, &QTcpSocket::readyRead, this, &MainWindow::updateGUI);
-
-    // send user settings to Python
-    // socket.write(wiz->getSettings());
 }
 
 void MainWindow::updateGUI()
@@ -108,6 +105,14 @@ void MainWindow::updatePlots(double ph, double od)
     // Add to line series
     pHSeries->append(pos, ph);
     odSeries->append(pos, od);
+
+    pHUpper->clear();
+    pHUpper->append(0,upper);
+    pHUpper->append(200 + farthest_x, upper);
+
+    pHLower->clear();
+    pHLower->append(0,lower);
+    pHLower->append(200 + farthest_x, lower);
 
     // Scroll graphs
     if (farthest_x > SCROLL_THRESH)
@@ -177,7 +182,7 @@ void MainWindow::makeOD(QWidget *parent, QBoxLayout *layout)
     QValueAxis *odYAxis = qobject_cast<QValueAxis *>(odChart->axes(Qt::Vertical).at(0));
 
     odXAxis->setRange(0, GRAPH_WIDTH);
-    odYAxis->setRange(0, 100);
+    odYAxis->setRange(0, 3);
     odXAxis->setTitleText("Time");
     odXAxis->setLabelsFont(plotTicks);
     odXAxis->setTitleFont(plotLabels);
@@ -198,18 +203,30 @@ void MainWindow::makePH(QWidget *parent, QBoxLayout *layout)
     pHChart->setTitleFont(plotTitles);
     QChartView *pHChartView = new QChartView(pHChart, parent);
     pHSeries = new QLineSeries;
+    pHUpper = new QLineSeries;
+    pHLower = new QLineSeries;
     pHChart->addSeries(pHSeries);
+    pHChart->addSeries(pHUpper);
+    pHChart->addSeries(pHLower);
+
     // graph cosmetics
     QPen phpen = pHSeries->pen();
     phpen.setWidth(7);
     phpen.setColor(Qt::red);
     pHSeries->setPen(phpen);
 
+    QPen limitpen = pHUpper->pen();
+    limitpen.setWidth(2);
+    limitpen.setColor(Qt::blue);
+    limitpen.setStyle(Qt::DotLine);
+    pHUpper->setPen(limitpen);
+    pHLower->setPen(limitpen);
+
     pHChart->createDefaultAxes();
     pHXAxis = qobject_cast<QValueAxis *>(pHChart->axes(Qt::Horizontal).at(0));
     QValueAxis *pHYAxis = qobject_cast<QValueAxis *>(pHChart->axes(Qt::Vertical).at(0));
     pHXAxis->setRange(0, GRAPH_WIDTH);
-    pHYAxis->setRange(0, 14);
+    pHYAxis->setRange(5, 9);
     pHXAxis->setTitleText("Time");
     pHXAxis->setTitleFont(plotLabels);
     pHXAxis->setLabelsFont(plotTicks);
@@ -438,6 +455,9 @@ void MainWindow::agitationSend(int val)
 }
 void MainWindow::sendSettings()
 {
+    std::array<double,2> pHLimits = wiz->getPhSettings();
+    upper = pHLimits[0];
+    lower = pHLimits[1];
     socket.write(wiz->getSettings());
 }
 void MainWindow::brightnessMoved()
