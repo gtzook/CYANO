@@ -32,9 +32,10 @@ class ADC():
 
     def val_to_od(self, val : int)-> float:
         #return (100 * (val / 600)) - self.od_zero
-        return np.clip(1.06 * np.log(val) - 4.57,0,5)
-    
-    def blank_od(self, zero):
+        return np.clip((1.06 * np.log(val) - 4.57)-self.od_zero,0,5)
+        
+    def blank_od(self):
+        zero = self.get_sense_vals()[1]
         self.od_zero = zero
         
     def get_sense_vals(self):
@@ -94,6 +95,7 @@ def ADC_loop(shared_data: Dict[str, Union[int,float,bool]],
     adc = ADC(num_sensors=2,debug_mode=debug_mode)
     ph_filt = ph_filter(filter_len=10)
     od_filt = od_filter(filter_len=10)
+
     while True:
         vals = adc.get_sense_vals()
         ph = vals[0]
@@ -112,7 +114,7 @@ def ADC_loop(shared_data: Dict[str, Union[int,float,bool]],
         events['new_adc'].set()
         
         if events['blank_request'].is_set():
-            adc.blank_od(shared_data['od'] )
+            adc.blank_od()
             events['blank_request'].clear()
         
         if debug_mode: # print in debug mode

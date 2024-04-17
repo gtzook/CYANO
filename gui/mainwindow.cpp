@@ -63,6 +63,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     menuButtons->addWidget(demoButton);
     menuButtons->addWidget(blankButton);
+    menuButtons->addSpacing(600);
+    makeWarning(centralWidget, menuButtons);
     menuButtons->addStretch();
     mainLayout->addLayout(menuButtons);
 
@@ -88,6 +90,7 @@ void MainWindow::updateGUI()
         if (data["success"].toBool())
         {
             updatePlots(data["ph"].toDouble(), data["od"].toDouble());
+            updateWarning(data["ph"].toDouble());
             updateText(data["state"].toBool(), (int)(data["remaining"].toDouble() + 0.5));
         }
     }
@@ -96,7 +99,6 @@ void MainWindow::updatePlots(double ph, double od)
 {
     auto count = pHSeries->count(); // number of existing points
     auto farthest_x = pHSeries->at(count - 1).x();
-
     auto pos = 0.0;
     if (count > 0)
     {
@@ -107,11 +109,11 @@ void MainWindow::updatePlots(double ph, double od)
     odSeries->append(pos, od);
 
     pHUpper->clear();
-    pHUpper->append(0,upper);
+    pHUpper->append(0, upper);
     pHUpper->append(200 + farthest_x, upper);
 
     pHLower->clear();
-    pHLower->append(0,lower);
+    pHLower->append(0, lower);
     pHLower->append(200 + farthest_x, lower);
 
     // Scroll graphs
@@ -126,6 +128,24 @@ void MainWindow::updatePlots(double ph, double od)
         pHSeries->remove(0);
     }
 }
+
+void MainWindow::updateWarning(double ph)
+{
+    // Get current date and time
+    QDateTime currentDateTime = QDateTime::currentDateTime();
+    QString currentTime = currentDateTime.toString("MM/dd hh:mm:ss");
+
+    if (ph > upper)
+    {
+        warningLabel->setText("<font color='red'>pH exceeded upper threshold at " + currentTime + "!</font>");
+    }
+    else if (ph < lower)
+    {
+        warningLabel->setText("pH exceeded lower threshold at " + currentTime + "!");
+    }
+}
+
+
 void MainWindow::updateText(bool isDay, int remaining)
 {
     if (isDay)
@@ -159,6 +179,13 @@ void MainWindow::makeFonts()
     plotTicks = QFont("Papyrus", 10, 20);
     labels = QFont("Papyrus", 20, 30);
     labels2 = QFont("Papyrus", 15, 50);
+}
+void MainWindow::makeWarning(QWidget *parent, QBoxLayout *layout)
+{
+    warningLabel = new QLabel("", parent);
+    warningLabel->setStyleSheet("QLabel { color: #d50a0a; }");
+    warningLabel->setFont(labels);
+    layout->addWidget(warningLabel);
 }
 void MainWindow::makeOD(QWidget *parent, QBoxLayout *layout)
 {
@@ -455,7 +482,7 @@ void MainWindow::agitationSend(int val)
 }
 void MainWindow::sendSettings()
 {
-    std::array<double,2> pHLimits = wiz->getPhSettings();
+    std::array<double, 2> pHLimits = wiz->getPhSettings();
     upper = pHLimits[0];
     lower = pHLimits[1];
     socket.write(wiz->getSettings());

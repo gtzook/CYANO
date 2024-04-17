@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QDateTime>
 #include <QCheckBox>
 #include <QMainWindow>
 #include <QPushButton>
@@ -57,9 +58,11 @@ private:
     void makeText(QWidget *parent, QBoxLayout *layout);
     void makePH(QWidget *parent, QBoxLayout *layout);
     void makeOD(QWidget *parent, QBoxLayout *layout);
+    void makeWarning(QWidget *parent, QBoxLayout *layout);
     void makeFonts();
     void updatePlots(double ph, double od);
     void updateText(bool isDay, int remaining);
+    void updateWarning(double ph);
     void agitationSend(int val);
     std::map<QString, QJsonValue> parseJSON(QByteArray raw);
     SettingsWizard *wiz;
@@ -77,6 +80,7 @@ private:
     QLabel *agitationValue;
     QLabel *dayNightLabel;
     QLabel *timeSwitchLabel;
+    QLabel *warningLabel;
     QCheckBox *manualCheck;
     // fonts
     QFont plotTitles;

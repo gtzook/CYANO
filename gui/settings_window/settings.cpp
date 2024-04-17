@@ -109,7 +109,7 @@ void IntroPage::makeAgi(QBoxLayout *layout){
     agiLayout->addSpacing(200);
     agiLayout->addWidget(agiLabel);
     agiLayout->addWidget(agiFreq, Qt::AlignHCenter);
-    agiLayout->addStretch();
+    agiLayout->addSpacing(200);
     makePh(agiLayout);
     registerField("agi_freq", agiFreq);
 

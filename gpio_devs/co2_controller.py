@@ -8,6 +8,7 @@ import sys
 from datetime import datetime as dt
 
 CO2_pin = 19
+CO2_falling_thresh = 0.1
 
 def co2_loop(shared_data: Dict[str, Union[int,float,bool]], 
              events: Dict[str, Event], 
@@ -37,7 +38,8 @@ def co2_loop(shared_data: Dict[str, Union[int,float,bool]],
                 print(f"co2_controller: ph {shared_data['ph']}, turning on co2")
             state = ctrl.on()
         else:
-            if state:
+            # only turn off after being on if less than the upper bound minus a margin
+            if state and shared_data['ph'] < shared_data['ph_upper'] - CO2_falling_thresh:
                 print(f"co2_controller: ph {shared_data['ph']}, turning off co2")
-            state = ctrl.off()
+                state = ctrl.off()
         time.sleep(1)
