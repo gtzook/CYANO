@@ -106,6 +106,8 @@ def ADC_loop(shared_data: Dict[str, Union[int,float,bool]],
         
         od_filt.add(od)
         od_f = od_filt.filtered()
+
+        shared_data['od_raw'] = od_f
         
         shared_data['ph'] = adc.val_to_ph(ph_f)
         shared_data['od'] = adc.val_to_od(od_f)

@@ -22,6 +22,7 @@ if __name__ == "__main__":
     # Shared memory items
     shared_data = manager.dict({'ph':-1, # ph value from adc
                                 'od':-1, # processed OD value
+                                'od_raw':-1, # raw OD sensor value
                                 'to_day': '09:00:00', # time to change to day
                                 'to_night': '18:00:00', # time to change to night
                                 'agi_freq': 0, # agitation period code (0 is always on)
@@ -45,7 +46,9 @@ if __name__ == "__main__":
               'new_settings': mp.Event(),
               'new_brightness': mp.Event(),
               'new_agi': mp.Event(),
-              'blank_request': mp.Event()}
+              'blank_request': mp.Event(),
+              'solenoid_on': mp.Event(),
+              'solenoid_off': mp.Event()}
 
     # ADC serial monitor
     usb_proc = mp.Process(name='usb', 

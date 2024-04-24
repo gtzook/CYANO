@@ -97,6 +97,11 @@ def server_loop(shared_data: Dict[str, Union[int,float,bool]],
             # blank requested
             elif 'x' in rec:
               events['blank_request'].set()
+            elif 's' in rec:
+              if '1' in rec:
+                events['solenoid_on'].set()
+              else:
+                events['solenoid_off'].set()
           except TimeoutError:
             pass
         except (ConnectionResetError, BrokenPipeError):

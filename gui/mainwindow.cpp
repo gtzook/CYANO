@@ -56,13 +56,25 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     QPushButton *blankButton = new QPushButton("Blank OD", centralWidget);
     blankButton->setFixedSize(200, 100);
     blankButton->setFont(labels);
+    QPushButton *solenoidOff = new QPushButton("Solenoid OFF", centralWidget);
+    solenoidOff->setFixedSize(200, 100);
+    solenoidOff->setFont(labels);
+    QPushButton *solenoidOn = new QPushButton("Solenoid ON", centralWidget);
+    solenoidOn->setFixedSize(200, 100);
+    solenoidOn->setFont(labels);
 
     connect(demoButton, &QPushButton::pressed, this, &MainWindow::demo);
 
     connect(blankButton, &QPushButton::pressed, this, &MainWindow::blank);
 
+    connect(solenoidOff, &QPushButton::pressed, this, &MainWindow::solOff);
+
+    connect(solenoidOn, &QPushButton::pressed, this, &MainWindow::solOn);
+
     menuButtons->addWidget(demoButton);
     menuButtons->addWidget(blankButton);
+    menuButtons->addWidget(solenoidOff);
+    menuButtons->addWidget(solenoidOn);
     menuButtons->addSpacing(600);
     makeWarning(centralWidget, menuButtons);
     menuButtons->addStretch();
@@ -502,6 +514,16 @@ void MainWindow::brightnessReleased()
 void MainWindow::demo()
 {
     QString s = QString("ApB\n");
+    socket.write(s.toUtf8());
+}
+void MainWindow::solOn()
+{
+    QString s = QString("As1B\n");
+    socket.write(s.toUtf8());
+}
+void MainWindow::solOff()
+{
+    QString s = QString("As0B\n");
     socket.write(s.toUtf8());
 }
 void MainWindow::blank()

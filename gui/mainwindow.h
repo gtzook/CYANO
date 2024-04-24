@@ -50,6 +50,8 @@ private slots:
     void brightnessReleased();
     void demo();
     void blank();
+    void solOn();
+    void solOff();
     void sendSettings();
 
 private:
